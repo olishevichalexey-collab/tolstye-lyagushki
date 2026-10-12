@@ -165,6 +165,9 @@
   .td-hud .act { color: #e4f5ec; border-color: #3f7d43; padding: 5px 11px; font-size: 0.85rem; }
   .td-hud .act[aria-pressed="true"] { background: #e4f5ec; color: #17362a; border-color: #e4f5ec; }
   .td-hud .big { background: var(--lily); color: #ffffff; padding: 7px 16px; font-size: 0.95rem; }
+  .td-hud .exit { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; color: #ffffff; background: #c1121f; border: 2px solid #ffffff; border-radius: 999px; padding: 9px 20px; cursor: pointer; }
+  .td-hud .exit:hover { background: #e63946; }
+  .td-hud .exit:focus-visible { outline: 3px solid var(--lily); outline-offset: 3px; }
   .td-game .td-stage { max-width: none; }
   .td-game .td-stage canvas { border: 0; border-radius: 0; }
   .td-line { display: flex; flex-direction: column; justify-content: center; gap: 1px; min-height: 2.9em; padding: 4px 12px; background: #f4fbf7; color: #3d5f51; font-size: 0.8rem; font-weight: 700; line-height: 1.25; }
@@ -416,7 +419,6 @@
       <div class="td-game" id="td-play" hidden>
        <div class="td-frame">
         <div class="td-hud">
-          <button class="act" id="td-back" type="button">К уровням</button>
           <b id="td-title"></b>
           <div class="stats">
             <div>Жизни<b id="td-lives">20</b></div>
@@ -429,6 +431,7 @@
           <button class="act" id="td-auto" type="button" aria-pressed="false">Волны подряд</button>
           <button class="act" id="td-pause" type="button">Пауза</button>
           <button class="act" id="td-restart" type="button">Заново</button>
+          <button class="exit" id="td-back" type="button">✕ Выйти</button>
         </div>
         <div class="td-stage">
           <canvas id="td-cv" width="800" height="500" aria-label="Поле обороны: тропа от гнезда стрекоз до озера лягушек"></canvas>
@@ -3244,7 +3247,7 @@
     tdNew(L);
     tdMakeDecor(); tdBake(); tdBuildShop();
     tdPick = -1; tdSel = null; tdHover = null; tdSig = ''; tdInfoSig = ''; tdAutoT = 0; tdNext = null; tdBackArmed = false;
-    $('td-back').textContent = 'К уровням';
+    $('td-back').textContent = '✕ Выйти';
     tdRestartArmed = false; $('td-restart').textContent = 'Заново';
     $('td-title').textContent = L + '. ' + TD_LEVELS[L - 1][0];
     $('td-map').hidden = true; $('td-play').hidden = false;
@@ -3391,7 +3394,7 @@
     tdStartLevel(td.L);
   });
   $('td-back').addEventListener('click', function () {
-    if (td && !td.over && td.wave > 0 && !tdBackArmed) { tdBackArmed = true; this.textContent = 'Выйти? Бой не сохранится'; return; }
+    if (td && !td.over && td.wave > 0 && !tdBackArmed) { tdBackArmed = true; this.textContent = 'Точно выйти? Бой не сохранится'; return; }
     tdShowMap();
   });
   $('td-veil-alt').addEventListener('click', tdShowMap);
