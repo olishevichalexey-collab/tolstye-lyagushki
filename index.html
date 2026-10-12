@@ -2967,6 +2967,9 @@
     abFx('puff', b.position.x, b.position.y, { r: s.kind === 'foe' ? s.r + 10 : 20, c: s.kind === 'foe' ? '#ffffff' : s.kind === 'barrel' ? '#ffb703' : AB_MAT[s.mat][2] });
     if (s.kind === 'foe') {
       ab.foes -= 1; ab.score += AB_FOE[s.type][2];
+      // сколько жильцов выбито одним выстрелом — для скрытого достижения
+      ab.shotKills = (ab.shotKills || 0) + 1;
+      if (ab.shotKills >= 3) { state.ach.hid.abTriple = 1; dirty = true; }
       abFx('text', b.position.x, b.position.y - 20, { text: '+' + AB_FOE[s.type][2] });
       if (ac) play('tok', freq(ab.score % 5, 3), 0, 0.6);
     } else if (s.kind === 'barrel') abBoom(b.position.x, b.position.y, 105, 46, 0.055);
@@ -3032,6 +3035,7 @@
   function abNext() {
     ab.frogs.forEach(function (f) { MX.Composite.remove(ab.engine.world, f); });
     ab.frogs = []; ab.cur = null; ab.pull = null;
+    ab.shotKills = 0;
     if (!ab.queue.length) { ab.mode = 'empty'; ab.wait = 2.5; abHud(); return; }
     ab.cur = { i: ab.queue.shift(), body: null, used: false, t: 0 };
     ab.mode = 'aim';
@@ -3201,6 +3205,7 @@
     if (win) {
       var stars = left >= 2 ? 3 : left >= 1 ? 2 : 1, first = !state.ab.done[L - 1];
       ab.score += left * 300;
+      if (left === 0) state.ach.hid.abLast = 1;
       state.ab.done[L - 1] = Math.max(state.ab.done[L - 1], stars);
       text = 'Все ульи разорены, лягушек в запасе: ' + left + '. Счёт: ' + fmt(ab.score) + '.';
       if (first && L % 5 === 0) { var tier = L >= 25 ? 2 : L >= 15 ? 1 : 0; state.td.chests[tier] += 1; text += ' Награда — ' + CHESTS[tier][0].toLowerCase() + ', он ждёт в инвентаре на вкладке «Моя лягушка».'; }
@@ -3393,7 +3398,9 @@
     ['Скрытые', 'noup', 'И так сойдёт', 'Пройдите уровень обороны, ни разу не улучшив лягушку.', 1, 30, function () { return state.ach.hid.noup ? 1 : 0; }, true],
     ['Скрытые', 'allel', 'Шесть стихий', 'Посадите в одном бою лягушек всех шести стихий.', 1, 20, function () { return state.ach.hid.allel ? 1 : 0; }, true],
     ['Скрытые', 'stubborn', 'Не сдаюсь', 'Проиграйте в обороне пять раз.', 5, 15, function () { return state.ach.tdLost; }, true],
-    ['Скрытые', 'crown', 'Король умер — да здравствует король', 'Переродитесь в короне.', 1, 40, function () { return state.ach.hid.crown ? 1 : 0; }, true]
+    ['Скрытые', 'crown', 'Король умер — да здравствует король', 'Переродитесь в короне.', 1, 40, function () { return state.ach.hid.crown ? 1 : 0; }, true],
+    ['Скрытые', 'abtriple', 'Цепная реакция', 'В «Штурме ульев» выбейте трёх жильцов одним выстрелом.', 1, 25, function () { return state.ach.hid.abTriple ? 1 : 0; }, true],
+    ['Скрытые', 'ablast', 'Последний шанс', 'Выиграйте уровень «Штурма ульев» самой последней лягушкой.', 1, 20, function () { return state.ach.hid.abLast ? 1 : 0; }, true]
   ];
   var toastQ = [], toastBusy = false;
   function nextToast() {
