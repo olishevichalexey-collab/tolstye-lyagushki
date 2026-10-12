@@ -234,6 +234,8 @@
   .top td:first-child { width: 2.6em; color: var(--ink-soft); font-family: var(--font-display); }
   .top td:last-child { text-align: right; white-space: nowrap; font-family: var(--font-display); font-weight: 800; }
   .top tr.me td { color: var(--lily); }
+  .top .who { display: flex; align-items: center; gap: 24px; padding-left: 12px; }
+  .top .who svg { width: 52px; height: auto; flex: none; overflow: visible; }
 
   /* инвентарь: сундуки и добыча из них */
   .inv { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; margin-top: 14px; padding-top: 18px; border-top: 2px dashed var(--line); }
@@ -535,6 +537,8 @@
   var EGG_ODDS = [50, 27, 14, 6.5, 2];
   // у этих форм низ узкий: лапы ставятся ближе к середине (доля от полуширины тела)
   var LEG_X = { strawberry: 0.6, heart: 0.34, gem: 0.52, ice: 0.52, star: 0.62, drop: 0.72, flame: 0.72 };
+  // где у формы макушка: высота над серединой тела в долях полувысоты (у обычных форм — ровно 1)
+  var HAT_TOP = { heart: 0.6, drop: 1.2, flame: 1.2, star: 1.02, ice: 1.12, cloud: 1.08 };
   // сундуки: название и шансы редкостей в процентах; за повтор, когда вся редкость собрана, дают корм
   var CHESTS = [['Деревянный сундук', [55, 28, 12, 4, 1]], ['Серебряный сундук', [35, 33, 20, 9.5, 2.5]], ['Золотой сундук', [15, 30, 30, 18, 7]]];
   var CHEST_FLIES = [5, 12, 30, 80, 250];
@@ -570,7 +574,7 @@
       frogs: FROGS.map(function (f) { return { n: 0, open: f.i < 3, auto: false, m: 0 }; }),
       me: { xp: 0, name: '', skin: 0, kind: 0, best: 0, wear: { neck: '', hat: '', eyes: '', suit: '', back: '' } },
       td: { done: TD_LEVELS.map(function () { return 0; }), chests: [0, 0, 0], loot: {} },
-      ach: { got: {}, kills: 0, bosses: 0, opened: 0, gold: 0, rides: 0, stomps: 0, close: 0, solo: 0, squad: 0, choir: 0, licks: 0, rebirths: 0, kinds: { 0: 1 } },
+      ach: { got: {}, kills: 0, bosses: 0, opened: 0, gold: 0, rides: 0, stomps: 0, close: 0, solo: 0, squad: 0, choir: 0, licks: 0, tickles: 0, tdLost: 0, hid: {}, rebirths: 0, kinds: { 0: 1 } },
       rec: { kvak: 0, jump: 0, td: 0 }
     };
   }
@@ -1011,7 +1015,7 @@
     } else if (id === 'party') {
       // небольшой колпак с выпуклыми боками, пушистой каймой и лёгким наклоном, чтобы сидел на голове, а не торчал
       var pw = hw * 0.72, ph = 54;
-      var pg = S('g', { transform: 'rotate(-10 ' + cx + ' ' + y + ')' }, g);
+      var pg = S('g', { transform: 'rotate(0 ' + cx + ' ' + y + ')' }, g);
       S('path', { d: 'M' + (cx - pw) + ' ' + y + ' Q' + (cx - pw * 0.62) + ' ' + (y - ph * 0.58) + ' ' + cx + ' ' + (y - ph) + ' Q' + (cx + pw * 0.62) + ' ' + (y - ph * 0.58) + ' ' + (cx + pw) + ' ' + y + ' Q' + cx + ' ' + (y + 10) + ' ' + (cx - pw) + ' ' + y + ' Z', fill: '#ffb703', stroke: '#c98a00', 'stroke-width': 3, 'stroke-linejoin': 'round' }, pg);
       [[-0.3, 0.3, '#fb5607'], [0.28, 0.36, '#3a86ff'], [-0.02, 0.62, '#ff006e'], [0.02, 0.14, '#8338ec']].forEach(function (p) { S('circle', { cx: cx + pw * p[0], cy: y - ph * p[1], r: 4.5, fill: p[2] }, pg); });
       S('path', { d: 'M' + (cx - pw) + ' ' + y + ' Q' + cx + ' ' + (y + 10) + ' ' + (cx + pw) + ' ' + y, fill: 'none', stroke: '#ffffff', 'stroke-width': 8, 'stroke-linecap': 'round' }, pg);
@@ -1081,7 +1085,7 @@
     } else if (id === 'wizard') {
       // мягкая шляпа с загнутым кончиком и округлыми полями вместо острого треугольника
       var zw = hw * 0.8;
-      var zg = S('g', { transform: 'rotate(-7 ' + cx + ' ' + y + ')' }, g);
+      var zg = S('g', { transform: 'rotate(0 ' + cx + ' ' + y + ')' }, g);
       S('ellipse', { cx: cx, cy: y, rx: zw + 26, ry: 10, fill: '#5a189a', stroke: '#3c096c', 'stroke-width': 3 }, zg);
       S('path', { d: 'M' + (cx - zw) + ' ' + (y - 2) + ' Q' + (cx - zw * 0.7) + ' ' + (y - 40) + ' ' + (cx - 2) + ' ' + (y - 58) + ' Q' + (cx + 12) + ' ' + (y - 68) + ' ' + (cx + 26) + ' ' + (y - 58) + ' Q' + (cx + 14) + ' ' + (y - 56) + ' ' + (cx + zw * 0.55) + ' ' + (y - 36) + ' Q' + (cx + zw * 0.9) + ' ' + (y - 18) + ' ' + (cx + zw) + ' ' + (y - 2) + ' Q' + cx + ' ' + (y + 8) + ' ' + (cx - zw) + ' ' + (y - 2) + ' Z', fill: '#7b2cbf', stroke: '#3c096c', 'stroke-width': 3, 'stroke-linejoin': 'round' }, zg);
       S('path', { d: 'M' + (cx - zw * 0.92) + ' ' + (y - 8) + ' Q' + cx + ' ' + (y + 2) + ' ' + (cx + zw * 0.92) + ' ' + (y - 8), fill: 'none', stroke: '#ffd60a', 'stroke-width': 5, 'stroke-linecap': 'round' }, zg);
@@ -1134,6 +1138,15 @@
     S('path', { class: 'pad', d: 'M150 284 L283 278 A138 24 0 1 0 275 294 Z' }, s);
     var g = S('g', { class: 'body' }, s);
     var shape = o.shape || 'round', narrow = LEG_X[shape], bq, ba;
+    // вещи нарисованы под лягушку обычного размера: на маленьких и больших они сжимаются и растягиваются вместе с телом,
+    // а шапка садится на настоящую макушку — у сердечка она в ложбинке, у капли и льдинки на остром верху
+    var fitK = Math.max(0.55, Math.min(1.15, Math.sqrt(c.rx * c.ry) / 95)), topY = c.cy - c.ry * (HAT_TOP[shape] || 1);
+    function fit(parent, ay, cyOf) {
+      var gg = S('g', { transform: 'translate(' + c.cx + ' ' + ay + ') scale(' + fitK + ') translate(' + (-c.cx) + ' ' + (-ay) + ')' }, parent);
+      var at = function (v) { return ay + (v - ay) / fitK; };
+      return { g: gg, c: { cx: c.cx, rx: c.rx / fitK, ry: c.ry / fitK, ex: c.ex / fitK, cy: at(cyOf === undefined ? c.cy : cyOf), ey: at(c.ey), base: at(c.base) } };
+    }
+    var fb = fit(g, c.cy), fs, fn, fh;
     // то, что у редких пород торчит из-за спины: лучи, кольцо, радуга
     if (shape === 'sun') {
       for (bq = 0; bq < 12; bq++) {
@@ -1150,7 +1163,7 @@
         S('path', { d: 'M' + (c.cx - rr) + ' ' + c.base + ' A' + rr + ' ' + rr + ' 0 0 1 ' + (c.cx + rr) + ' ' + c.base, fill: 'none', stroke: col, 'stroke-width': 9.5 }, g);
       });
     }
-    drawBack(g, wear.back, c);
+    drawBack(fb.g, wear.back, fb.c);
     if (o.tail) S('path', { d: 'M' + (c.cx + c.rx * 0.7) + ' ' + (c.base - 14) + ' q46 -4 58 -34 q-4 34 -50 46 Z', fill: o.mark }, g);
     var legColor = o.pattern === 'seeds' || o.pattern === 'galaxy' ? o.skin : o.mark;
     [-1, 1].forEach(function (k) { S('ellipse', { cx: c.cx + k * (narrow ? c.rx * narrow : c.rx - 14), cy: c.base - 12, rx: c.rx * 0.3, ry: 20, fill: legColor }, g); });
@@ -1171,7 +1184,7 @@
     if (shape === 'watermelon') {
       [[-0.3, 0.2], [0.28, 0.14], [0, 0.44], [-0.18, 0.62], [0.24, 0.6]].forEach(function (p) { S('ellipse', { cx: c.cx + c.rx * p[0], cy: c.cy + c.ry * p[1], rx: 3, ry: 5, fill: '#3b1f1f' }, g); });
     }
-    if (wear.suit) drawLoot(S('g', { 'clip-path': 'url(#' + id + ')' }, g), wear.suit, c);
+    if (wear.suit) { fs = fit(S('g', { 'clip-path': 'url(#' + id + ')' }, g), c.cy + c.ry * 0.08); drawLoot(fs.g, wear.suit, fs.c); }
     drawTop(g, o, c);
     [-1, 1].forEach(function (k) {
       S('circle', { cx: c.cx + k * c.ex, cy: c.ey, r: 26, fill: o.skin }, g);
@@ -1182,9 +1195,9 @@
     var my = c.cy - c.ry * 0.3, mw = c.rx * 0.5;
     S('path', { d: 'M' + (c.cx - mw) + ' ' + my + ' Q' + c.cx + ' ' + (my + 24) + ' ' + (c.cx + mw) + ' ' + my, fill: 'none', stroke: '#1c2b22', 'stroke-width': 5, 'stroke-linecap': 'round' }, g);
     [-1, 1].forEach(function (k) { S('ellipse', { cx: c.cx + k * (mw + 6), cy: my + 6, rx: 11, ry: 6, fill: '#f29bb5', opacity: 0.75 }, g); });
-    drawNeck(g, wear.neck, c);
+    fn = fit(g, c.cy + c.ry * 0.02); drawNeck(fn.g, wear.neck, fn.c);
     [-1, 1].forEach(function (k) { S('ellipse', { cx: c.cx + k * c.rx * (shape === 'heart' ? 0.2 : 0.36), cy: c.base - 4, rx: 20, ry: 10, fill: o.skin }, g); });
-    drawHat(g, wear.hat, c);
+    fh = fit(g, topY, topY + c.ry); drawHat(fh.g, wear.hat, fh.c);
     drawEyes(g, wear.eyes, c);
     if (wear.back === 'halo') S('ellipse', { cx: c.cx, cy: c.ey - 52, rx: 46, ry: 11, fill: 'none', stroke: '#ffd60a', 'stroke-width': 7 }, g);
     return s;
@@ -1226,6 +1239,7 @@
   document.getElementById('vol').value = Math.round(volume * 100);
   document.getElementById('vol').addEventListener('input', function () {
     volume = this.value / 100;
+    if (state && volume === 0) { state.ach.hid.mute = 1; dirty = true; }
     if (master) master.gain.value = 0.55 * volume;
     try { localStorage.setItem('fatFrogs.volume', String(volume)); } catch (e) { /* громкость просто не запомнится */ }
   });
@@ -1428,6 +1442,8 @@
       return;
     }
     if (!allowed('frog' + f.i)) return;
+    var hour = new Date().getHours();
+    if (hour >= 2 && hour < 5) state.ach.hid.owl = 1;
     // корм для своей лягушки: единица за каждые 10 настоящих нажатий (пение «сама» не считается)
     state.taps += 1;
     if (state.taps % 10 === 0) state.flies += 1;
@@ -1482,13 +1498,17 @@
   var mineBuilt = false, petStage = -1, petSig = '';
   function mySkin() { var f = FROGS[state.me.skin] || FROGS[0]; return { skin: f.skin, belly: f.belly, mark: f.mark, pattern: f.pattern, shape: f.shape }; }
   function petSvg() {
-    var me = state.me, st = stageOf(me.xp), sk = mySkin();
-    var kind = KINDS[me.kind] || KINDS[0];
-    if (st === 0) return drawEgg(me.xp >= STAGES[1][1] * 0.6, kind[1]);
-    if (st === 1) return drawTadpole(sk);
-    var size = [null, null, [70, 56], [98, 76], [124, 88]][st];
+    var me = state.me;
+    return petLook(stageOf(me.xp), me.skin, me.kind, me.wear, me.xp >= STAGES[1][1] * 0.6);
+  }
+  // картинка питомца по его виду: стадия, расцветка, порода, вещи. Так же рисуются чужие питомцы в таблице лидеров
+  function petLook(st, skinI, kindI, wear, crack) {
+    var f = FROGS[skinI] || FROGS[0], kind = KINDS[kindI] || KINDS[0];
+    if (st === 0) return drawEgg(crack, kind[1]);
+    if (st === 1) return drawTadpole(f);
+    var size = [null, null, [70, 56], [98, 76], [124, 88]][st] || [124, 88];
     // у обычных пород форма тела — от выбранной расцветки, у остальных — своя
-    return drawFrog({ skin: sk.skin, belly: sk.belly, mark: sk.mark, pattern: sk.pattern, shape: kind[2] || sk.shape, fx: kind[5], rx: size[0] * kind[3], ry: size[1] * kind[4], wear: me.wear, tail: st === 2 });
+    return drawFrog({ skin: f.skin, belly: f.belly, mark: f.mark, pattern: f.pattern, shape: kind[2] || f.shape, fx: kind[5], rx: size[0] * kind[3], ry: size[1] * kind[4], wear: wear, tail: st === 2 });
   }
   // частицы вокруг питомца и свечение по редкости породы; яйцо и головастик тоже светятся
   var FX = { bubbles: ['ring', '#8fd3e8', '', 5], drops: ['drop', '#4cc9f0', 'fall', 5], leaves: ['leaf', '#58a84a', 'fall', 5], sparkles: ['spark', '#ffffff', 'tw', 7], stars: ['star', '#ffd60a', 'tw', 8], embers: ['dot', '#ff7b00', '', 9], snow: ['dot', '#ffffff', 'fall', 9], rainbow: ['spark', '', 'tw', 10], hearts: ['heart', '#ff2e88', '', 10] };
@@ -1575,6 +1595,7 @@
   function rebirth() {
     if (stageOf(state.me.xp) < STAGES.length - 1) return;
     checkAch(); keepRecords();
+    if (state.me.wear.hat === 'crown' || state.me.wear.hat === 'flame') state.ach.hid.crown = 1;
     var roll = Math.random() * 100, acc = 0, rare, old = state;
     for (rare = 0; rare < 5; rare++) { acc += EGG_ODDS[rare]; if (roll < acc) break; }
     var pool = [];
@@ -1799,6 +1820,7 @@
     var now = performance.now();
     if (now - reactAt < 700) return;
     reactAt = now;
+    if (kind === 'tickle') { state.ach.tickles += 1; dirty = true; }
     var st = stageOf(state.me.xp), row = REPLIES[kind][Math.min(2, st)];
     var text = row[Math.floor(Math.random() * row.length)];
     if (text === lastReply) text = row[(row.indexOf(text) + 1) % row.length];
@@ -1905,6 +1927,7 @@
   function endJump() {
     playing = false;
     var score = Math.floor(run.score);
+    if (score < 100) { state.ach.hid.plop = 1; dirty = true; }
     if (score > state.me.best) { state.me.best = score; dirty = true; save(); }
     $('veil-title').textContent = 'Плюх! Счёт: ' + fmt(score);
     $('veil-text').textContent = 'Рекорд: ' + fmt(state.me.best) + '. Добрались до зоны «' + ZONES[run.zone].name + '».';
@@ -2168,6 +2191,8 @@
     r.lick = { x: best.x, y: best.y, t: 0.16 };
     r.score += 150;
     state.ach.licks += 1; dirty = true;
+    r.caught = (r.caught || 0) + 1;
+    if (r.caught >= 3) state.ach.hid.trio = 1;
     play('pluck', freq(4, 3), 0);
   }
   var tapAt = 0;
@@ -2269,7 +2294,18 @@
     ['Перерождение', 'kind4', 'Легендарная порода', 'Получите яйцо легендарной породы или лучше.', 4, 80, function () { return Math.min(4, bestKind()); }],
     ['Перерождение', 'kind5', 'Тайна болота', 'Получите секретное яйцо. Говорят, внутри бьётся сердце.', 1, 200, function () { return bestKind() === 5 ? 1 : 0; }],
     ['Перерождение', 'kinds8', 'Заводчик', 'Откройте 8 разных пород.', 8, 60, function () { return kindsGot(); }],
-    ['Перерождение', 'kindsall', 'Все породы', 'Откройте все 16 пород.', 16, 300, function () { return kindsGot(); }]
+    ['Перерождение', 'kindsall', 'Все породы', 'Откройте все 16 пород.', 16, 300, function () { return kindsGot(); }],
+    // скрытые: последний признак true — в списке вместо названия и условия стоит вопрос, пока достижение не получено
+    ['Скрытые', 'owl', 'Сова', 'Квакайте в пруду глубокой ночью, между двумя и пятью часами.', 1, 15, function () { return state.ach.hid.owl ? 1 : 0; }, true],
+    ['Скрытые', 'tickle', 'Щекотун', 'Пощекотите своего питомца 25 раз.', 25, 15, function () { return state.ach.tickles; }, true],
+    ['Скрытые', 'namesake', 'Тёзка', 'Назовите питомца именем любой лягушки из пруда.', 1, 10, function () { var n = state.me.name.trim().toLowerCase(); return NAMES.some(function (x) { return x.toLowerCase() === n; }) ? 1 : 0; }, true],
+    ['Скрытые', 'mute', 'Режим библиотеки', 'Убавьте громкость до нуля.', 1, 5, function () { return state.ach.hid.mute ? 1 : 0; }, true],
+    ['Скрытые', 'plop', 'Плюх!', 'Закончите забег в «Прыжках», не набрав и ста очков.', 1, 10, function () { return state.ach.hid.plop ? 1 : 0; }, true],
+    ['Скрытые', 'trio', 'Тройной улов', 'Достаньте языком трёх мух за один забег.', 1, 20, function () { return state.ach.hid.trio ? 1 : 0; }, true],
+    ['Скрытые', 'noup', 'И так сойдёт', 'Пройдите уровень обороны, ни разу не улучшив лягушку.', 1, 30, function () { return state.ach.hid.noup ? 1 : 0; }, true],
+    ['Скрытые', 'allel', 'Шесть стихий', 'Посадите в одном бою лягушек всех шести стихий.', 1, 20, function () { return state.ach.hid.allel ? 1 : 0; }, true],
+    ['Скрытые', 'stubborn', 'Не сдаюсь', 'Проиграйте в обороне пять раз.', 5, 15, function () { return state.ach.tdLost; }, true],
+    ['Скрытые', 'crown', 'Король умер — да здравствует король', 'Переродитесь в короне.', 1, 40, function () { return state.ach.hid.crown ? 1 : 0; }, true]
   ];
   var toastQ = [], toastBusy = false;
   function nextToast() {
@@ -2319,10 +2355,12 @@
       var done = !!got[a[1]], cur = Math.min(a[4], Math.floor(a[6]()));
       var el = document.createElement('div'), col = document.createElement('div'), b = document.createElement('b'), t = document.createElement('span'), sm = document.createElement('small');
       el.className = 'ach' + (done ? ' got' : ''); el.id = 'ach-' + a[1];
-      b.textContent = a[2]; t.textContent = a[3];
-      sm.textContent = (done ? 'Получено' : a[4] > 1 ? fmt(cur) + ' из ' + fmt(a[4]) : 'Не получено') + ' · +' + a[5] + ' корма';
+      // скрытое достижение до получения не выдаёт ни названия, ни условия, ни того, сколько уже сделано
+      var secret = a[7] && !done;
+      b.textContent = secret ? '???' : a[2]; t.textContent = secret ? 'Скрытое достижение. Что для него нужно — придётся догадаться.' : a[3];
+      sm.textContent = (done ? 'Получено' : !secret && a[4] > 1 ? fmt(cur) + ' из ' + fmt(a[4]) : 'Не получено') + ' · +' + a[5] + ' корма';
       col.appendChild(b); col.appendChild(t);
-      if (!done && a[4] > 1) { var m = document.createElement('div'), i = document.createElement('i'); m.className = 'meter'; i.style.width = (cur / a[4] * 100) + '%'; m.appendChild(i); col.appendChild(m); }
+      if (!done && !secret && a[4] > 1) { var m = document.createElement('div'), i = document.createElement('i'); m.className = 'meter'; i.style.width = (cur / a[4] * 100) + '%'; m.appendChild(i); col.appendChild(m); }
       col.appendChild(sm);
       el.appendChild(drawMedal()); el.appendChild(col);
       grid.appendChild(el);
@@ -2381,7 +2419,8 @@
   function netMine() {
     keepRecords();
     return {
-      name: state.me.name.trim().slice(0, 18) || 'Лягушка ' + net.uid.slice(0, 4).toUpperCase(),
+      // после имени через черту идёт код вида питомца: правила базы принимают только известные поля, а имя — одно из них
+      name: (state.me.name.replace(/\|/g, ' ').trim().slice(0, 18) || 'Лягушка ' + net.uid.slice(0, 4).toUpperCase()) + '|' + petCode(),
       // в таблицу идут лучшие результаты за все жизни: перерождение их не обнуляет
       kvak: Math.min(1e8, state.rec.kvak), jump: Math.min(1e6, state.rec.jump),
       td: state.rec.td, ach: Math.min(NET_ACH_MAX, ACH.filter(function (a) { return state.ach.got[a[1]]; }).length)
@@ -2395,6 +2434,24 @@
     net.sent = sig;
     rec.t = window.firebase.database.ServerValue.TIMESTAMP;
     net.db.ref('players/' + net.uid).set(rec).catch(function () { net.sent = ''; });
+  }
+  // вид питомца в восьми знаках: стадия, расцветка, порода и по знаку на каждый раздел гардероба (0 — ничего, дальше номер вещи в разделе)
+  var B36 = '0123456789abcdefghijklmnopqrstuvwxyz';
+  function slotItems(slot) { return (POOLS[slot] || []).concat(LOOT_IDS.filter(function (id) { return LOOT[id][0] === slot; })); }
+  function petCode() {
+    var me = state.me;
+    return B36[stageOf(me.xp)] + B36[me.skin] + B36[me.kind] + WARDROBE.map(function (slot) { return B36[slotItems(slot).indexOf(me.wear[slot]) + 1]; }).join('');
+  }
+  // чужой питомец рисуется из кода, который прислал другой игрок, поэтому из него берутся только известные игре значения
+  function netPet(code) {
+    var n = function (k) { var v = B36.indexOf(String(code || '').charAt(k)); return v < 0 ? 0 : v; }, wear = {};
+    WARDROBE.forEach(function (slot, k) { wear[slot] = slotItems(slot)[n(3 + k) - 1] || ''; });
+    return petLook(Math.min(4, n(0)), n(1), n(2), wear, false);
+  }
+  // имя из базы: «имя|код вида»; у строк, записанных до появления кода, кода нет
+  function netName(raw) {
+    var s = String(raw || 'Лягушка'), cut = s.lastIndexOf('|');
+    return cut > 0 && s.length - cut - 1 === 8 ? [s.slice(0, cut), s.slice(cut + 1)] : [s, ''];
   }
   function netValue(key, v) { return key === 'td' ? Math.floor(v / 100) + ' ур. · ' + (v % 100) + ' ★' : fmt(v); }
   function netBoard(key) {
@@ -2414,11 +2471,16 @@
     net.db.ref('players').orderByChild(key).limitToLast(20).once('value').then(function (snap) {
       if (net.board !== key || curView !== 'top') return;
       var rows = [], mine = netMine(), found = false;
-      snap.forEach(function (c) { var v = c.val(); if (v && v[key] > 0) rows.unshift({ id: c.key, name: String(v.name || 'Лягушка'), v: v[key] }); });
+      snap.forEach(function (c) { var v = c.val(); if (v && v[key] > 0) { var who = netName(v.name); rows.unshift({ id: c.key, name: who[0], v: v[key], pet: who[1] }); } });
       table.textContent = '';
       rows.forEach(function (r, k) {
         var tr = document.createElement('tr');
-        [String(k + 1), r.name, netValue(key, r.v)].forEach(function (x) { var td1 = document.createElement('td'); td1.textContent = x; tr.appendChild(td1); });
+        [String(k + 1), r.name, netValue(key, r.v)].forEach(function (x, col) {
+          var td1 = document.createElement('td');
+          if (col === 1) { var wrap = document.createElement('span'); wrap.className = 'who'; wrap.appendChild(netPet(r.pet)); wrap.appendChild(document.createTextNode(x)); td1.appendChild(wrap); }
+          else td1.textContent = x;
+          tr.appendChild(td1);
+        });
         if (r.id === net.uid) { tr.className = 'me'; found = true; }
         table.appendChild(tr);
       });
@@ -2600,7 +2662,7 @@
     grid[e[1]][e[0]] = 2;
     td = {
       L: L, pts: pts, seg: seg, len: total, grid: grid, end: pts[pts.length - 1], towers: [], mobs: [], shots: [], fx: [],
-      gold: Math.round(TD_START_GOLD * Math.pow(TD_GOLD_L, L - 1)), lives: TD_LIVES, wave: 0, queue: [], qi: 0, wt: 0, active: false, t: 0, over: '', born: 0, kills: 0, bosses: 0, used: {}, bonus: 1
+      gold: Math.round(TD_START_GOLD * Math.pow(TD_GOLD_L, L - 1)), lives: TD_LIVES, wave: 0, queue: [], qi: 0, wt: 0, active: false, t: 0, over: '', born: 0, kills: 0, bosses: 0, used: {}, els: {}, ups: 0, bonus: 1
     };
   }
   function tdAt(m) {
@@ -2618,6 +2680,8 @@
     td.gold -= cost;
     var t = { i: i, cls: FROGS[i].voice, heat: 1, last: null, cx: cx, cy: cy, x: (cx + 0.5) * TD_CELL, y: (cy + 0.5) * TD_CELL, stars: 1, lvl: tdFrogLvl(i), s: tdStat(i, 1), cd: 0.2, hop: 0, spent: cost };
     td.used[i] = 1;
+    td.els[TD_ATK[i].el] = 1;
+    if (TD_ELS.every(function (e) { return td.els[e]; })) { state.ach.hid.allel = 1; dirty = true; }
     td.towers.push(t);
     td.towers.sort(function (p, q) { return p.y - q.y; });
     return t;
@@ -2626,7 +2690,7 @@
   function tdUpgrade(t) {
     var c = tdUpCost(t);
     if (!c || td.gold < c) return false;
-    td.gold -= c; t.spent += c; t.stars += 1; t.s = tdStat(t.i, t.stars);
+    td.gold -= c; t.spent += c; t.stars += 1; t.s = tdStat(t.i, t.stars); td.ups += 1;
     return true;
   }
   function tdSell(t) {
@@ -3280,6 +3344,7 @@
       state.td.done[L - 1] = Math.max(state.td.done[L - 1], stars);
       if (td.lives <= 3) state.ach.close = 1;
       if (Object.keys(td.used).length === 1) state.ach.solo = 1;
+      if (!td.ups) state.ach.hid.noup = 1;
       dirty = true; save();
       tdVeil = L < TD_LEVELS.length ? 'next' : 'map';
       $('td-veil-title').textContent = 'Победа! ' + tdStars(stars);
@@ -3288,6 +3353,7 @@
       if (ac) [0, 2, 4, 5, 7].forEach(function (d, k) { play('pluck', freq(d, 2), ac.currentTime + k * 0.11); });
     } else {
       tdVeil = 'retry';
+      state.ach.tdLost += 1; dirty = true;
       $('td-veil-title').textContent = 'Стрекозы прорвались';
       $('td-veil-text').textContent = 'Вы дошли до волны ' + td.wave + ' из ' + TD_WAVES + '. Попробуйте рассадить лягушек иначе или подрастите их в пруду: уровень лягушки прибавляет ей силы.';
       $('td-veil-btn').textContent = 'Ещё раз';
