@@ -465,7 +465,7 @@
 
   // ---------- данные ----------
 
-  var NAMES = ['Пончик', 'Клёцка', 'Батон', 'Клубничка', 'Булочка', 'Черничка', 'Колобок', 'Малинка', 'Вареник', 'Лимончик', 'Кекс', 'Арбузик', 'Пряник', 'Вишенка', 'Зефир', 'Грушка', 'Чебурек', 'Тыковка', 'Эклер', 'Виноградинка', 'Плюшка', 'Ананасик', 'Такояки', 'Трюфель', 'Царь-Жаба'];
+  var NAMES = ['Пончик', 'Клёцка', 'Батон', 'Клубничка', 'Булочка', 'Черничка', 'Колобок', 'Малинка', 'Вареник', 'Лимончик', 'Кекс', 'Арбузик', 'Пряник', 'Вишенка', 'Зефир', 'Грушка', 'Чебурек', 'Тыковка', 'Эклер', 'Виноградинка', 'Плюшка', 'Ананасик', 'Такояки', 'Трюфель', 'Царь-Жаба', 'Чертёнок', 'Вампирчик', 'Дракоша', 'Единорожка', 'Котожаб', 'Зайка', 'Пришелец', 'Ёжик', 'Моржик', 'Панк'];
   // кожа, пузо, цвет узора, узор, форма тела (у ягодных и фруктовых лягушек своя)
   var SKINS = [
     ['#6fbf4b', '#e9f3b5', '#4f9a36', 'spots', 'round'], ['#9bc53d', '#f6f2c4', '#7aa02a', 'plain', 'round'], ['#4fae7b', '#dff3d8', '#35895c', 'stripes', 'round'],
@@ -476,7 +476,12 @@
     ['#c5d86d', '#f7f9d0', '#93a83c', 'spots', 'pear'], ['#e76f51', '#ffe1d6', '#c2512f', 'tiger', 'round'], ['#f77f00', '#ffe3b8', '#c25e00', 'ribs', 'pumpkin'],
     ['#6d4c41', '#f1dcc9', '#4e342e', 'stripes', 'round'], ['#7b4bb8', '#e6d6fb', '#4c2a85', 'drupelets', 'raspberry'], ['#48cae4', '#e0f7fb', '#0096c7', 'stars', 'round'],
     ['#f2b632', '#fff1c4', '#a86f00', 'hatch', 'pineapple'], ['#d9892b', '#f8e3b0', '#5b3a1a', 'waves', 'round'], ['#2b2d42', '#8d99ae', '#edf2f4', 'galaxy', 'round'],
-    ['#f5c518', '#fff3b0', '#e09f00', 'rainbow', 'round']
+    ['#f5c518', '#fff3b0', '#e09f00', 'rainbow', 'round'],
+    // лягушки-диковинки: шестым идёт список примет (рожки, клыки, уши и так далее). В обороне болота они не участвуют
+    ['#c1121f', '#ffd9d6', '#6a040f', 'plain', 'round', 'horns fangs'], ['#b8a9d9', '#f1ecfb', '#3c096c', 'tiger', 'round', 'ears_bat fangs'], ['#3fa34d', '#fff3b0', '#1b5e20', 'spots', 'round', 'horns spikes'],
+    ['#fdf0f7', '#ffffff', '#f08ab5', 'stars', 'round', 'horn1'], ['#f4a261', '#fff1e0', '#c2622a', 'tiger', 'round', 'ears_cat whiskers'], ['#e9e4f0', '#ffffff', '#b9a9d9', 'plain', 'round', 'ears_bunny'],
+    ['#9be564', '#e8ffd1', '#3f8f2a', 'dots', 'round', 'antennae'], ['#b08968', '#f3e2cf', '#6b4a2b', 'plain', 'round', 'spikes'], ['#7d93a8', '#e3ecf3', '#4a5d70', 'plain', 'round', 'tusks whiskers'],
+    ['#2ec4b6', '#e0fbf8', '#ff006e', 'stripes', 'round', 'mohawk']
   ];
   var SHAPE_SIZE = { strawberry: [104, 88], blueberry: [94, 90], raspberry: [102, 86], lemon: [110, 76], watermelon: [108, 90], cherry: [94, 88], pear: [100, 92], pumpkin: [122, 80], pineapple: [90, 92] };
   var VOICES = ['croak', 'pluck', 'bass', 'tok', 'chirp', 'choir', 'kick'];
@@ -494,7 +499,7 @@
     choir: [[0], [8], [0, 8]],
     kick: [[0, 4, 8, 12], [0, 8, 10], [0, 6, 8]]
   };
-  var UNLOCK = [0, 0, 0, 300, 800, 1600, 2800, 4500, 6500, 9000, 12000, 16000, 21000, 27000, 34000, 42000, 52000, 64000, 78000, 95000, 115000, 140000, 170000, 205000, 250000];
+  var UNLOCK = [0, 0, 0, 300, 800, 1600, 2800, 4500, 6500, 9000, 12000, 16000, 21000, 27000, 34000, 42000, 52000, 64000, 78000, 95000, 115000, 140000, 170000, 205000, 250000, 300000, 360000, 430000, 510000, 600000, 700000, 820000, 950000, 1100000, 1300000];
   var LEVELS = [0, 40, 200, 700, 2000];
 
   var ITEMS = {
@@ -520,7 +525,13 @@
     mushroom: ['hat', 'Шляпка мухомора', 1], pirate: ['hat', 'Пиратская треуголка', 1], nightcap: ['hat', 'Ночной колпак', 1], ski: ['eyes', 'Лыжная маска', 1], hawaii: ['suit', 'Гавайская рубашка', 1], shell: ['back', 'Домик улитки', 1],
     horns: ['hat', 'Рожки чертёнка', 2], pixel: ['eyes', 'Пиксельные очки', 2], tux: ['suit', 'Смокинг', 2], butterfly: ['back', 'Крылья бабочки', 2], amulet: ['neck', 'Амулет болотной ведьмы', 2],
     astro: ['hat', 'Шлем космонавта', 3], cyber: ['eyes', 'Кибервизор', 3], knight: ['suit', 'Рыцарские латы', 3], jetpack: ['back', 'Реактивный ранец', 3],
-    flame: ['hat', 'Огненная корона', 4], rainbow: ['eyes', 'Радужный визор', 4], royal: ['suit', 'Королевская мантия', 4], dragon: ['back', 'Крылья дракона', 4]
+    flame: ['hat', 'Огненная корона', 4], rainbow: ['eyes', 'Радужный визор', 4], royal: ['suit', 'Королевская мантия', 4], dragon: ['back', 'Крылья дракона', 4],
+    // вторая партия вещей. Новые вещи дописываются только в конец: по порядку в этом списке вещь узнают в таблице лидеров
+    bucket: ['hat', 'Панамка', 0], daisy: ['hat', 'Ромашка за ухом', 0], eyepatch: ['eyes', 'Повязка пирата', 0], shellbeads: ['neck', 'Ракушечные бусы', 0], kerchief: ['neck', 'Платочек в горошек', 0], apron: ['suit', 'Фартук', 0],
+    santa: ['hat', 'Колпак Деда Мороза', 1], detective: ['hat', 'Шляпа сыщика', 1], aviator: ['eyes', 'Очки-авиаторы', 1], stethoscope: ['neck', 'Стетоскоп', 1], pajama: ['suit', 'Пижама со звёздами', 1], guitar: ['back', 'Гитара за спиной', 1],
+    ninja: ['hat', 'Повязка ниндзя', 2], vr: ['eyes', 'Шлем виртуальной реальности', 2], goldkey: ['neck', 'Золотой ключик', 2], kimono: ['suit', 'Кимоно', 2], fairy: ['back', 'Крылья феи', 2],
+    pharaoh: ['hat', 'Убор фараона', 3], laser: ['eyes', 'Лазерный взгляд', 3], astrosuit: ['suit', 'Скафандр', 3],
+    ufo: ['hat', 'Летающая тарелка', 4], phoenix: ['back', 'Крылья феникса', 4]
   };
   var LOOT_IDS = Object.keys(LOOT);
   // породы питомца, которые выпадают при перерождении: название, редкость (5 — секретная), форма тела, множители ширины и высоты, эффект вокруг
@@ -550,7 +561,7 @@
     var voice = VOICES[i % 7];
     return {
       i: i, name: name, voice: voice,
-      skin: SKINS[i][0], belly: SKINS[i][1], mark: SKINS[i][2], pattern: SKINS[i][3], shape: SKINS[i][4],
+      skin: SKINS[i][0], belly: SKINS[i][1], mark: SKINS[i][2], pattern: SKINS[i][3], shape: SKINS[i][4], extra: SKINS[i][5] || '',
       rx: SHAPE_SIZE[SKINS[i][4]] ? SHAPE_SIZE[SKINS[i][4]][0] : 100 + (i * 7) % 23,
       ry: SHAPE_SIZE[SKINS[i][4]] ? SHAPE_SIZE[SKINS[i][4]][1] : 72 + (i * 5) % 17,
       deg: (i * 2) % 5, oct: OCTAVE[voice] + (Math.floor(i / 7) % 2),
@@ -582,12 +593,15 @@
     var s = null;
     try { s = JSON.parse(localStorage.getItem(KEY)); } catch (e) { s = null; }
     var f = fresh();
-    if (!s || !s.frogs || s.frogs.length !== FROGS.length || !s.me) return f;
+    if (!s || !s.frogs || !s.me) return f;
     s.frogs.forEach(function (x) { x.auto = false; }); // звук нельзя начать без нажатия, поэтому хор после перезагрузки молчит
+    // новые лягушки и уровни дописываются к старому сохранению, прогресс при этом не теряется
+    while (s.frogs.length < FROGS.length) s.frogs.push({ n: 0, open: false, auto: false, m: 0 });
     if (typeof s.taps !== 'number') s.taps = 0;
     if (typeof s.me.best !== 'number') s.me.best = 0;
     if (typeof s.me.wear.suit !== 'string') s.me.wear.suit = '';
-    if (!s.td || !s.td.done || s.td.done.length !== TD_LEVELS.length || !s.td.chests || !s.td.loot) s.td = f.td;
+    if (!s.td || !s.td.done || !s.td.chests || !s.td.loot) s.td = f.td;
+    while (s.td.done.length < TD_LEVELS.length) s.td.done.push(0);
     if (!s.ach || !s.ach.got) s.ach = f.ach;
     if (!s.rec) s.rec = f.rec;
     if (!KINDS[s.me.kind]) s.me.kind = 0;
@@ -912,6 +926,122 @@
         S('rect', { x: x - 18, y: y, width: 36, height: c.ry * 0.95, rx: 16, fill: '#adb5bd', stroke: '#495057', 'stroke-width': 4 }, g);
         S('rect', { x: x - 18, y: y + c.ry * 0.3, width: 36, height: 9, fill: '#ef233c' }, g);
       });
+    } else if (id === 'bucket') {
+      S('path', { d: 'M' + (cx - hw - 28) + ' ' + (hy + 8) + ' Q' + cx + ' ' + (hy - 12) + ' ' + (cx + hw + 28) + ' ' + (hy + 8) + ' Q' + cx + ' ' + (hy + 20) + ' ' + (cx - hw - 28) + ' ' + (hy + 8) + ' Z', fill: '#8ecae6', stroke: '#5fa8c9', 'stroke-width': 3, 'stroke-linejoin': 'round' }, g);
+      S('path', { d: 'M' + (cx - hw) + ' ' + (hy + 2) + ' A' + hw + ' ' + (hw * 0.95) + ' 0 0 1 ' + (cx + hw) + ' ' + (hy + 2) + ' Z', fill: '#a9d8ee', stroke: '#5fa8c9', 'stroke-width': 3 }, g);
+      S('path', { d: 'M' + (cx - hw + 2) + ' ' + (hy - 6) + ' Q' + cx + ' ' + (hy + 2) + ' ' + (cx + hw - 2) + ' ' + (hy - 6), fill: 'none', stroke: '#ffffff', 'stroke-width': 5 }, g);
+    } else if (id === 'daisy') {
+      x = cx + ex + 20; y = ey - 28;
+      for (k = 0; k < 8; k++) S('ellipse', { cx: x + Math.cos(k * 0.785) * 12, cy: y + Math.sin(k * 0.785) * 12, rx: 9, ry: 5.5, fill: '#ffffff', stroke: '#d9d9d9', 'stroke-width': 1.5, transform: 'rotate(' + (k * 45) + ' ' + (x + Math.cos(k * 0.785) * 12) + ' ' + (y + Math.sin(k * 0.785) * 12) + ')' }, g);
+      S('circle', { cx: x, cy: y, r: 8, fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 2 }, g);
+    } else if (id === 'santa') {
+      S('path', { d: 'M' + (cx - hw - 2) + ' ' + hy + ' Q' + (cx - hw * 0.5) + ' ' + (hy - 56) + ' ' + (cx + hw * 0.5) + ' ' + (hy - 52) + ' Q' + (cx + hw + 32) + ' ' + (hy - 46) + ' ' + (cx + hw + 36) + ' ' + (hy - 6) + ' Q' + (cx + hw + 14) + ' ' + (hy - 28) + ' ' + (cx + hw + 2) + ' ' + hy + ' Z', fill: '#d00000', stroke: '#6a040f', 'stroke-width': 3, 'stroke-linejoin': 'round' }, g);
+      S('path', { d: 'M' + (cx - hw - 6) + ' ' + hy + ' Q' + cx + ' ' + (hy + 10) + ' ' + (cx + hw + 6) + ' ' + hy, fill: 'none', stroke: '#ffffff', 'stroke-width': 13, 'stroke-linecap': 'round' }, g);
+      S('circle', { cx: cx + hw + 36, cy: hy - 2, r: 10, fill: '#ffffff', stroke: '#b8c4cc', 'stroke-width': 2 }, g);
+    } else if (id === 'detective') {
+      S('ellipse', { cx: cx, cy: hy + 2, rx: hw + 32, ry: 9, fill: '#7a5c3e', stroke: '#4a3520', 'stroke-width': 3 }, g);
+      S('path', { d: 'M' + (cx - hw - 2) + ' ' + hy + ' A' + (hw + 2) + ' ' + (hw + 2) + ' 0 0 1 ' + (cx + hw + 2) + ' ' + hy + ' Z', fill: '#a0825e', stroke: '#4a3520', 'stroke-width': 3 }, g);
+      [-0.5, 0, 0.5].forEach(function (p) { S('path', { d: 'M' + (cx + hw * p) + ' ' + hy + ' Q' + (cx + hw * p * 0.6) + ' ' + (hy - hw * 0.6) + ' ' + cx + ' ' + (hy - hw - 2), fill: 'none', stroke: '#4a3520', 'stroke-width': 2 }, g); });
+      S('circle', { cx: cx, cy: hy - hw - 3, r: 5, fill: '#4a3520' }, g);
+    } else if (id === 'ninja') {
+      S('path', { d: 'M' + (cx + hw + 16) + ' ' + (hy + 4) + ' l34 -14 l-4 14 l10 10 Z', fill: '#1b1b24' }, g);
+      S('rect', { x: cx - hw - 20, y: hy - 4, width: (hw + 20) * 2, height: 17, rx: 7, fill: '#1b1b24' }, g);
+      S('circle', { cx: cx, cy: hy + 4.5, r: 6, fill: '#d00000' }, g);
+    } else if (id === 'pharaoh') {
+      S('path', { d: 'M' + (cx - hw) + ' ' + (hy - 24) + ' Q' + cx + ' ' + (hy - 46) + ' ' + (cx + hw) + ' ' + (hy - 24) + ' L' + (cx + hw + 46) + ' ' + (ey + 54) + ' L' + (cx + hw + 20) + ' ' + (ey + 54) + ' L' + (cx + hw + 4) + ' ' + (hy + 8) + ' L' + (cx - hw - 4) + ' ' + (hy + 8) + ' L' + (cx - hw - 20) + ' ' + (ey + 54) + ' L' + (cx - hw - 46) + ' ' + (ey + 54) + ' Z', fill: '#ffd60a', stroke: '#1d4ed8', 'stroke-width': 3, 'stroke-linejoin': 'round' }, g);
+      [-1, 1].forEach(function (s) { for (var q = 0; q < 4; q++) S('path', { d: 'M' + (cx + s * (hw + 6 + q * 4)) + ' ' + (hy + 12 + q * 14) + ' l' + (s * 22) + ' 6', stroke: '#1d4ed8', 'stroke-width': 4 }, g); });
+      S('path', { d: 'M' + (cx - hw + 4) + ' ' + (hy - 10) + ' Q' + cx + ' ' + (hy - 24) + ' ' + (cx + hw - 4) + ' ' + (hy - 10), fill: 'none', stroke: '#1d4ed8', 'stroke-width': 4 }, g);
+      S('circle', { cx: cx, cy: hy - 30, r: 6, fill: '#d00000', stroke: '#6a040f', 'stroke-width': 2 }, g);
+    } else if (id === 'ufo') {
+      S('path', { d: 'M' + (cx - 16) + ' ' + (hy - 30) + ' L' + (cx + 16) + ' ' + (hy - 30) + ' L' + (cx + hw + 4) + ' ' + (hy + 10) + ' L' + (cx - hw - 4) + ' ' + (hy + 10) + ' Z', fill: '#fff3b0', opacity: 0.5 }, g);
+      S('path', { d: 'M' + (cx - 20) + ' ' + (hy - 40) + ' A20 18 0 0 1 ' + (cx + 20) + ' ' + (hy - 40) + ' Z', fill: '#9bf6ff', stroke: '#495057', 'stroke-width': 2.5 }, g);
+      S('ellipse', { cx: cx, cy: hy - 36, rx: hw + 34, ry: 11, fill: '#adb5bd', stroke: '#495057', 'stroke-width': 3 }, g);
+      [-0.8, -0.4, 0, 0.4, 0.8].forEach(function (p, n) { S('circle', { cx: cx + (hw + 30) * p, cy: hy - 35, r: 3.5, fill: n % 2 ? '#ef233c' : '#ffd60a' }, g); });
+    } else if (id === 'eyepatch') {
+      S('path', { d: 'M' + (cx - ex - 34) + ' ' + (ey - 20) + ' L' + (cx + ex + 34) + ' ' + (ey - 6), stroke: '#1b1b24', 'stroke-width': 4, 'stroke-linecap': 'round' }, g);
+      S('ellipse', { cx: cx - ex, cy: ey, rx: 21, ry: 19, fill: '#1b1b24' }, g);
+    } else if (id === 'aviator') {
+      S('path', { d: 'M' + (cx - ex + 22) + ' ' + (ey - 8) + ' L' + (cx + ex - 22) + ' ' + (ey - 8) + ' M' + (cx - ex + 22) + ' ' + (ey - 1) + ' L' + (cx + ex - 22) + ' ' + (ey - 1), stroke: '#b58900', 'stroke-width': 3 }, g);
+      [-1, 1].forEach(function (s) {
+        S('path', { d: 'M' + (cx + s * ex - 25) + ' ' + (ey - 13) + ' L' + (cx + s * ex + 25) + ' ' + (ey - 13) + ' Q' + (cx + s * ex + 27) + ' ' + (ey + 20) + ' ' + (cx + s * ex) + ' ' + (ey + 22) + ' Q' + (cx + s * ex - 27) + ' ' + (ey + 20) + ' ' + (cx + s * ex - 25) + ' ' + (ey - 13) + ' Z', fill: '#2a9d8f', 'fill-opacity': 0.8, stroke: '#b58900', 'stroke-width': 4, 'stroke-linejoin': 'round' }, g);
+        S('path', { d: 'M' + (cx + s * ex - 14) + ' ' + (ey - 5) + ' l12 0', stroke: '#ffffff', 'stroke-width': 3, 'stroke-linecap': 'round', opacity: 0.7 }, g);
+      });
+    } else if (id === 'vr') {
+      S('path', { d: 'M' + (cx - ex - 30) + ' ' + ey + ' l-16 -4 M' + (cx + ex + 30) + ' ' + ey + ' l16 -4', stroke: '#4a4e69', 'stroke-width': 10, 'stroke-linecap': 'round' }, g);
+      S('rect', { x: cx - ex - 30, y: ey - 21, width: ex * 2 + 60, height: 42, rx: 11, fill: '#22223b', stroke: '#4a4e69', 'stroke-width': 4 }, g);
+      S('path', { d: 'M' + (cx - ex - 16) + ' ' + (ey - 10) + ' l' + (ex * 1.1) + ' 0', stroke: '#9bf6ff', 'stroke-width': 4, 'stroke-linecap': 'round', opacity: 0.8 }, g);
+      S('circle', { cx: cx + ex + 18, cy: ey + 10, r: 3.5, fill: '#00f5d4' }, g);
+    } else if (id === 'laser') {
+      [-1, 1].forEach(function (s) {
+        S('path', { d: 'M' + (cx + s * ex) + ' ' + ey + ' L' + (cx + s * (ex + 82)) + ' ' + (ey + 58), stroke: '#ff1e1e', 'stroke-width': 8, 'stroke-linecap': 'round', opacity: 0.75 }, g);
+        S('path', { d: 'M' + (cx + s * ex) + ' ' + ey + ' L' + (cx + s * (ex + 82)) + ' ' + (ey + 58), stroke: '#ffffff', 'stroke-width': 2.5, 'stroke-linecap': 'round' }, g);
+        S('circle', { cx: cx + s * ex, cy: ey, r: 13, fill: '#ff1e1e', 'fill-opacity': 0.85, stroke: '#ffd6d6', 'stroke-width': 3 }, g);
+      });
+    } else if (id === 'shellbeads') {
+      for (k = 0; k < 9; k++) { var st = k / 8; S('circle', { cx: cx - nw + nw * 2 * st, cy: ny - 4 + Math.sin(st * Math.PI) * 26, r: k === 4 ? 0 : 6, fill: '#fde3ea', stroke: '#e79ab8', 'stroke-width': 2 }, g); }
+      S('path', { d: 'M' + (cx - 14) + ' ' + (ny + 30) + ' A14 16 0 0 1 ' + (cx + 14) + ' ' + (ny + 30) + ' Z', fill: '#fff1e0', stroke: '#e0a36a', 'stroke-width': 2.5, transform: 'rotate(180 ' + cx + ' ' + (ny + 26) + ')' }, g);
+      [-6, 0, 6].forEach(function (p) { S('path', { d: 'M' + cx + ' ' + (ny + 20) + ' L' + (cx + p) + ' ' + (ny + 36), stroke: '#e0a36a', 'stroke-width': 1.5 }, g); });
+    } else if (id === 'kerchief') {
+      S('path', { d: 'M' + (cx - nw) + ' ' + (ny - 6) + ' Q' + cx + ' ' + (ny + 8) + ' ' + (cx + nw) + ' ' + (ny - 6) + ' L' + cx + ' ' + (ny + 44) + ' Z', fill: '#3a86ff', stroke: '#1d4ed8', 'stroke-width': 3, 'stroke-linejoin': 'round' }, g);
+      [[-20, 8], [18, 9], [-4, 16], [8, 26], [-8, 30]].forEach(function (p) { S('circle', { cx: cx + p[0], cy: ny + p[1], r: 3.2, fill: '#ffffff' }, g); });
+      S('circle', { cx: cx + nw - 4, cy: ny - 4, r: 8, fill: '#3a86ff', stroke: '#1d4ed8', 'stroke-width': 3 }, g);
+    } else if (id === 'stethoscope') {
+      S('path', { d: 'M' + (cx - nw * 0.6) + ' ' + (ny - 8) + ' Q' + (cx - nw * 0.5) + ' ' + (ny + 30) + ' ' + cx + ' ' + (ny + 34) + ' Q' + (cx + nw * 0.5) + ' ' + (ny + 30) + ' ' + (cx + nw * 0.6) + ' ' + (ny - 8) + ' M' + cx + ' ' + (ny + 34) + ' Q' + (cx - 4) + ' ' + (ny + 48) + ' ' + (cx + 12) + ' ' + (ny + 54), fill: 'none', stroke: '#22223b', 'stroke-width': 4.5, 'stroke-linecap': 'round' }, g);
+      S('circle', { cx: cx + 16, cy: ny + 60, r: 11, fill: '#adb5bd', stroke: '#495057', 'stroke-width': 3 }, g);
+      S('circle', { cx: cx + 16, cy: ny + 60, r: 4.5, fill: '#e9eef2' }, g);
+    } else if (id === 'goldkey') {
+      S('path', { d: 'M' + (cx - nw) + ' ' + (ny - 6) + ' Q' + cx + ' ' + (ny + 28) + ' ' + (cx + nw) + ' ' + (ny - 6), fill: 'none', stroke: '#b58900', 'stroke-width': 3, 'stroke-linecap': 'round' }, g);
+      S('rect', { x: cx - 3.5, y: ny + 30, width: 7, height: 30, fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 2 }, g);
+      S('rect', { x: cx + 3, y: ny + 46, width: 9, height: 5, fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 2 }, g);
+      S('rect', { x: cx + 3, y: ny + 54, width: 6, height: 5, fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 2 }, g);
+      S('circle', { cx: cx, cy: ny + 22, r: 10, fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 3 }, g);
+      S('circle', { cx: cx, cy: ny + 22, r: 4, fill: '#b58900' }, g);
+    } else if (id === 'apron') {
+      var ay = c.cy + c.ry * 0.34, aw = c.rx * 0.42;
+      [-1, 1].forEach(function (s) { S('path', { d: 'M' + (cx + s * aw * 0.8) + ' ' + (sy + 6) + ' L' + (cx + s * c.rx * 0.7) + ' ' + (c.cy - c.ry * 0.3), stroke: '#ffffff', 'stroke-width': 9, 'stroke-linecap': 'round' }, g); });
+      S('rect', { x: cx - c.rx * 0.8, y: ay, width: c.rx * 1.6, height: c.base - ay + 4, fill: '#ffffff', stroke: '#b8c4cc', 'stroke-width': 3 }, g);
+      S('rect', { x: cx - aw, y: sy, width: aw * 2, height: ay - sy + 6, rx: 6, fill: '#ffffff', stroke: '#b8c4cc', 'stroke-width': 3 }, g);
+      S('path', { d: heart(cx, sy + 18, 9), fill: '#e63946' }, g);
+      S('rect', { x: cx - aw * 0.6, y: ay + 12, width: aw * 1.2, height: 18, rx: 5, fill: 'none', stroke: '#b8c4cc', 'stroke-width': 3 }, g);
+    } else if (id === 'pajama') {
+      S('rect', { x: sx, y: sy, width: sw, height: sh, fill: '#4361ee' }, g);
+      [[0.14, 0.24], [0.34, 0.6], [0.66, 0.26], [0.86, 0.62], [0.24, 0.86], [0.76, 0.88], [0.08, 0.62]].forEach(function (p) { S('polygon', { points: star(sx + sw * p[0], sy + sh * p[1], 7), fill: '#ffd60a' }, g); });
+      S('path', { d: 'M' + cx + ' ' + sy + ' L' + cx + ' ' + (c.base + 4), stroke: '#27336b', 'stroke-width': 3 }, g);
+      [0.2, 0.45, 0.7].forEach(function (p) { S('circle', { cx: cx, cy: sy + sh * p, r: 4, fill: '#ffffff', stroke: '#27336b', 'stroke-width': 1.5 }, g); });
+      S('path', { d: 'M' + (cx - 24) + ' ' + (sy - 2) + ' L' + cx + ' ' + (sy + 16) + ' L' + (cx + 24) + ' ' + (sy - 2), fill: 'none', stroke: '#ffffff', 'stroke-width': 6, 'stroke-linejoin': 'round' }, g);
+    } else if (id === 'kimono') {
+      S('rect', { x: sx, y: sy, width: sw, height: sh, fill: '#c1121f' }, g);
+      S('path', { d: 'M' + (cx - c.rx * 0.5) + ' ' + (sy - 2) + ' L' + (cx + c.rx * 0.16) + ' ' + (sy + sh * 0.5) + ' M' + (cx + c.rx * 0.5) + ' ' + (sy - 2) + ' L' + (cx - c.rx * 0.16) + ' ' + (sy + sh * 0.5), stroke: '#ffffff', 'stroke-width': 11, 'stroke-linecap': 'round' }, g);
+      S('rect', { x: sx, y: sy + sh * 0.46, width: sw, height: 18, fill: '#1b1b24' }, g);
+      S('rect', { x: cx - 13, y: sy + sh * 0.46 - 3, width: 26, height: 24, rx: 5, fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 2 }, g);
+    } else if (id === 'astrosuit') {
+      S('rect', { x: sx, y: sy, width: sw, height: sh, fill: '#e9eef2' }, g);
+      S('path', { d: 'M' + sx + ' ' + sy + ' l' + sw + ' 0', stroke: '#9aa7b0', 'stroke-width': 12 }, g);
+      [-1, 1].forEach(function (s) { S('rect', { x: cx + s * c.rx * 0.62 - 6, y: sy + 6, width: 12, height: sh, fill: '#ff7b00' }, g); });
+      S('rect', { x: cx - 26, y: sy + 16, width: 52, height: 34, rx: 6, fill: '#3a86ff', stroke: '#1d4ed8', 'stroke-width': 3 }, g);
+      [['#ef233c', -14], ['#ffd60a', 0], ['#8ac926', 14]].forEach(function (p) { S('circle', { cx: cx + p[1], cy: sy + 28, r: 4.5, fill: p[0] }, g); });
+      S('rect', { x: cx - 18, y: sy + 38, width: 36, height: 6, rx: 3, fill: '#bde0fe' }, g);
+    } else if (id === 'guitar') {
+      x = cx + c.rx * 0.74; y = c.cy - c.ry * 0.05;
+      S('path', { d: 'M' + x + ' ' + y + ' L' + (x + 58) + ' ' + (y - c.ry - 46), stroke: '#6b3a12', 'stroke-width': 11, 'stroke-linecap': 'round' }, g);
+      S('rect', { x: x + 50, y: y - c.ry - 64, width: 18, height: 24, rx: 4, fill: '#3b1f0b', transform: 'rotate(28 ' + (x + 58) + ' ' + (y - c.ry - 50) + ')' }, g);
+      S('ellipse', { cx: x, cy: y, rx: 34, ry: 42, fill: '#c2622a', stroke: '#6b3a12', 'stroke-width': 4, transform: 'rotate(28 ' + x + ' ' + y + ')' }, g);
+      S('circle', { cx: x, cy: y, r: 10, fill: '#3b1f0b' }, g);
+    } else if (id === 'fairy') {
+      [-1, 1].forEach(function (s) {
+        var ux = cx + s * (c.rx + 26), uy = c.cy - c.ry * 0.45, lx = cx + s * (c.rx + 14), ly = c.cy + c.ry * 0.12;
+        S('ellipse', { cx: ux, cy: uy, rx: 54, ry: 30, fill: '#c8f7ff', 'fill-opacity': 0.8, stroke: '#7fdcff', 'stroke-width': 3, transform: 'rotate(' + (s * -32) + ' ' + ux + ' ' + uy + ')' }, g);
+        S('ellipse', { cx: lx, cy: ly, rx: 36, ry: 20, fill: '#ffd6ff', 'fill-opacity': 0.8, stroke: '#f08ab5', 'stroke-width': 3, transform: 'rotate(' + (s * 20) + ' ' + lx + ' ' + ly + ')' }, g);
+        S('polygon', { points: star(ux + s * 18, uy - 14, 7), fill: '#ffffff' }, g);
+      });
+    } else if (id === 'phoenix') {
+      [-1, 1].forEach(function (s) {
+        var r0 = cx + s * c.rx * 0.6, t0 = c.cy - c.ry * 0.15;
+        [[78, 104, '#d00000'], [48, 100, '#ff7b00'], [18, 92, '#ffd60a'], [-14, 76, '#ff7b00']].forEach(function (p) {
+          var a = p[0] * Math.PI / 180, tx = r0 + s * Math.cos(a) * p[1], ty = t0 - Math.sin(a) * p[1], nx = -Math.sin(a) * 16, ny2 = -Math.cos(a) * 16;
+          S('path', { d: 'M' + r0 + ' ' + t0 + ' Q' + (r0 + s * Math.cos(a) * p[1] * 0.5 + s * nx) + ' ' + (t0 - Math.sin(a) * p[1] * 0.5 + ny2) + ' ' + tx + ' ' + ty + ' Q' + (r0 + s * Math.cos(a) * p[1] * 0.5 - s * nx) + ' ' + (t0 - Math.sin(a) * p[1] * 0.5 - ny2) + ' ' + r0 + ' ' + t0 + ' Z', fill: p[2], stroke: '#9d0208', 'stroke-width': 2.5, 'stroke-linejoin': 'round' }, g);
+        });
+      });
     } else if (id === 'dragon') {
       [-1, 1].forEach(function (s) {
         var r0 = cx + s * c.rx * 0.6, t0 = c.cy - c.ry * 0.2;
@@ -920,6 +1050,47 @@
         S('circle', { cx: cx + s * (c.rx + 74), cy: c.cy - c.ry * 1.05, r: 5, fill: '#ffd60a' }, g);
       });
     }
+  }
+  // приметы лягушек-диковинок: рожки, уши, шипы, клыки и прочее. back — то, что растёт из-за тела и рисуется под ним; остальное — поверх морды
+  function drawExtra(g, o, c, back) {
+    var ex = o.extra || '', cx = c.cx, top = c.cy - c.ry, k;
+    function has(what) { return ex.indexOf(what) >= 0; }
+    if (!ex) return;
+    if (back) {
+      if (has('spikes')) for (k = -3; k <= 3; k++) {
+        var a = k * 0.36, sx1 = cx + Math.sin(a) * c.rx * 0.96, sy1 = c.cy - Math.cos(a) * c.ry * 0.96;
+        S('path', { d: 'M' + (sx1 - 13 * Math.cos(a)) + ' ' + (sy1 - 13 * Math.sin(a) + 8) + ' L' + (cx + Math.sin(a) * (c.rx + 28)) + ' ' + (c.cy - Math.cos(a) * (c.ry + 28)) + ' L' + (sx1 + 13 * Math.cos(a)) + ' ' + (sy1 + 13 * Math.sin(a) + 8) + ' Z', fill: o.mark, 'stroke-linejoin': 'round' }, g);
+      }
+      if (has('mohawk')) for (k = -2; k <= 2; k++) S('path', { d: 'M' + (cx + k * 13 - 10) + ' ' + (top + 14) + ' L' + (cx + k * 17) + ' ' + (top - 46 + Math.abs(k) * 10) + ' L' + (cx + k * 13 + 10) + ' ' + (top + 14) + ' Z', fill: o.mark, stroke: '#b3004d', 'stroke-width': 2, 'stroke-linejoin': 'round' }, g);
+      [-1, 1].forEach(function (s) {
+        var x = cx + s * c.rx * 0.66;
+        if (has('ears_bunny')) {
+          S('ellipse', { cx: cx + s * c.rx * 0.3, cy: top - 30, rx: 14, ry: 44, fill: o.skin, stroke: o.mark, 'stroke-width': 3, transform: 'rotate(' + (s * 12) + ' ' + (cx + s * c.rx * 0.3) + ' ' + top + ')' }, g);
+          S('ellipse', { cx: cx + s * c.rx * 0.3, cy: top - 30, rx: 6, ry: 30, fill: '#f8b4cb', transform: 'rotate(' + (s * 12) + ' ' + (cx + s * c.rx * 0.3) + ' ' + top + ')' }, g);
+        }
+        if (has('ears_cat')) {
+          S('path', { d: 'M' + (x - 24) + ' ' + (top + 30) + ' L' + (x + s * 10) + ' ' + (top - 24) + ' L' + (x + 24) + ' ' + (top + 30) + ' Z', fill: o.skin, stroke: o.mark, 'stroke-width': 3, 'stroke-linejoin': 'round' }, g);
+          S('path', { d: 'M' + (x - 11) + ' ' + (top + 22) + ' L' + (x + s * 7) + ' ' + (top - 8) + ' L' + (x + 12) + ' ' + (top + 22) + ' Z', fill: '#f8b4cb' }, g);
+        }
+        if (has('ears_bat')) S('path', { d: 'M' + (x - 22) + ' ' + (top + 32) + ' L' + (x + s * 20) + ' ' + (top - 34) + ' L' + (x + s * 14) + ' ' + (top + 2) + ' L' + (x + s * 32) + ' ' + (top + 6) + ' L' + (x + 20) + ' ' + (top + 34) + ' Z', fill: o.mark, 'stroke-linejoin': 'round' }, g);
+        if (has('horns')) S('path', { d: 'M' + (x - 12) + ' ' + (top + 28) + ' Q' + (x + s * 2) + ' ' + (top - 6) + ' ' + (x + s * 22) + ' ' + (top - 34) + ' Q' + (x + s * 20) + ' ' + (top + 4) + ' ' + (x + 14) + ' ' + (top + 30) + ' Z', fill: '#f4ead5', stroke: '#b8a97a', 'stroke-width': 3, 'stroke-linejoin': 'round' }, g);
+        if (has('antennae')) {
+          S('path', { d: 'M' + (cx + s * c.rx * 0.22) + ' ' + (top + 10) + ' Q' + (cx + s * c.rx * 0.26) + ' ' + (top - 22) + ' ' + (cx + s * c.rx * 0.42) + ' ' + (top - 38), fill: 'none', stroke: o.mark, 'stroke-width': 4.5, 'stroke-linecap': 'round' }, g);
+          S('circle', { cx: cx + s * c.rx * 0.42, cy: top - 40, r: 8, fill: '#ff70a6', stroke: '#c9457a', 'stroke-width': 2 }, g);
+        }
+      });
+      if (has('horn1')) {
+        S('path', { d: 'M' + (cx - 11) + ' ' + (top + 14) + ' L' + cx + ' ' + (top - 54) + ' L' + (cx + 11) + ' ' + (top + 14) + ' Z', fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 3, 'stroke-linejoin': 'round' }, g);
+        [0, 1, 2].forEach(function (n) { S('path', { d: 'M' + (cx - 8 + n * 2.4) + ' ' + (top - 2 - n * 16) + ' l' + (16 - n * 4.8) + ' -7', stroke: '#b58900', 'stroke-width': 2.5 }, g); });
+      }
+      return;
+    }
+    var my = c.cy - c.ry * 0.3, mw = c.rx * 0.5;
+    [-1, 1].forEach(function (s) {
+      if (has('fangs')) S('path', { d: 'M' + (cx + s * mw * 0.42 - 5.5) + ' ' + (my + 12) + ' L' + (cx + s * mw * 0.42) + ' ' + (my + 28) + ' L' + (cx + s * mw * 0.42 + 5.5) + ' ' + (my + 13) + ' Z', fill: '#ffffff', stroke: '#1c2b22', 'stroke-width': 1.5, 'stroke-linejoin': 'round' }, g);
+      if (has('tusks')) S('path', { d: 'M' + (cx + s * mw * 0.5 - 6) + ' ' + (my + 10) + ' Q' + (cx + s * mw * 0.5 + s * 2) + ' ' + (my + 34) + ' ' + (cx + s * mw * 0.5 - s * 3) + ' ' + (my + 48) + ' Q' + (cx + s * mw * 0.5 + 9) + ' ' + (my + 30) + ' ' + (cx + s * mw * 0.5 + 6) + ' ' + (my + 11) + ' Z', fill: '#fdf6e3', stroke: '#b8a97a', 'stroke-width': 2, 'stroke-linejoin': 'round' }, g);
+      if (has('whiskers')) [-9, 0, 9].forEach(function (d) { S('path', { d: 'M' + (cx + s * (mw + 14)) + ' ' + (my + 8) + ' L' + (cx + s * (mw + 52)) + ' ' + (my + 8 + d), stroke: '#1c2b22', 'stroke-width': 2, 'stroke-linecap': 'round' }, g); });
+    });
   }
   function drawChest(tier) {
     var col = [['#b5651d', '#7a4212', '#ffd60a'], ['#ced4da', '#7d8a96', '#4cc9f0'], ['#ffd60a', '#b58900', '#e63946']][tier];
@@ -1165,6 +1336,7 @@
     }
     drawBack(fb.g, wear.back, fb.c);
     if (o.tail) S('path', { d: 'M' + (c.cx + c.rx * 0.7) + ' ' + (c.base - 14) + ' q46 -4 58 -34 q-4 34 -50 46 Z', fill: o.mark }, g);
+    drawExtra(g, o, c, true);
     var legColor = o.pattern === 'seeds' || o.pattern === 'galaxy' ? o.skin : o.mark;
     [-1, 1].forEach(function (k) { S('ellipse', { cx: c.cx + k * (narrow ? c.rx * narrow : c.rx - 14), cy: c.base - 12, rx: c.rx * 0.3, ry: 20, fill: legColor }, g); });
     if (shape === 'cloud') {
@@ -1195,6 +1367,7 @@
     var my = c.cy - c.ry * 0.3, mw = c.rx * 0.5;
     S('path', { d: 'M' + (c.cx - mw) + ' ' + my + ' Q' + c.cx + ' ' + (my + 24) + ' ' + (c.cx + mw) + ' ' + my, fill: 'none', stroke: '#1c2b22', 'stroke-width': 5, 'stroke-linecap': 'round' }, g);
     [-1, 1].forEach(function (k) { S('ellipse', { cx: c.cx + k * (mw + 6), cy: my + 6, rx: 11, ry: 6, fill: '#f29bb5', opacity: 0.75 }, g); });
+    drawExtra(g, o, c, false);
     fn = fit(g, c.cy + c.ry * 0.02); drawNeck(fn.g, wear.neck, fn.c);
     [-1, 1].forEach(function (k) { S('ellipse', { cx: c.cx + k * c.rx * (shape === 'heart' ? 0.2 : 0.36), cy: c.base - 4, rx: 20, ry: 10, fill: o.skin }, g); });
     fh = fit(g, topY, topY + c.ry); drawHat(fh.g, wear.hat, fh.c);
@@ -1373,7 +1546,7 @@
   function paintFrog(f) {
     var c = cards[f.i], st = state.frogs[f.i], lvl = st.open ? levelOf(st.n) : 5;
     c.btn.textContent = '';
-    c.btn.appendChild(drawFrog({ skin: f.skin, belly: f.belly, mark: f.mark, pattern: f.pattern, shape: f.shape, rx: f.rx, ry: f.ry, wear: wearOf(f, lvl) }));
+    c.btn.appendChild(drawFrog({ skin: f.skin, belly: f.belly, mark: f.mark, pattern: f.pattern, shape: f.shape, extra: f.extra, rx: f.rx, ry: f.ry, wear: wearOf(f, lvl) }));
     c.lvl = st.open ? lvl : 0;
   }
   function nextLocked() { for (var k = 0; k < FROGS.length; k++) if (!state.frogs[k].open) return k; return -1; }
@@ -1508,7 +1681,7 @@
     if (st === 1) return drawTadpole(f);
     var size = [null, null, [70, 56], [98, 76], [124, 88]][st] || [124, 88];
     // у обычных пород форма тела — от выбранной расцветки, у остальных — своя
-    return drawFrog({ skin: f.skin, belly: f.belly, mark: f.mark, pattern: f.pattern, shape: kind[2] || f.shape, fx: kind[5], rx: size[0] * kind[3], ry: size[1] * kind[4], wear: wear, tail: st === 2 });
+    return drawFrog({ skin: f.skin, belly: f.belly, mark: f.mark, pattern: f.pattern, shape: kind[2] || f.shape, extra: f.extra, fx: kind[5], rx: size[0] * kind[3], ry: size[1] * kind[4], wear: wear, tail: st === 2 });
   }
   // частицы вокруг питомца и свечение по редкости породы; яйцо и головастик тоже светятся
   var FX = { bubbles: ['ring', '#8fd3e8', '', 5], drops: ['drop', '#4cc9f0', 'fall', 5], leaves: ['leaf', '#58a84a', 'fall', 5], sparkles: ['spark', '#ffffff', 'tw', 7], stars: ['star', '#ffd60a', 'tw', 8], embers: ['dot', '#ff7b00', '', 9], snow: ['dot', '#ffffff', 'fall', 9], rainbow: ['spark', '', 'tw', 10], hearts: ['heart', '#ff2e88', '', 10] };
@@ -1736,7 +1909,7 @@
     });
     det.appendChild(tbl);
     var dn = document.createElement('p'); dn.className = 'note';
-    dn.textContent = 'Первая победа на уровнях 1–7 даёт деревянный сундук, 8–14 — серебряный, 15–20 — золотой; повторная победа — деревянный. Повторов не бывает: пока в выпавшей редкости есть несобранные вещи, выпадает новая, а потом вместо вещи дают корм.';
+    dn.textContent = 'Первая победа на уровнях 1–7 даёт деревянный сундук, 8–14 — серебряный, с 15-го — золотой; повторная победа — деревянный. Повторов не бывает: пока в выпавшей редкости есть несобранные вещи, выпадает новая, а потом вместо вещи дают корм.';
     det.appendChild(dn);
     box.appendChild(det);
   }
@@ -2255,9 +2428,10 @@
     ['Пруд', 'kvak100k', 'Болото гудит', 'Наберите 100 000 кваков.', 100000, 50, function () { return state.total; }],
     ['Пруд', 'open5', 'Квинтет', 'Разбудите 5 лягушек.', 5, 5, function () { return frogsAt(1); }],
     ['Пруд', 'open13', 'Половина пруда', 'Разбудите 13 лягушек.', 13, 15, function () { return frogsAt(1); }],
-    ['Пруд', 'open25', 'Полный пруд', 'Разбудите всех 25 лягушек.', 25, 40, function () { return frogsAt(1); }],
+    ['Пруд', 'open25', 'Полный пруд', 'Разбудите 25 лягушек.', 25, 40, function () { return frogsAt(1); }],
+    ['Пруд', 'open35', 'Зверинец', 'Разбудите всех 35 лягушек, включая диковинок.', 35, 80, function () { return frogsAt(1); }],
     ['Пруд', 'lvl5', 'Примадонна', 'Вырастите любую лягушку до 5-го уровня.', 1, 10, function () { return frogsAt(5); }],
-    ['Пруд', 'lvl5all', 'Консерватория', 'Вырастите всех 25 лягушек до 5-го уровня.', 25, 100, function () { return frogsAt(5); }],
+    ['Пруд', 'lvl5all', 'Консерватория', 'Вырастите 25 лягушек до 5-го уровня.', 25, 100, function () { return frogsAt(5); }],
     ['Пруд', 'choir', 'Хор без дирижёра', 'Пусть 5 лягушек поют сами одновременно.', 1, 10, function () { return state.ach.choir; }],
     ['Моя лягушка', 'named', 'Знакомство', 'Дайте своей лягушке имя.', 1, 2, function () { return state.me.name.trim() ? 1 : 0; }],
     ['Моя лягушка', 'hatch', 'Вылупился!', 'Выкормите яйцо до головастика.', 1, 5, function () { return stageOf(state.me.xp); }],
@@ -2272,9 +2446,10 @@
     ['Прыжки', 'lick', 'Мухолов', 'Достаньте языком 50 мух.', 50, 15, function () { return state.ach.licks; }],
     ['Оборона болота', 'td1', 'Первая оборона', 'Пройдите первый уровень.', 1, 5, function () { return tdWon(1); }],
     ['Оборона болота', 'td10', 'Половина болота', 'Пройдите 10 уровней.', 10, 30, function () { return tdWon(1); }],
-    ['Оборона болота', 'td20', 'Хозяин болота', 'Пройдите все 20 уровней.', 20, 100, function () { return tdWon(1); }],
+    ['Оборона болота', 'td20', 'Хозяин болота', 'Пройдите 20 уровней.', 20, 100, function () { return tdWon(1); }],
+    ['Оборона болота', 'td30', 'Повелитель болот', 'Пройдите все 30 уровней.', 30, 150, function () { return tdWon(1); }],
     ['Оборона болота', 'clean', 'Ни царапины', 'Пройдите уровень, не потеряв ни одной жизни.', 1, 20, function () { return tdWon(3); }],
-    ['Оборона болота', 'clean20', 'Неприступное озеро', 'Пройдите все 20 уровней без потери жизней.', 20, 200, function () { return tdWon(3); }],
+    ['Оборона болота', 'clean20', 'Неприступное озеро', 'Пройдите 20 уровней без потери жизней.', 20, 200, function () { return tdWon(3); }],
     ['Оборона болота', 'close', 'На волоске', 'Победите, когда у озера осталось не больше 3 жизней.', 1, 15, function () { return state.ach.close; }],
     ['Оборона болота', 'solo', 'Один голос', 'Пройдите уровень, сажая лягушек только одного вида.', 1, 30, function () { return state.ach.solo; }],
     ['Оборона болота', 'squad', 'Звёздный отряд', 'Держите на поле 5 лягушек, улучшенных до трёх звёзд.', 1, 15, function () { return state.ach.squad; }],
@@ -2285,7 +2460,7 @@
     ['Сундуки', 'gold', 'Золотая лихорадка', 'Откройте золотой сундук.', 1, 10, function () { return state.ach.gold; }],
     ['Сундуки', 'legend', 'Легенда болота', 'Получите легендарную вещь.', 1, 30, function () { return lootGot(4); }],
     ['Сундуки', 'loot13', 'Коллекционер', 'Соберите 13 вещей из сундуков.', 13, 30, function () { return lootGot(); }],
-    ['Сундуки', 'lootall', 'Полная коллекция', 'Соберите все 26 вещей из сундуков.', 26, 150, function () { return lootGot(); }],
+    ['Сундуки', 'lootall', 'Полная коллекция', 'Соберите все 48 вещей из сундуков.', 48, 150, function () { return lootGot(); }],
     ['Перерождение', 'reb1', 'Новая жизнь', 'Превратите выросшую лягушку в яйцо.', 1, 10, function () { return state.ach.rebirths; }],
     ['Перерождение', 'reb5', 'Колесо жизни', 'Переродитесь 5 раз.', 5, 40, function () { return state.ach.rebirths; }],
     ['Перерождение', 'reb15', 'Вечная жаба', 'Переродитесь 15 раз.', 15, 100, function () { return state.ach.rebirths; }],
@@ -2382,6 +2557,8 @@
   };
   // больше этого числа достижений правила базы не принимают (см. firebase-rules.json)
   var NET_ACH_MAX = 100;
+  // правила базы принимают счёт обороны не больше 2060 (20 уровней на три звезды); уровни сверх этого в таблицу пока не попадают
+  var NET_TD_MAX = 2060;
   var TOPS = [['kvak', 'Кваки'], ['jump', 'Прыжки'], ['td', 'Оборона болота'], ['ach', 'Достижения']];
   var net = { db: null, uid: '', ok: false, sent: '', board: 'kvak', err: '' };
   function loadScript(src, done) {
@@ -2423,7 +2600,7 @@
       name: (state.me.name.replace(/\|/g, ' ').trim().slice(0, 18) || 'Лягушка ' + net.uid.slice(0, 4).toUpperCase()) + '|' + petCode(),
       // в таблицу идут лучшие результаты за все жизни: перерождение их не обнуляет
       kvak: Math.min(1e8, state.rec.kvak), jump: Math.min(1e6, state.rec.jump),
-      td: state.rec.td, ach: Math.min(NET_ACH_MAX, ACH.filter(function (a) { return state.ach.got[a[1]]; }).length)
+      td: Math.min(NET_TD_MAX, state.rec.td), ach: Math.min(NET_ACH_MAX, ACH.filter(function (a) { return state.ach.got[a[1]]; }).length)
     };
   }
   // своя строка отправляется, только когда в ней что-то изменилось
@@ -2563,7 +2740,17 @@
     ['Ледяная полынья', [[0, 5], [2, 5], [2, 2], [5, 2], [5, 7], [8, 7], [8, 2], [11, 2], [11, 7], [14, 7], [14, 4]]],
     ['Ядовитая топь', [[15, 5], [12, 5], [12, 8], [7, 8], [7, 1], [3, 1], [3, 5], [1, 5], [1, 8], [4, 8]]],
     ['Сердце чащи', [[6, 0], [6, 2], [1, 2], [1, 7], [4, 7], [4, 4], [9, 4], [9, 8], [14, 8], [14, 2], [11, 2], [11, 6]]],
-    ['Чёрное болото', [[0, 1], [2, 1], [2, 8], [5, 8], [5, 1], [8, 1], [8, 8], [11, 8], [11, 1], [14, 1], [14, 6]]]
+    ['Чёрное болото', [[0, 1], [2, 1], [2, 8], [5, 8], [5, 1], [8, 1], [8, 8], [11, 8], [11, 1], [14, 1], [14, 6]]],
+    ['Янтарный бор', [[0, 8], [3, 8], [3, 2], [7, 2], [7, 6], [11, 6], [11, 2], [14, 2], [14, 7]]],
+    ['Соляные топи', [[15, 2], [12, 2], [12, 7], [8, 7], [8, 1], [4, 1], [4, 8], [1, 8], [1, 3]]],
+    ['Грозовой перевал', [[5, 0], [5, 3], [1, 3], [1, 8], [9, 8], [9, 4], [13, 4], [13, 8]]],
+    ['Коралловая заводь', [[0, 4], [2, 4], [2, 1], [13, 1], [13, 4], [5, 4], [5, 7], [13, 7]]],
+    ['Вулканическая топь', [[15, 8], [12, 8], [12, 5], [14, 5], [14, 1], [9, 1], [9, 6], [6, 6], [6, 2], [3, 2], [3, 8], [1, 8]]],
+    ['Хрустальные пещеры', [[8, 9], [8, 7], [2, 7], [2, 2], [6, 2], [6, 5], [10, 5], [10, 2], [14, 2], [14, 7], [11, 7]]],
+    ['Небесные острова', [[0, 1], [4, 1], [4, 4], [1, 4], [1, 8], [6, 8], [6, 6], [11, 6], [11, 8], [14, 8], [14, 3], [9, 3]]],
+    ['Затонувший город', [[15, 5], [13, 5], [13, 8], [10, 8], [10, 2], [7, 2], [7, 8], [4, 8], [4, 2], [1, 2], [1, 6]]],
+    ['Край теней', [[3, 0], [3, 2], [13, 2], [13, 4], [2, 4], [2, 6], [13, 6], [13, 8], [5, 8]]],
+    ['Трон Царь-Стрекозы', [[0, 5], [1, 5], [1, 1], [14, 1], [14, 8], [3, 8], [3, 3], [12, 3], [12, 6], [6, 6]]]
   ];
   var td = null;
 
@@ -2577,6 +2764,8 @@
     };
   }
   function tdFrogLvl(i) { var st = state.frogs[i]; return st.open ? levelOf(st.n) : 0; }
+  // после 20-го уровня стрекозы крепнут медленнее: лягушки игрока к этому времени уже все открыты и расти им почти некуда
+  function tdHpL(L) { return Math.pow(TD_HP_L, Math.min(L, 20) - 1) * Math.pow(1.235, Math.max(0, L - 20)); }
   function tdCost(i) { return Math.round(40 * Math.pow(1.17, i) * TD_ATK[i].cost / 5) * 5; }
   // сила приёма: растёт с номером лягушки, её уровнем в пруду и звёздами; звёзды усиливают и побочные действия приёма
   function tdStat(i, stars) {
@@ -2593,7 +2782,7 @@
   // чтобы вся волна весила как столько же обычных стрекоз своего уровня; у стрекозы 1-го уровня ровно 1 здоровья
   function tdWave(L, w) {
     var rnd = tdRng(L * 7919 + w * 104729), ml = w + TD_LVL_STEP * (L - 1), u = (L - 1) * TD_WAVES + w;
-    var full = 30 + Math.round((L - 1) * 20 / 19) + Math.round((rnd() - 0.5) * 6), boss = w % 5 === 0, n = boss ? Math.round(full * 0.6) : full;
+    var full = 30 + Math.round((Math.min(L, 20) - 1) * 20 / 19) + Math.round((rnd() - 0.5) * 6), boss = w % 5 === 0, n = boss ? Math.round(full * 0.6) : full;
     var pool = [], share = {}, rest = 1, k1, k2, s;
     if (u >= 4) pool.push('fast');
     if (u >= 8) pool.push('fat');
@@ -2623,7 +2812,7 @@
         if (left[k] > 0) more = true;
       });
     }
-    var base = Math.pow(TD_HP_W, w - 1) * Math.pow(TD_HP_L, L - 1), mul = 0, list = [], at = 1, gap = (20 + order.length * 0.2) / order.length, total = 0;
+    var base = Math.pow(TD_HP_W, w - 1) * tdHpL(L), mul = 0, list = [], at = 1, gap = (20 + order.length * 0.2) / order.length, total = 0;
     order.forEach(function (k) { mul += TD_KIND[k].hp; });
     order.forEach(function (k, idx) {
       list.push({ k: k, hp: Math.max(1, Math.round(base * TD_KIND[k].hp * order.length / mul)), at: at });
@@ -2676,7 +2865,7 @@
   function tdCanBuild(cx, cy) { return cx >= 0 && cy >= 0 && cx < TD_COLS && cy < TD_ROWS && td.grid[cy][cx] === 0 && !tdTowerAt(cx, cy); }
   function tdPlace(i, cx, cy) {
     var cost = tdCost(i);
-    if (!tdFrogLvl(i) || !tdCanBuild(cx, cy) || td.gold < cost) return null;
+    if (i >= TD_ATK.length || !tdFrogLvl(i) || !tdCanBuild(cx, cy) || td.gold < cost) return null;
     td.gold -= cost;
     var t = { i: i, cls: FROGS[i].voice, heat: 1, last: null, cx: cx, cy: cy, x: (cx + 0.5) * TD_CELL, y: (cy + 0.5) * TD_CELL, stars: 1, lvl: tdFrogLvl(i), s: tdStat(i, 1), cd: 0.2, hop: 0, spent: cost };
     td.used[i] = 1;
@@ -2909,7 +3098,17 @@
     ['#dbeef4', '#bcdde8', '#a3bccb', '#7190a4', '#8fd3e8', '#4a8f7c', '#35705f', ['#ffffff', '#bde0fe'], 'pine', 'snow', 0, [7, 1, 0, 1, 0, 6]],
     ['#7e9e3c', '#62822c', '#615743', '#3c3528', '#b6e34a', '#5a6f2a', '#43551d', ['#b5179e', '#c77dff'], 'dead', 'spores', 0, [3, 4, 2, 1, 8, 1]],
     ['#44834a', '#30693a', '#8e7853', '#5a4a30', '#5aa9a8', '#2d6e3c', '#1e5229', ['#ffffff', '#ffd93b'], 'pine', 'fog', 0, [10, 1, 1, 1, 3, 1]],
-    ['#3e3856', '#2c2744', '#71637e', '#413553', '#6a4c9c', '#2a2440', '#1d1a2e', ['#ff595e', '#f72585'], 'dead', 'embers', 1, [5, 2, 3, 1, 3, 4]]
+    ['#3e3856', '#2c2744', '#71637e', '#413553', '#6a4c9c', '#2a2440', '#1d1a2e', ['#ff595e', '#f72585'], 'dead', 'embers', 1, [5, 2, 3, 1, 3, 4]],
+    ['#d9a441', '#b8842c', '#8a5a2b', '#5c3a18', '#7fc4c9', '#c9731a', '#9c4f12', ['#ffd60a', '#fff3b0'], 'pine', 'leaves', 0, [8, 1, 2, 1, 3, 2]],
+    ['#e6e1d3', '#cfc7b3', '#b7ad94', '#8a8169', '#9fd8e0', '#9aa78f', '#7b8a72', ['#ffffff', '#ffd6e4'], 'dead', '', 0, [2, 3, 1, 2, 0, 8]],
+    ['#6f7f95', '#55657b', '#9aa3ad', '#5e6670', '#6a8fb8', '#44566e', '#2f3f55', ['#ffd60a', '#ffffff'], 'pine', 'rain', 0, [5, 1, 1, 1, 0, 7]],
+    ['#5fc9c0', '#3fa8a8', '#f2d9b1', '#c9a878', '#48cae4', '#ff7b9c', '#e0457b', ['#ffb3d1', '#ffd670', '#ffffff'], 'round', '', 0, [4, 7, 5, 1, 0, 2]],
+    ['#5a3a35', '#3f2724', '#8a5548', '#4a2a22', '#ff7b00', '#3a2320', '#241512', ['#ff7b00', '#ffd60a'], 'dead', 'embers', 1, [4, 2, 1, 0, 2, 8]],
+    ['#4a4f8a', '#35396b', '#9aa0d6', '#5a5f9a', '#7fdcff', '#6a4cb8', '#4c2a85', ['#7fdcff', '#ffffff', '#c77dff'], 'pine', 'stars', 1, [3, 3, 3, 0, 4, 6]],
+    ['#bfe6ff', '#9fd0f5', '#f4fbff', '#b8cfe0', '#7cc7f0', '#7fcf8a', '#5aa66a', ['#ffffff', '#ffd93b'], 'round', '', 0, [4, 2, 6, 1, 0, 2]],
+    ['#3f8f9a', '#2c6f7a', '#9fb9b3', '#5f7f7a', '#3aa7c9', '#2f7d6a', '#1f5f50', ['#bde0fe', '#ffffff'], 'willow', 'fog', 0, [2, 6, 1, 5, 0, 6]],
+    ['#2f2a3a', '#211d2b', '#5a5068', '#342c40', '#4a3d6b', '#1d1826', '#120f18', ['#c77dff', '#f72585'], 'dead', 'fireflies', 1, [6, 2, 2, 1, 4, 3]],
+    ['#4a1f2a', '#33141c', '#b58900', '#6a4f00', '#b3122d', '#5a0f1e', '#3a0812', ['#ffd60a', '#ff595e'], 'dead', 'embers', 1, [4, 1, 3, 0, 2, 5]]
   ];
   var TD_DECOR = ['tree', 'lily', 'flower', 'reed', 'shroom', 'rock'];
   // вид стрекоз: кожа, пузо, узор, полуширина и полувысота тела — те же краски и формы, по которым различаются лягушки
@@ -2930,7 +3129,7 @@
   function tdFrogSprite(i) {
     var lvl = tdFrogLvl(i), key = i + ':' + lvl;
     if (tdFrogImg[key]) return tdFrogImg[key].ok ? tdFrogImg[key].img : null;
-    var f = FROGS[i], s = drawFrog({ skin: f.skin, belly: f.belly, mark: f.mark, pattern: f.pattern, shape: f.shape, rx: f.rx, ry: f.ry, wear: wearOf(f, lvl) });
+    var f = FROGS[i], s = drawFrog({ skin: f.skin, belly: f.belly, mark: f.mark, pattern: f.pattern, shape: f.shape, extra: f.extra, rx: f.rx, ry: f.ry, wear: wearOf(f, lvl) });
     ['.pad', '.sac'].forEach(function (q) { var e = s.querySelector(q); if (e) e.parentNode.removeChild(e); });
     s.setAttribute('xmlns', NS); s.setAttribute('width', '300'); s.setAttribute('height', '310');
     var rec = { img: new Image(), ok: false };
@@ -3303,10 +3502,10 @@
     box.textContent = ''; tdShop = [];
     FROGS.forEach(function (f) {
       var lvl = tdFrogLvl(f.i);
-      if (!lvl) return;
+      if (!lvl || f.i >= TD_ATK.length) return;
       var b = document.createElement('button'), s = document.createElement('span'), sm = document.createElement('small'), cost = tdCost(f.i);
       b.type = 'button'; b.className = 'buy'; b.id = 'td-buy-' + f.i;
-      b.appendChild(drawFrog({ skin: f.skin, belly: f.belly, mark: f.mark, pattern: f.pattern, shape: f.shape, rx: f.rx, ry: f.ry, wear: wearOf(f, lvl) }));
+      b.appendChild(drawFrog({ skin: f.skin, belly: f.belly, mark: f.mark, pattern: f.pattern, shape: f.shape, extra: f.extra, rx: f.rx, ry: f.ry, wear: wearOf(f, lvl) }));
       s.appendChild(document.createTextNode(f.name));
       var st = tdStat(f.i, 1), sm2 = document.createElement('small'), sm3 = document.createElement('small');
       // рамка карточки — цвета стихии; полные характеристики появляются в строке над магазином, когда лягушка выбрана
