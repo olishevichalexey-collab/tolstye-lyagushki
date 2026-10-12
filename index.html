@@ -218,6 +218,7 @@
 
   /* вылетающая цифра: сколько кваков дало нажатие */
   .plus { position: absolute; top: 18%; transform: translateX(-50%); pointer-events: none; font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; color: var(--lily); text-shadow: 0 2px 0 var(--surface), 0 0 6px var(--surface); white-space: nowrap; animation: plusUp 0.85s ease-out forwards; }
+  .plus.super { font-size: 2.1rem; color: #f59f00; text-shadow: 0 2px 0 #ffffff, 0 0 10px #ffd60a; animation-duration: 1.2s; }
   @keyframes plusUp { 0% { opacity: 0; margin-top: 16px; } 20% { opacity: 1; } 100% { opacity: 0; margin-top: -54px; } }
   @media (prefers-reduced-motion: reduce) { .plus { animation-duration: 0.5s; } }
 
@@ -326,6 +327,8 @@
         <div class="meter"><i id="pet-bar"></i></div>
         <div class="row">
           <button class="big" id="pet-feed" type="button">Покормить</button>
+          <button class="big" id="pet-feed10" type="button">Скормить 10</button>
+          <button class="big" id="pet-feed25" type="button">Скормить 25</button>
         </div>
         <div class="row">
           <button class="act" id="pet-stroke" type="button">Погладить</button>
@@ -371,6 +374,7 @@
         <li><b>Перерождение.</b> Выросшую лягушку можно превратить в новое яйцо. Весь прогресс обнулится, кроме достижений, сундуков и вещей из них, зато вылупится другая порода — от обычной до секретной, а каждое перерождение навсегда прибавляет 10% к получаемым квакам. Редкая порода ещё и прибавляет кваки: от +3% у необычной до +40% у секретной, начиная с лягушонка.</li>
         <li><b>Прыжки.</b> ← и → ведут лягушку вверх по кувшинкам. Пробел или быстрое касание — язык по мухе.</li>
         <li><b>Ловля мошек.</b> Насекомые вылетают из камышей — ловите их языком нажатием или взмахом. Ос не трогайте.</li>
+        <li><b>Штурм ульев.</b> Стреляйте лягушками из рогатки по ульям ос и пчёл. В полёте нажмите ещё раз — сработает приём лягушки.</li>
         <li><b>Оборона болота.</b> Сажайте лягушек у тропы и не пускайте стрекоз к озеру. Чем круче лягушка в пруду, тем сильнее она бьёт. У каждой лягушки свой приём и стихия; стрекоза с цветным ободком боится одной стихии и почти не замечает свою. За победу дают сундук.</li>
         <li><b>Сундуки.</b> Открываются в инвентаре на вкладке «Моя лягушка». Внутри вещи пяти редкостей.</li>
         <li><b>Достижения и лидеры.</b> Достижения засчитываются сами. В таблице лидеров вы под именем своей лягушки.</li>
@@ -385,6 +389,7 @@
       <button class="tab" id="game-jump" role="tab" type="button" aria-selected="true">Прыжки</button>
       <button class="tab" id="game-td" role="tab" type="button" aria-selected="false">Оборона болота</button>
       <button class="tab" id="game-nin" role="tab" type="button" aria-selected="false">Ловля мошек</button>
+      <button class="tab" id="game-ab" role="tab" type="button" aria-selected="false">Штурм ульев</button>
     </div>
     <div class="jump" id="pane-jump">
       <div class="stage">
@@ -495,6 +500,47 @@
             </div>
           </div>
         </div>
+       </div>
+      </div>
+    </div>
+
+    <div class="td" id="pane-ab" hidden>
+      <h2>Штурм ульев</h2>
+      <p class="note">Осы и пчёлы настроили ульев у самого пруда. Заряжайте лягушек в рогатку и ломайте постройки: уровень пройден, когда в ульях не осталось ни одного жильца. Оттяните лягушку и отпустите, а в полёте нажмите ещё раз — у каждой из двенадцати лягушек свой приём, тот же по духу, что в обороне болота. Чем выше уровень лягушки в пруду, тем сильнее она бьёт. Новые лягушки приходят в отряд по мере прохождения.</p>
+      <ul class="legend">
+        <li><b>Воск</b> и <b>лёд</b> хрупкие, <b>дерево</b> крепче, <b>камень</b> берётся только взрывом или тяжёлым ударом.</li>
+        <li><b>Бочка с мёдом</b> взрывается, <b>гриб</b> подбрасывает как батут.</li>
+        <li>На некоторых уровнях дует <b>ветер</b> или почти нет <b>тяжести</b>, а на каждом десятом сидит <b>матка</b>.</li>
+        <li>Сбережённые лягушки дают звёзды, а каждый пятый уровень — сундук.</li>
+      </ul>
+      <p class="meta" id="ab-stars"></p>
+      <div class="levels" id="ab-levels"></div>
+      <div class="td-game" id="ab-play" hidden>
+       <div class="td-frame">
+        <div class="td-hud">
+          <b id="ab-title"></b>
+          <div class="stats">
+            <div>Счёт<b id="ab-score">0</b></div>
+            <div>Жильцов<b id="ab-foes">0</b></div>
+            <div>Лягушек<b id="ab-left">0</b></div>
+          </div>
+          <span class="spacer"></span>
+          <button class="act" id="ab-pause" type="button">Пауза</button>
+          <button class="act" id="ab-again" type="button">Заново</button>
+          <button class="exit" id="ab-exit" type="button">✕ Выйти</button>
+        </div>
+        <div class="td-stage">
+          <canvas id="ab-cv" width="800" height="500" aria-label="Поле штурма: рогатка слева, ульи ос и пчёл справа"></canvas>
+          <div class="veil" id="ab-veil" hidden>
+            <h2 id="ab-veil-title"></h2>
+            <p class="note" id="ab-veil-text"></p>
+            <div class="row">
+              <button class="big" id="ab-veil-btn" type="button">Продолжить</button>
+              <button class="act" id="ab-veil-alt" type="button">К уровням</button>
+            </div>
+          </div>
+        </div>
+        <div class="td-line"><span id="ab-info"></span></div>
        </div>
       </div>
     </div>
@@ -629,8 +675,9 @@
       frogs: FROGS.map(function (f) { return { n: 0, open: f.i < 3, auto: false, m: 0 }; }),
       me: { xp: 0, name: '', skin: 0, kind: 0, best: 0, nin: 0, wear: { neck: '', hat: '', eyes: '', suit: '', back: '' } },
       td: { done: TD_LEVELS.map(function () { return 0; }), chests: [0, 0, 0], loot: {} },
+      ab: { done: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
       ach: { got: {}, kills: 0, bosses: 0, opened: 0, gold: 0, rides: 0, stomps: 0, close: 0, solo: 0, squad: 0, choir: 0, licks: 0, sweep: 0, tickles: 0, tdLost: 0, hid: {}, rebirths: 0, kinds: { 0: 1 } },
-      rec: { kvak: 0, jump: 0, td: 0 }
+      rec: { kvak: 0, jump: 0, td: 0, nin: 0, ab: 0 }
     };
   }
   function load() {
@@ -647,6 +694,8 @@
     if (typeof s.me.wear.suit !== 'string') s.me.wear.suit = '';
     if (!s.td || !s.td.done || !s.td.chests || !s.td.loot) s.td = f.td;
     while (s.td.done.length < TD_LEVELS.length) s.td.done.push(0);
+    if (!s.ab || !s.ab.done) s.ab = f.ab;
+    while (s.ab.done.length < AB_LEVELS) s.ab.done.push(0);
     if (!s.ach || !s.ach.got) s.ach = f.ach;
     if (!s.rec) s.rec = f.rec;
     if (!KINDS[s.me.kind]) s.me.kind = 0;
@@ -1672,15 +1721,18 @@
     audio();
     sing(f, 0);
     var got = levelOf(st.n), fed = state.taps % 10 === 0;
-    gain(f, got);
+    // каждое пятидесятое нажатие — супер-клик: кваков за него в 3,2–7,4 раза больше
+    var boost = state.taps % 50 === 0 ? 3.2 + Math.random() * 4.2 : 1;
+    gain(f, got * boost);
     bounce(cards[f.i].btn);
     // над лягушкой вылетает, сколько кваков дало нажатие; на каждом десятом — ещё и корм
     var plus = document.createElement('span');
     plus.className = 'plus';
-    plus.textContent = '+' + String(Math.round(got * kvMul() * 10) / 10).replace('.', ',') + (fed ? ' и корм' : '');
+    plus.textContent = (boost > 1 ? 'СУПЕР ×' + String(Math.round(boost * 10) / 10).replace('.', ',') + ': ' : '') + '+' + String(Math.round(got * boost * kvMul() * 10) / 10).replace('.', ',') + (fed ? ' и корм' : '');
+    if (boost > 1) { plus.className = 'plus super'; sing(f, ac ? ac.currentTime + 0.09 : 0); }
     plus.style.left = (30 + Math.random() * 40) + '%';
     cards[f.i].btn.appendChild(plus);
-    setTimeout(function () { if (plus.parentNode) plus.parentNode.removeChild(plus); }, 900);
+    setTimeout(function () { if (plus.parentNode) plus.parentNode.removeChild(plus); }, boost > 1 ? 1300 : 900);
   }
   // Ограничение скорости: одна лягушка принимает нажатие не чаще раза в 110 мс, а все вместе — не больше 9 нажатий в секунду.
   // Лишние нажатия не дают ни звука, ни кваков, так что автокликер и нажатие всеми пальцами разом ничего не ускоряют.
@@ -1803,6 +1855,7 @@
     petSig = ''; petStage = -1; lastReady = -2; dropText = ''; rebArmed = false;
     pauseJump(); run = null;
     ninPlaying = false; nin = null; $('nin-play').hidden = true;
+    abPlaying = false; ab = null; $('ab-play').hidden = true;
     tdShowMap();
     syncTransport();
     FROGS.forEach(function (f) { paintFrog(f); refreshCard(f); });
@@ -1814,6 +1867,10 @@
     r.kvak = Math.max(r.kvak, Math.floor(state.total));
     r.jump = Math.max(r.jump, Math.floor(state.me.best));
     r.td = Math.max(r.td, tdWon(1) * 100 + stars);
+    stars = 0;
+    state.ab.done.forEach(function (x) { stars += x; });
+    r.nin = Math.max(r.nin || 0, state.me.nin);
+    r.ab = Math.max(r.ab || 0, abWon() * 91 + stars);
   }
   function rebirth() {
     if (stageOf(state.me.xp) < STAGES.length - 1) return;
@@ -1852,6 +1909,8 @@
     $('pet-stage').textContent = STAGES[st][0] + (next ? ' · до стадии «' + next[0] + '» ' + fmt(stageNeed(st + 1) - me.xp) + ' очков роста' : ' · выросла полностью');
     $('pet-bar').style.width = (next ? Math.min(100, (me.xp - stageNeed(st)) / (stageNeed(st + 1) - stageNeed(st)) * 100) : 100) + '%';
     $('pet-feed').disabled = state.flies < 1;
+    $('pet-feed10').disabled = state.flies < 10;
+    $('pet-feed25').disabled = state.flies < 25;
     $('pet-feed').textContent = 'Покормить (' + fmt(state.flies) + ')';
     $('pet-hint').textContent = (st === 0 ? 'Кормите яйцо, чтобы оно вылупилось. ' : st === 1 ? 'Головастик растёт. Одежду можно будет надеть, когда он станет лягушонком. ' : '') +
       'Питомец растёт только от корма: каждые 10 нажатий на лягушек в пруду дают одну единицу, одна единица — 5 очков роста.';
@@ -1987,15 +2046,17 @@
     checkAch();
     sparkle(r >= 2 ? 'star' : 'heart', RARITY[r][1]);
   }
-  $('pet-feed').addEventListener('click', function () {
-    if (state.flies < 1) return;
+  // покормить можно по одной единице корма или сразу пачкой в 10 и 25
+  function feedPet(n) {
+    if (state.flies < n) return;
     audio();
     var st = stageOf(state.me.xp);
     play(st < 2 ? 'chirp' : 'croak', freq(state.me.xp % 5, st < 2 ? 3 : 2), 0);
-    state.flies -= 1; state.me.xp += 5; dirty = true;
+    state.flies -= n; state.me.xp += 5 * n; dirty = true;
     refreshPet(); refreshHeader();
     bounce($('pet-btn'));
-  });
+  }
+  [['pet-feed', 1], ['pet-feed10', 10], ['pet-feed25', 25]].forEach(function (b) { $(b[0]).addEventListener('click', function () { feedPet(b[1]); }); });
   $('pet-name').addEventListener('input', function () { state.me.name = this.value; dirty = true; });
 
   // ---------- общение с питомцем: на рост не влияет, но питомец отвечает ----------
@@ -2067,7 +2128,7 @@
 
   // ---------- вкладки и кнопки ----------
 
-  var VIEWS = { pond: '#prud', mine: '#moya', games: '#igry', ach: '#achivki', top: '#lidery' }, GAMES = { jump: '#pryzhki', td: '#oborona', nin: '#lovlya' }, curView = 'pond', curGame = 'jump';
+  var VIEWS = { pond: '#prud', mine: '#moya', games: '#igry', ach: '#achivki', top: '#lidery' }, GAMES = { jump: '#pryzhki', td: '#oborona', nin: '#lovlya', ab: '#ulyi' }, curView = 'pond', curGame = 'jump';
   function show(view) {
     curView = view;
     Object.keys(VIEWS).forEach(function (v) {
@@ -2090,6 +2151,7 @@
     if (on && game === 'jump') openJump(); else pauseJump();
     if (on && game === 'td') tdOpen(); else tdPause();
     if (on && game === 'nin') ninOpen(); else ninPause();
+    if (on && game === 'ab') abOpen(); else abPause();
     try { history.replaceState(null, '', on ? GAMES[game] : VIEWS[curView]); } catch (e) { /* адрес не меняется, вкладки работают */ }
   }
   Object.keys(VIEWS).forEach(function (v) { $('tab-' + v).addEventListener('click', function () { show(v); }); });
@@ -2438,7 +2500,7 @@
   }
   window.addEventListener('keydown', function (ev) { key(ev, true); });
   window.addEventListener('keyup', function (ev) { key(ev, false); });
-  document.addEventListener('visibilitychange', function () { if (document.hidden) { pauseJump(); tdPause(); ninPause(); } });
+  document.addEventListener('visibilitychange', function () { if (document.hidden) { pauseJump(); tdPause(); ninPause(); abPause(); } });
   $('btn-stop').addEventListener('click', function () {
     state.frogs.forEach(function (x) { x.auto = false; });
     FROGS.forEach(refreshCard);
@@ -2782,8 +2844,486 @@
     else ninStart();
   });
 
+  // ---------- мини-игра «Штурм ульев» ----------
+
+  // лягушки летят из рогатки и ломают ульи ос и пчёл. Столкновения и падения считает физический движок Matter.js,
+  // он подгружается при первом входе в игру; всё остальное — уровни, приёмы, урон и рисование — здесь.
+  var AB_W = 800, AB_H = 500, AB_GROUND = 452, AB_SLING = { x: 128, y: 356 }, AB_LEVELS = 30, AB_FROGS = 12;
+  // материалы блоков: плотность, прочность, цвет, край, трение
+  var AB_MAT = { wax: [0.0008, 26, '#ffd76a', '#d9a521', 0.6], wood: [0.0012, 55, '#c9955a', '#8a5a2b', 0.6], stone: [0.003, 150, '#9aa5ab', '#5e6a72', 0.8], ice: [0.001, 20, '#bfeaff', '#6fc0e6', 0.03] };
+  // жильцы ульев: радиус, здоровье, очки
+  var AB_FOE = { wasp: [15, 16, 100], bee: [17, 36, 150], queen: [30, 150, 500] };
+  // приём каждой из двенадцати лягушек — тот же по духу, что у неё в обороне болота. Срабатывает по нажатию в полёте, один раз
+  var AB_SKILL = [
+    ['Язык', 'хлещет языком ближайшую цель и дёргает её к себе'],
+    ['Тройная капля', 'распадается на три капли веером'],
+    ['Грязевая бомба', 'взрывается и расшвыривает всё вокруг; сработает и сама при ударе'],
+    ['Выстрел', 'срывается с места по прямой с огромной скоростью'],
+    ['Искра', 'бьёт молнией по трём ближайшим жильцам улья'],
+    ['Мороз', 'промораживает блоки вокруг — они становятся хрупкими'],
+    ['Ядовитое облако', 'оставляет облако, которое травит ос и пчёл несколько секунд'],
+    ['Уголёк', 'поджигает блоки рядом: воск и дерево горят быстрее всего'],
+    ['Водяная пушка', 'струёй сносит всё, что перед ней'],
+    ['Тройной разряд', 'роняет под себя три молнии'],
+    ['Огненный шар', 'большой взрыв с пожаром; сработает и сам при ударе'],
+    ['Арбузный удар', 'тяжелеет вшестеро и камнем падает вниз']
+  ];
+  var AB_ZONES = ['Лужайка', 'Пасека', 'Каменные соты', 'Ледяные соты', 'Ночной рой', 'Королевский улей'];
+  var abCv = $('ab-cv'), ag = abCv.getContext('2d'), abDpr = Math.min(2, window.devicePixelRatio || 1);
+  var ab = null, abPlaying = false, abRaf = 0, abLast = 0, abVeil = '', abLib = 0, abWant = 0, MX = null;
+  abCv.width = AB_W * abDpr; abCv.height = AB_H * abDpr;
+  ag.setTransform(abDpr, 0, 0, abDpr, 0, 0);
+
+  // уровень целиком выводится из своего номера: чем он больше, тем больше башен, этажей, камня и пчёл, а с ними — бочки с мёдом, грибы-батуты, висячие островки, ветер и слабая тяжесть
+  function abPlan(L) {
+    var rnd = tdRng(L * 3571 + 11), nT = Math.min(4, 1 + Math.floor((L + 1) / 5)), x0 = 770 - nT * 104 + 52, parts = [], foes = 0, k, f, r;
+    for (k = 0; k < nT; k++) {
+      var floors = 1 + Math.floor(rnd() * Math.min(3, 1 + L / 7)), p = { t: 'tower', x: x0 + k * 104, floors: floors, w: 62 + Math.floor(rnd() * 20), h: 52 + Math.floor(rnd() * 20), foe: [] };
+      r = rnd();
+      p.mat = L < 3 ? 'wax' : r < 0.3 ? 'wax' : r < 0.3 + Math.min(0.35, L / 50) ? 'stone' : L >= 11 && r > 0.85 ? 'ice' : 'wood';
+      for (f = 0; f < floors; f++) { p.foe.push(rnd() < Math.min(0.5, L / 45) ? 'bee' : 'wasp'); foes++; }
+      if (rnd() < 0.2 + L / 80) { p.top = rnd() < L / 50 ? 'bee' : 'wasp'; foes++; }
+      parts.push(p);
+    }
+    if (L % 10 === 0) { parts[parts.length - 1].top = 'queen'; foes += 3; }
+    if (L >= 4) for (k = Math.floor(rnd() * (1.3 + L / 12)); k > 0; k--) parts.push({ t: 'barrel', x: x0 - 52 + Math.floor(rnd() * nT) * 104 + (rnd() < 0.5 ? 104 : 0) });
+    if (L >= 7 && rnd() < 0.45) parts.push({ t: 'pad', x: 300 + rnd() * 70 });
+    if (L >= 13 && rnd() < 0.55) { parts.push({ t: 'isle', x: x0 - 80, y: 170 + rnd() * 90, foe: rnd() < 0.4 ? 'bee' : 'wasp' }); foes++; }
+    var open = Math.min(AB_FROGS, 1 + Math.floor(L / 2)), shots = Math.min(7, 3 + Math.ceil(foes / 2.2)), squad = [];
+    for (k = 0; k < shots; k++) squad.push(k === 0 && L % 2 === 0 && L / 2 < AB_FROGS ? L / 2 : Math.floor(rnd() * open));
+    return { parts: parts, squad: squad, zone: Math.min(5, Math.floor((L - 1) / 5)), wind: [9, 17, 23, 28].indexOf(L) >= 0 ? (L % 2 ? -1 : 1) * 0.00035 : 0, lowg: L === 19 || L === 27 };
+  }
+  function abBody(b, kind, hp, extra) {
+    b.ab = { kind: kind, hp: hp, max: hp, burn: 0, cold: false };
+    if (extra) for (var k in extra) b.ab[k] = extra[k];
+    MX.Composite.add(ab.engine.world, b);
+    ab.bodies.push(b);
+    return b;
+  }
+  function abBlock(x, y, w, h, mat) {
+    var m = AB_MAT[mat];
+    return abBody(MX.Bodies.rectangle(x, y, w, h, { density: m[0], friction: m[4], restitution: 0.05 }), 'block', m[1], { mat: mat, w: w, h: h });
+  }
+  function abFoe(x, y, type) {
+    var f = AB_FOE[type];
+    ab.foes += 1;
+    return abBody(MX.Bodies.circle(x, y - f[0], f[0], { density: 0.0011, friction: 0.7, restitution: 0.2 }), 'foe', f[1], { type: type, r: f[0] });
+  }
+  function abNew(L) {
+    var plan = abPlan(L), eng = MX.Engine.create();
+    eng.gravity.y = plan.lowg ? 0.55 : 1;
+    eng.positionIterations = 8; eng.velocityIterations = 6;
+    ab = { L: L, plan: plan, engine: eng, bodies: [], frogs: [], fx: [], clouds: [], queue: plan.squad.slice(), cur: null, mode: 'aim', pull: null, t: 0, wait: 0, foes: 0, score: 0, over: '', shake: 0 };
+    MX.Composite.add(eng.world, MX.Bodies.rectangle(AB_W / 2, AB_GROUND + 40, AB_W * 3, 80, { isStatic: true, friction: 0.9 }));
+    MX.Composite.add(eng.world, MX.Bodies.rectangle(AB_W + 60, AB_H / 2, 40, AB_H * 3, { isStatic: true }));
+    plan.parts.forEach(function (p) {
+      if (p.t === 'tower') {
+        var y = AB_GROUND, f;
+        for (f = 0; f < p.floors; f++) {
+          abBlock(p.x - p.w / 2 + 6, y - p.h / 2, 12, p.h, p.mat);
+          abBlock(p.x + p.w / 2 - 6, y - p.h / 2, 12, p.h, p.mat);
+          abBlock(p.x, y - p.h - 6, p.w + 12, 12, p.mat);
+          abFoe(p.x, y, p.foe[f]);
+          y -= p.h + 12;
+        }
+        if (p.top) abFoe(p.x, y, p.top);
+      } else if (p.t === 'barrel') {
+        abBody(MX.Bodies.rectangle(p.x, AB_GROUND - 17, 26, 34, { density: 0.001, friction: 0.7, restitution: 0.1 }), 'barrel', 12, { w: 26, h: 34 });
+      } else if (p.t === 'pad') {
+        var pad = MX.Bodies.rectangle(p.x, AB_GROUND - 9, 56, 18, { isStatic: true, restitution: 1.25 });
+        pad.ab = { kind: 'pad', hp: 1, max: 1 };
+        MX.Composite.add(eng.world, pad); ab.bodies.push(pad);
+      } else if (p.t === 'isle') {
+        var isle = MX.Bodies.rectangle(p.x, p.y, 84, 16, { isStatic: true, friction: 0.9 });
+        isle.ab = { kind: 'isle', hp: 1, max: 1 };
+        MX.Composite.add(eng.world, isle); ab.bodies.push(isle);
+        abFoe(p.x, p.y - 8, p.foe);
+      }
+    });
+    // урон от ударов: чем быстрее столкнулись и чем тяжелее ударивший, тем больнее. Первую секунду, пока постройки оседают, урон не считается
+    MX.Events.on(eng, 'collisionStart', function (ev) {
+      ev.pairs.forEach(function (pr) {
+        var a = pr.bodyA, b = pr.bodyB, dx = a.velocity.x - b.velocity.x, dy = a.velocity.y - b.velocity.y, rel = Math.sqrt(dx * dx + dy * dy);
+        [[a, b], [b, a]].forEach(function (q) {
+          var me = q[0], it = q[1];
+          if (me.ab && me.ab.kind === 'frog' && !me.ab.hit) { me.ab.hit = true; if (ab.cur && me === ab.cur.body && !ab.cur.used && (ab.cur.i === 2 || ab.cur.i === 10)) abUse(); }
+          if (ab.t < 1 || rel < 1.8 || !me.ab || me.ab.kind === 'frog' || me.ab.kind === 'pad' || me.ab.kind === 'isle') return;
+          var ratio = it.isStatic ? 2 : Math.max(0.4, Math.min(2.5, it.mass / me.mass));
+          abHurt(me, (rel - 1.8) * 7 * ratio * (it.ab && it.ab.kind === 'frog' ? 1.5 * it.ab.pow : 1));
+        });
+      });
+    });
+    abNext();
+  }
+  function abFx(type, x, y, o) { o = o || {}; o.type = type; o.x = x; o.y = y; o.t = 0; ab.fx.push(o); }
+  function abHurt(b, dmg) {
+    var s = b.ab;
+    if (!s || s.dead || s.kind === 'frog' || s.kind === 'pad' || s.kind === 'isle' || dmg <= 0) return;
+    s.hp -= dmg;
+    if (s.hp > 0) return;
+    s.dead = true;
+    MX.Composite.remove(ab.engine.world, b);
+    ab.bodies.splice(ab.bodies.indexOf(b), 1);
+    abFx('puff', b.position.x, b.position.y, { r: s.kind === 'foe' ? s.r + 10 : 20, c: s.kind === 'foe' ? '#ffffff' : s.kind === 'barrel' ? '#ffb703' : AB_MAT[s.mat][2] });
+    if (s.kind === 'foe') {
+      ab.foes -= 1; ab.score += AB_FOE[s.type][2];
+      abFx('text', b.position.x, b.position.y - 20, { text: '+' + AB_FOE[s.type][2] });
+      if (ac) play('tok', freq(ab.score % 5, 3), 0, 0.6);
+    } else if (s.kind === 'barrel') abBoom(b.position.x, b.position.y, 105, 46, 0.055);
+    else ab.score += 10;
+    abHud();
+  }
+  function abBoom(x, y, R, dmg, force) {
+    abFx('boom', x, y, { r: R });
+    ab.shake = 0.25;
+    if (ac) play('bass', freq(0, 0), 0, 0.9);
+    ab.bodies.slice().forEach(function (b) {
+      var dx = b.position.x - x, dy = b.position.y - y, d = Math.sqrt(dx * dx + dy * dy) || 1, fall = 1 - d / R;
+      if (fall <= 0 || b.isStatic) return;
+      MX.Body.applyForce(b, b.position, { x: dx / d * force * fall * b.mass, y: (dy / d - 0.4) * force * fall * b.mass });
+      abHurt(b, dmg * fall);
+    });
+  }
+  function abNear(x, y, R, kind) {
+    return ab.bodies.filter(function (b) { var dx = b.position.x - x, dy = b.position.y - y; return (!kind || b.ab.kind === kind) && !b.isStatic && dx * dx + dy * dy <= R * R; })
+      .sort(function (p, q) { return (p.position.x - x) * (p.position.x - x) + (p.position.y - y) * (p.position.y - y) - (q.position.x - x) * (q.position.x - x) - (q.position.y - y) * (q.position.y - y); });
+  }
+  function abShot(i, x, y, vx, vy, small) {
+    var lvl = Math.max(1, tdFrogLvl(i)), b = MX.Bodies.circle(x, y, small ? 10 : 16, { density: small ? 0.003 : 0.004, restitution: 0.35, friction: 0.6, frictionAir: 0.004 });
+    // лягушка, выращенная в пруду, бьёт сильнее: +8% за каждый уровень сверх первого
+    b.ab = { kind: 'frog', i: i, pow: 1 + 0.08 * (lvl - 1), small: !!small, life: 0 };
+    MX.Composite.add(ab.engine.world, b);
+    MX.Body.setVelocity(b, { x: vx, y: vy });
+    MX.Body.setAngularVelocity(b, 0.12);
+    ab.frogs.push(b);
+    return b;
+  }
+  // приём летящей лягушки
+  function abUse() {
+    var c = ab.cur, b = c && c.body, x, y, v, sp, pow, near;
+    if (!c || c.used || ab.mode !== 'fly') return;
+    c.used = true;
+    x = b.position.x; y = b.position.y; v = b.velocity; sp = Math.sqrt(v.x * v.x + v.y * v.y) || 1; pow = b.ab.pow;
+    abFx('text', x, y - 26, { text: AB_SKILL[c.i][0] + '!' });
+    if (ac) play(FROGS[c.i].voice, freq(FROGS[c.i].deg + 2, FROGS[c.i].oct), 0, 0.8);
+    if (c.i === 0) {
+      near = abNear(x, y, 200)[0];
+      if (near) { abFx('line', x, y, { x2: near.position.x, y2: near.position.y, c: '#f06292', w: 7 }); MX.Body.applyForce(near, near.position, { x: (x - near.position.x) * 0.0006 * near.mass, y: (y - near.position.y) * 0.0006 * near.mass - 0.02 * near.mass }); abHurt(near, 34 * pow); }
+    } else if (c.i === 1) {
+      [-0.28, 0.28].forEach(function (a) { abShot(1, x, y, v.x * Math.cos(a) - v.y * Math.sin(a), v.x * Math.sin(a) + v.y * Math.cos(a), true).ab.pow = pow; });
+    } else if (c.i === 2) abBoom(x, y, 100, 38 * pow, 0.05);
+    else if (c.i === 3) { MX.Body.setVelocity(b, { x: v.x / sp * 27, y: v.y / sp * 27 }); b.ab.pow = pow * 1.8; abFx('ring', x, y, { r: 40, c: '#ffffff' }); }
+    else if (c.i === 4) abNear(x, y, 240, 'foe').slice(0, 3).forEach(function (f) { abFx('line', x, y, { x2: f.position.x, y2: f.position.y, c: '#ffe066', w: 4, zig: true }); abHurt(f, 24 * pow); });
+    else if (c.i === 5) { abFx('ring', x, y, { r: 125, c: '#7fdcff' }); abNear(x, y, 125).forEach(function (o) { if (o.ab.kind === 'block') { o.ab.cold = true; o.ab.hp *= 0.35; } else if (o.ab.kind === 'foe') abHurt(o, o.ab.hp * 0.4); }); }
+    else if (c.i === 6) ab.clouds.push({ x: x, y: y, r: 90, t: 4.5, dps: 10 * pow });
+    else if (c.i === 7) { abFx('ring', x, y, { r: 100, c: '#ff7b00' }); abNear(x, y, 100, 'block').forEach(function (o) { o.ab.burn = 3.5; o.ab.fire = 9 * pow; }); }
+    else if (c.i === 8) {
+      abFx('line', x, y, { x2: x + v.x / sp * 210, y2: y + v.y / sp * 210, c: '#4cc9f0', w: 16 });
+      abNear(x, y, 215).forEach(function (o) { var dx = o.position.x - x, dy = o.position.y - y, d = Math.sqrt(dx * dx + dy * dy) || 1; if ((dx * v.x + dy * v.y) / (d * sp) < 0.75) return; MX.Body.applyForce(o, o.position, { x: v.x / sp * 0.05 * o.mass, y: v.y / sp * 0.05 * o.mass - 0.012 * o.mass }); abHurt(o, 9 * pow); });
+    } else if (c.i === 9) {
+      [-34, 0, 34].forEach(function (dx) {
+        var hit = MX.Query.ray(ab.bodies, { x: x + dx, y: y + 18 }, { x: x + dx, y: AB_GROUND }).map(function (q) { return q.bodyA || q.body; }).filter(function (o) { return o && o.ab && !o.isStatic; }).sort(function (p, q) { return p.position.y - q.position.y; })[0];
+        abFx('line', x + dx, y, { x2: x + dx, y2: hit ? hit.position.y : AB_GROUND, c: '#ffe066', w: 5, zig: true });
+        if (hit) abHurt(hit, 30 * pow);
+      });
+    } else if (c.i === 10) { abBoom(x, y, 125, 44 * pow, 0.06); abNear(x, y, 125, 'block').forEach(function (o) { o.ab.burn = 3; o.ab.fire = 8 * pow; }); }
+    else { MX.Body.setDensity(b, 0.024); MX.Body.setVelocity(b, { x: v.x * 0.25, y: 17 }); abFx('ring', x, y, { r: 36, c: '#4caf50' }); }
+  }
+  function abNext() {
+    ab.frogs.forEach(function (f) { MX.Composite.remove(ab.engine.world, f); });
+    ab.frogs = []; ab.cur = null; ab.pull = null;
+    if (!ab.queue.length) { ab.mode = 'empty'; ab.wait = 2.5; abHud(); return; }
+    ab.cur = { i: ab.queue.shift(), body: null, used: false, t: 0 };
+    ab.mode = 'aim';
+    tdFrogSprite(ab.cur.i);
+    abHud();
+  }
+  function abStep(dt) {
+    var c = ab.cur, k;
+    ab.t += dt;
+    if (ab.shake > 0) ab.shake -= dt;
+    if (ab.plan.wind) ab.frogs.forEach(function (f) { MX.Body.applyForce(f, f.position, { x: ab.plan.wind * f.mass, y: 0 }); });
+    MX.Engine.update(ab.engine, 1000 / 60);
+    // горящие блоки теряют прочность: воск и дерево вдвое быстрее камня
+    ab.bodies.slice().forEach(function (b) {
+      if (b.ab.burn > 0) { b.ab.burn -= dt; abHurt(b, b.ab.fire * dt * (b.ab.mat === 'stone' ? 0.3 : b.ab.mat === 'ice' ? 3 : 1.6)); }
+      if (b.position.y > AB_H + 200 || b.position.x < -300) abHurt(b, 9999);
+    });
+    ab.clouds = ab.clouds.filter(function (cl) { cl.t -= dt; abNear(cl.x, cl.y, cl.r, 'foe').forEach(function (f) { abHurt(f, cl.dps * dt); }); return cl.t > 0; });
+    ab.fx = ab.fx.filter(function (f) { f.t += dt; return f.t < (f.type === 'text' ? 1 : 0.45); });
+    if (ab.mode === 'fly') {
+      c.t += dt;
+      var b = c.body, sp = Math.sqrt(b.velocity.x * b.velocity.x + b.velocity.y * b.velocity.y);
+      c.slow = sp < 0.4 ? (c.slow || 0) + dt : 0;
+      if (c.t > 9 || c.slow > 1 || b.position.x > AB_W + 40 || b.position.x < -60 || b.position.y > AB_H + 40) { ab.mode = 'rest'; ab.wait = 1.1; }
+    } else if (ab.mode === 'rest') {
+      ab.wait -= dt;
+      if (ab.wait <= 0) abNext();
+    } else if (ab.mode === 'empty') {
+      ab.wait -= dt;
+      if (ab.wait <= 0 && ab.foes > 0) ab.over = 'lose';
+    }
+    if (ab.foes <= 0) { ab.win = (ab.win || 0) + dt; if (ab.win > 1.2) ab.over = 'win'; }
+  }
+
+  function abFoeDraw(b) {
+    var s = b.ab, r = s.r, flap = Math.sin(ab.t * 34 + b.id) * 0.3, k, queen = s.type === 'queen', bee = s.type === 'bee';
+    ag.save();
+    ag.translate(b.position.x, b.position.y); ag.rotate(b.angle);
+    ag.fillStyle = 'rgba(235,248,255,0.9)'; ag.strokeStyle = '#8aa7b8'; ag.lineWidth = 1.5;
+    for (k = -1; k <= 1; k += 2) { ag.beginPath(); ag.ellipse(k * r * 0.95, -r * 0.75, r * 0.8, r * 0.36, k * (0.5 + flap), 0, Math.PI * 2); ag.fill(); ag.stroke(); }
+    ag.fillStyle = queen ? '#c77dff' : bee ? '#ffb703' : '#ffd60a';
+    ag.beginPath(); ag.arc(0, 0, r, 0, Math.PI * 2); ag.fill();
+    ag.save(); ag.clip(); ag.fillStyle = queen ? '#3c096c' : bee ? '#6b3a12' : '#22223b';
+    [0.05, 0.5].forEach(function (p) { ag.fillRect(-r, r * p, r * 2, r * 0.24); });
+    ag.restore();
+    for (k = -1; k <= 1; k += 2) {
+      ag.fillStyle = '#ffffff'; ag.strokeStyle = '#1c2b22'; ag.lineWidth = 1.2; ag.beginPath(); ag.arc(k * r * 0.36, -r * 0.3, r * 0.27, 0, Math.PI * 2); ag.fill(); ag.stroke();
+      ag.fillStyle = bee ? '#1c2b22' : '#d00000'; ag.beginPath(); ag.arc(k * r * 0.4, -r * 0.26, r * 0.13, 0, Math.PI * 2); ag.fill();
+      if (!bee) { ag.strokeStyle = '#1c2b22'; ag.lineWidth = 2; ag.beginPath(); ag.moveTo(k * r * 0.66, -r * 0.66); ag.lineTo(k * r * 0.14, -r * 0.46); ag.stroke(); }
+      ag.fillStyle = 'rgba(242,155,181,0.85)'; ag.beginPath(); ag.ellipse(k * r * 0.62, r * 0.02, r * 0.15, r * 0.09, 0, 0, Math.PI * 2); ag.fill();
+    }
+    ag.strokeStyle = '#1c2b22'; ag.lineWidth = 1.8; ag.beginPath();
+    if (bee) ag.arc(0, -r * 0.02, r * 0.22, 0.15 * Math.PI, 0.85 * Math.PI); else ag.arc(0, r * 0.26, r * 0.22, 1.2 * Math.PI, 1.8 * Math.PI);
+    ag.stroke();
+    if (queen) { ag.fillStyle = '#ffd60a'; ag.strokeStyle = '#b58900'; ag.lineWidth = 1.5; ag.beginPath(); ag.moveTo(-r * 0.5, -r * 0.82); ag.lineTo(-r * 0.5, -r * 1.3); ag.lineTo(-r * 0.25, -r * 1.02); ag.lineTo(0, -r * 1.42); ag.lineTo(r * 0.25, -r * 1.02); ag.lineTo(r * 0.5, -r * 1.3); ag.lineTo(r * 0.5, -r * 0.82); ag.closePath(); ag.fill(); ag.stroke(); }
+    ag.restore();
+    if (s.hp < s.max) { ag.fillStyle = 'rgba(0,0,0,0.45)'; ag.fillRect(b.position.x - 14, b.position.y - r - 12, 28, 4); ag.fillStyle = '#8ac926'; ag.fillRect(b.position.x - 14, b.position.y - r - 12, 28 * Math.max(0, s.hp / s.max), 4); }
+  }
+  function abFrogDraw(i, x, y, angle, size) {
+    var img = tdFrogSprite(i);
+    ag.save(); ag.translate(x, y); ag.rotate(angle);
+    if (img) ag.drawImage(img, -size / 2, -size * 0.62, size, size * 1.033);
+    else { ag.fillStyle = FROGS[i].skin; ag.beginPath(); ag.arc(0, 0, size * 0.36, 0, Math.PI * 2); ag.fill(); }
+    ag.restore();
+  }
+  function abDraw() {
+    var z = ab ? ab.plan.zone : 0, k, night = z === 4, sky = [['#bfe8ff', '#e8f7d0'], ['#ffe9b8', '#fff6d6'], ['#c9d6df', '#e6ecef'], ['#cfeeff', '#f2fbff'], ['#1d2b4a', '#3a3f6b'], ['#ffd6a5', '#ffe9c9']][z];
+    var bg = ag.createLinearGradient(0, 0, 0, AB_H);
+    bg.addColorStop(0, sky[0]); bg.addColorStop(1, sky[1]);
+    ag.save();
+    if (ab && ab.shake > 0) ag.translate((Math.random() - 0.5) * 8, (Math.random() - 0.5) * 8);
+    ag.fillStyle = bg; ag.fillRect(-10, -10, AB_W + 20, AB_H + 20);
+    for (k = 0; k < 5; k++) { ag.fillStyle = night ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.55)'; ag.beginPath(); ag.ellipse(90 + k * 170 + ((ab ? ab.t : 0) * 4) % 170, 60 + (k % 3) * 34, 54, 16, 0, 0, Math.PI * 2); ag.fill(); }
+    if (night) for (k = 0; k < 40; k++) { ag.fillStyle = 'rgba(255,255,255,' + (0.4 + 0.5 * Math.abs(Math.sin((ab ? ab.t : 0) + k))).toFixed(2) + ')'; ag.fillRect((k * 83) % AB_W, (k * 47) % 300, 2, 2); }
+    ag.fillStyle = night ? '#2f5d50' : ['#8fcf7a', '#b7d66a', '#9aa58a', '#d7ecf2', '#2f5d50', '#d9b45a'][z]; ag.fillRect(-10, AB_GROUND, AB_W + 20, AB_H);
+    ag.fillStyle = 'rgba(0,0,0,0.12)'; ag.fillRect(-10, AB_GROUND, AB_W + 20, 6);
+    if (!ab) { ag.restore(); return; }
+    // рогатка и очередь лягушек
+    ag.strokeStyle = '#6b4226'; ag.lineWidth = 9; ag.lineCap = 'round';
+    ag.beginPath(); ag.moveTo(AB_SLING.x, AB_GROUND); ag.lineTo(AB_SLING.x, AB_SLING.y + 34); ag.lineTo(AB_SLING.x - 16, AB_SLING.y - 6); ag.moveTo(AB_SLING.x, AB_SLING.y + 34); ag.lineTo(AB_SLING.x + 16, AB_SLING.y - 6); ag.stroke();
+    ab.queue.forEach(function (i, n) { abFrogDraw(i, 98 - n * 15, AB_GROUND - 13, 0, 28); });
+    if (ab.mode === 'aim' && ab.cur) {
+      var px = ab.pull ? ab.pull.x : AB_SLING.x, py = ab.pull ? ab.pull.y : AB_SLING.y;
+      ag.strokeStyle = '#3b2313'; ag.lineWidth = 5;
+      ag.beginPath(); ag.moveTo(AB_SLING.x - 16, AB_SLING.y - 6); ag.lineTo(px, py); ag.lineTo(AB_SLING.x + 16, AB_SLING.y - 6); ag.stroke();
+      if (ab.pull) {
+        // пунктир показывает, куда полетит лягушка
+        var vx = (AB_SLING.x - px) * 0.14, vy = (AB_SLING.y - py) * 0.14, tx = px, ty = py, g = 0.278 * (ab.plan.lowg ? 0.55 : 1);
+        ag.fillStyle = night ? 'rgba(255,255,255,0.8)' : 'rgba(23,54,42,0.55)';
+        for (k = 0; k < 46; k++) { vx *= 0.996; vy = vy * 0.996 + g; tx += vx; ty += vy; if (k % 3 === 0) { ag.beginPath(); ag.arc(tx, ty, 3, 0, Math.PI * 2); ag.fill(); } if (ty > AB_GROUND) break; }
+      }
+      abFrogDraw(ab.cur.i, px, py, 0, 44);
+    }
+    ab.clouds.forEach(function (cl) { ag.fillStyle = 'rgba(140,220,60,' + (0.25 * Math.min(1, cl.t)).toFixed(2) + ')'; for (k = 0; k < 5; k++) { ag.beginPath(); ag.arc(cl.x + Math.cos(k * 1.26 + ab.t) * cl.r * 0.4, cl.y + Math.sin(k * 1.26 + ab.t) * cl.r * 0.3, cl.r * 0.6, 0, Math.PI * 2); ag.fill(); } });
+    ab.bodies.forEach(function (b) {
+      var s = b.ab;
+      if (s.kind === 'foe') { abFoeDraw(b); return; }
+      ag.save();
+      ag.translate(b.position.x, b.position.y); ag.rotate(b.angle);
+      if (s.kind === 'block') {
+        var m = AB_MAT[s.mat];
+        ag.fillStyle = s.cold ? '#d9f2ff' : m[2]; ag.strokeStyle = s.cold ? '#7fdcff' : m[3]; ag.lineWidth = 2;
+        ag.fillRect(-s.w / 2, -s.h / 2, s.w, s.h); ag.strokeRect(-s.w / 2, -s.h / 2, s.w, s.h);
+        if (s.hp < s.max * 0.5) { ag.strokeStyle = 'rgba(0,0,0,0.45)'; ag.lineWidth = 1.5; ag.beginPath(); ag.moveTo(-s.w * 0.3, -s.h * 0.4); ag.lineTo(s.w * 0.1, 0); ag.lineTo(-s.w * 0.1, s.h * 0.4); ag.stroke(); }
+        if (s.burn > 0) for (k = 0; k < 3; k++) { ag.fillStyle = k % 2 ? '#ffd60a' : '#ff7b00'; ag.beginPath(); ag.arc((k - 1) * s.w * 0.3, -s.h / 2 - 4 - Math.abs(Math.sin(ab.t * 12 + k + b.id)) * 8, 5, 0, Math.PI * 2); ag.fill(); }
+      } else if (s.kind === 'barrel') {
+        ag.fillStyle = '#b5651d'; ag.strokeStyle = '#6b3a12'; ag.lineWidth = 2; ag.fillRect(-13, -17, 26, 34); ag.strokeRect(-13, -17, 26, 34);
+        ag.fillStyle = '#ffb703'; ag.fillRect(-13, -17, 26, 9); ag.beginPath(); ag.arc(-5, -8, 4, 0, Math.PI); ag.arc(6, -8, 3, 0, Math.PI); ag.fill();
+        ag.fillStyle = '#6b3a12'; ag.fillRect(-13, 2, 26, 3);
+      } else if (s.kind === 'pad') {
+        ag.fillStyle = '#f4ead5'; ag.fillRect(-8, -2, 16, 11);
+        ag.fillStyle = '#e63946'; ag.beginPath(); ag.ellipse(0, 0, 28, 13, 0, Math.PI, 0); ag.closePath(); ag.fill();
+        ag.fillStyle = '#ffffff'; [[-14, -6], [2, -9], [15, -5]].forEach(function (q) { ag.beginPath(); ag.arc(q[0], q[1], 3, 0, Math.PI * 2); ag.fill(); });
+      } else {
+        ag.fillStyle = '#7a5c3e'; ag.fillRect(-42, -8, 84, 16); ag.fillStyle = '#58a84a'; ag.fillRect(-42, -10, 84, 6);
+      }
+      ag.restore();
+    });
+    ab.frogs.forEach(function (f) { abFrogDraw(f.ab.i, f.position.x, f.position.y, f.angle, f.ab.small ? 28 : 44); });
+    ab.fx.forEach(function (f) {
+      var a = 1 - f.t / (f.type === 'text' ? 1 : 0.45);
+      ag.globalAlpha = Math.max(0, a);
+      if (f.type === 'boom') { ag.fillStyle = '#ff9f1c'; ag.beginPath(); ag.arc(f.x, f.y, f.r * (1 - a * 0.6), 0, Math.PI * 2); ag.fill(); ag.fillStyle = '#ffe066'; ag.beginPath(); ag.arc(f.x, f.y, f.r * (1 - a) * 0.6 + 6, 0, Math.PI * 2); ag.fill(); }
+      else if (f.type === 'ring') { ag.strokeStyle = f.c; ag.lineWidth = 5; ag.beginPath(); ag.arc(f.x, f.y, f.r * (1 - a * 0.7), 0, Math.PI * 2); ag.stroke(); }
+      else if (f.type === 'puff') { ag.fillStyle = f.c; for (k = 0; k < 6; k++) { ag.beginPath(); ag.arc(f.x + Math.cos(k * 1.05) * f.r * (1 - a), f.y + Math.sin(k * 1.05) * f.r * (1 - a), 5 * a + 2, 0, Math.PI * 2); ag.fill(); } }
+      else if (f.type === 'line') {
+        ag.strokeStyle = f.c; ag.lineWidth = f.w; ag.lineCap = 'round'; ag.lineJoin = 'round'; ag.beginPath(); ag.moveTo(f.x, f.y);
+        if (f.zig) for (k = 1; k < 5; k++) ag.lineTo(f.x + (f.x2 - f.x) * k / 5 + ((k * 7) % 13 - 6), f.y + (f.y2 - f.y) * k / 5 + ((k * 5) % 11 - 5));
+        ag.lineTo(f.x2, f.y2); ag.stroke();
+      } else {
+        ag.font = 'bold 18px "Balsamiq Sans", "Comic Sans MS", sans-serif'; ag.textAlign = 'center';
+        ag.lineWidth = 4; ag.strokeStyle = '#ffffff'; ag.strokeText(f.text, f.x, f.y - f.t * 30); ag.fillStyle = '#17362a'; ag.fillText(f.text, f.x, f.y - f.t * 30);
+      }
+      ag.globalAlpha = 1;
+    });
+    if (ab.plan.wind) { ag.font = 'bold 15px "Balsamiq Sans", "Comic Sans MS", sans-serif'; ag.textAlign = 'left'; ag.fillStyle = night ? '#ffffff' : '#17362a'; ag.fillText('Ветер ' + (ab.plan.wind > 0 ? '→ в спину' : '← в лицо'), 14, 26); }
+    if (ab.plan.lowg) { ag.font = 'bold 15px "Balsamiq Sans", "Comic Sans MS", sans-serif'; ag.textAlign = 'left'; ag.fillStyle = night ? '#ffffff' : '#17362a'; ag.fillText('Слабая тяжесть: всё летит дальше', 14, 26); }
+    ag.restore();
+  }
+
+  function abHud() {
+    if (!ab) return;
+    $('ab-title').textContent = ab.L + '. ' + AB_ZONES[ab.plan.zone];
+    $('ab-score').textContent = fmt(ab.score);
+    $('ab-foes').textContent = Math.max(0, ab.foes);
+    $('ab-left').textContent = ab.queue.length + (ab.cur && ab.mode === 'aim' ? 1 : 0);
+    var c = ab.cur, info = $('ab-info');
+    info.textContent = '';
+    if (!c) { info.textContent = 'Лягушки кончились.'; return; }
+    var b = document.createElement('b');
+    b.textContent = FROGS[c.i].name + ' — ' + AB_SKILL[c.i][0] + '.';
+    info.appendChild(b);
+    info.appendChild(document.createTextNode(' Оттяните лягушку на рогатке и отпустите. В полёте нажмите ещё раз — она ' + AB_SKILL[c.i][1] + '.'));
+  }
+  function abFrame(ts) {
+    if (!abPlaying || !ab) return;
+    var dt = abLast ? Math.min(0.034, (ts - abLast) / 1000) : 0.016;
+    abLast = ts;
+    abStep(dt);
+    abDraw();
+    if (ab.over) abFinish(); else abRaf = requestAnimationFrame(abFrame);
+  }
+  // сундук дают за первую победу на каждом пятом уровне: 5 и 10 — деревянный, 15 и 20 — серебряный, 25 и 30 — золотой
+  function abFinish() {
+    abPlaying = false;
+    var L = ab.L, win = ab.over === 'win', left = ab.queue.length + (ab.mode === 'aim' ? 1 : 0), text;
+    if (win) {
+      var stars = left >= 2 ? 3 : left >= 1 ? 2 : 1, first = !state.ab.done[L - 1];
+      ab.score += left * 300;
+      state.ab.done[L - 1] = Math.max(state.ab.done[L - 1], stars);
+      text = 'Все ульи разорены, лягушек в запасе: ' + left + '. Счёт: ' + fmt(ab.score) + '.';
+      if (first && L % 5 === 0) { var tier = L >= 25 ? 2 : L >= 15 ? 1 : 0; state.td.chests[tier] += 1; text += ' Награда — ' + CHESTS[tier][0].toLowerCase() + ', он ждёт в инвентаре на вкладке «Моя лягушка».'; }
+      dirty = true; save();
+      abVeil = L < AB_LEVELS ? 'next' : 'map';
+      $('ab-veil-title').textContent = 'Победа! ' + tdStars(stars);
+      $('ab-veil-btn').textContent = L < AB_LEVELS ? 'Следующий уровень' : 'К уровням';
+      if (ac) [0, 2, 4, 5, 7].forEach(function (d, k) { play('pluck', freq(d, 2), ac.currentTime + k * 0.11); });
+    } else {
+      abVeil = 'retry';
+      text = 'В ульях осталось жильцов: ' + ab.foes + '. Попробуйте другой угол или приберегите приём до самой постройки.';
+      $('ab-veil-title').textContent = 'Улей устоял';
+      $('ab-veil-btn').textContent = 'Ещё раз';
+      if (ac) [4, 2, 0].forEach(function (d, k) { play('bass', freq(d, 1), ac.currentTime + k * 0.18); });
+    }
+    $('ab-veil-text').textContent = text;
+    $('ab-veil-alt').hidden = abVeil === 'map';
+    $('ab-veil').hidden = false;
+    abHud(); checkAch();
+  }
+  function abLevels() {
+    var box = $('ab-levels'), done = state.ab.done, k, sum = 0;
+    box.textContent = '';
+    for (k = 0; k < AB_LEVELS; k++) (function (n) {
+      var open = n === 0 || done[n - 1] > 0, b = document.createElement('button'), num = document.createElement('b'), s = document.createElement('small');
+      sum += done[n];
+      b.type = 'button'; b.className = 'lvl'; b.id = 'ab-lvl-' + (n + 1); b.disabled = !open;
+      num.textContent = String(n + 1);
+      b.appendChild(num); b.appendChild(document.createTextNode(AB_ZONES[Math.min(5, Math.floor(n / 5))]));
+      if (done[n]) { s.className = 'won'; s.textContent = tdStars(done[n]); }
+      else s.textContent = !open ? 'Сначала пройдите уровень ' + n : (n + 1) % 5 === 0 ? 'Награда: сундук' : (n + 1) % 2 === 0 && (n + 1) / 2 < AB_FROGS ? 'Новая лягушка: ' + NAMES[(n + 1) / 2] : 'Открыт';
+      b.appendChild(s);
+      b.addEventListener('click', function () { abGo(n + 1); });
+      box.appendChild(b);
+    })(k);
+    $('ab-stars').textContent = 'Звёзд собрано: ' + sum + ' из ' + AB_LEVELS * 3;
+  }
+  function abOpen() { if ($('ab-play').hidden) abLevels(); }
+  function abPause() {
+    if (!abPlaying) return;
+    abPlaying = false;
+    cancelAnimationFrame(abRaf);
+    abVeil = 'resume';
+    $('ab-veil-title').textContent = 'Пауза';
+    $('ab-veil-text').textContent = 'Лягушки ждут у рогатки.';
+    $('ab-veil-btn').textContent = 'Продолжить';
+    $('ab-veil-alt').hidden = false;
+    $('ab-veil').hidden = false;
+  }
+  function abClose() {
+    abPlaying = false; cancelAnimationFrame(abRaf); ab = null;
+    $('ab-play').hidden = true;
+    abLevels();
+  }
+  // физический движок грузится один раз; пока он не пришёл, окно показывает ожидание, а если не пришёл совсем — объясняет почему
+  function abGo(L) {
+    audio();
+    abWant = L;
+    $('ab-play').hidden = false; $('ab-veil').hidden = true;
+    fitGame('ab-play');
+    if (abLib === 2) { abStart(L); return; }
+    abDraw();
+    $('ab-veil-title').textContent = 'Загружаем физику…';
+    $('ab-veil-text').textContent = 'Нужна один раз, дальше игра запускается сразу.';
+    $('ab-veil-btn').hidden = true; $('ab-veil-alt').hidden = false; $('ab-veil').hidden = false;
+    if (abLib === 1) return;
+    abLib = 1;
+    var sc = document.createElement('script');
+    sc.src = 'https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js'; sc.async = true;
+    sc.onload = function () { abLib = 2; MX = window.Matter; $('ab-veil-btn').hidden = false; if (!$('ab-play').hidden) abStart(abWant); };
+    sc.onerror = function () { abLib = 0; $('ab-veil-title').textContent = 'Физика не загрузилась'; $('ab-veil-text').textContent = 'Не получилось скачать движок игры. Проверьте связь и попробуйте войти в уровень ещё раз.'; };
+    document.head.appendChild(sc);
+  }
+  function abStart(L) {
+    for (var i = 0; i < AB_FROGS; i++) tdFrogSprite(i);
+    abNew(L);
+    $('ab-veil').hidden = true; $('ab-veil-btn').hidden = false;
+    abPlaying = true; abLast = 0;
+    cancelAnimationFrame(abRaf);
+    abRaf = requestAnimationFrame(abFrame);
+    abHud();
+  }
+  function abPoint(ev) { var box = abCv.getBoundingClientRect(); return { x: (ev.clientX - box.left) / box.width * AB_W, y: (ev.clientY - box.top) / box.height * AB_H }; }
+  function abAim(p) {
+    var dx = p.x - AB_SLING.x, dy = p.y - AB_SLING.y, d = Math.sqrt(dx * dx + dy * dy) || 1, m = Math.min(105, d);
+    ab.pull = { x: AB_SLING.x + dx / d * m, y: Math.min(AB_GROUND - 18, AB_SLING.y + dy / d * m) };
+  }
+  abCv.addEventListener('pointerdown', function (ev) {
+    if (!abPlaying || !ab) return;
+    ev.preventDefault();
+    var p = abPoint(ev);
+    if (ab.mode === 'fly') { abUse(); return; }
+    if (ab.mode !== 'aim') return;
+    // оттягивать можно, взявшись где угодно в левой части поля — так удобнее пальцем
+    if (p.x < 330) { ab.drag = true; abAim(p); try { abCv.setPointerCapture(ev.pointerId); } catch (e) { /* без захвата тоже работает */ } }
+  });
+  abCv.addEventListener('pointermove', function (ev) { if (abPlaying && ab && ab.drag) abAim(abPoint(ev)); });
+  ['pointerup', 'pointercancel'].forEach(function (n) {
+    abCv.addEventListener(n, function () {
+      if (!ab || !ab.drag) return;
+      ab.drag = false;
+      var p = ab.pull, dx = AB_SLING.x - p.x, dy = AB_SLING.y - p.y;
+      if (dx * dx + dy * dy < 15 * 15) { ab.pull = null; return; }
+      ab.cur.body = abShot(ab.cur.i, p.x, p.y, dx * 0.14, dy * 0.14, false);
+      ab.mode = 'fly'; ab.pull = null;
+      if (ac) play('pluck', freq(1, 2), 0, 0.7);
+      abHud();
+    });
+  });
+  $('ab-pause').addEventListener('click', abPause);
+  $('ab-exit').addEventListener('click', abClose);
+  $('ab-again').addEventListener('click', function () { if (ab && abLib === 2) abStart(ab.L); });
+  $('ab-veil-alt').addEventListener('click', abClose);
+  $('ab-veil-btn').addEventListener('click', function () {
+    if (abVeil === 'resume') { abPlaying = true; $('ab-veil').hidden = true; abLast = 0; abRaf = requestAnimationFrame(abFrame); }
+    else if (abVeil === 'next') abStart(ab.L + 1);
+    else if (abVeil === 'retry') abStart(ab.L);
+    else abClose();
+  });
+
   // ---------- достижения ----------
 
+  function abWon() { return state.ab.done.filter(function (x) { return x > 0; }).length; }
   function frogsAt(lvl) { return state.frogs.filter(function (x) { return x.open && levelOf(x.n) >= lvl; }).length; }
   function tdWon(stars) { return state.td.done.filter(function (x) { return x >= stars; }).length; }
   function lootGot(rare) { return LOOT_IDS.filter(function (id) { return state.td.loot[id] && (rare === undefined || LOOT[id][2] === rare); }).length; }
@@ -2814,6 +3354,9 @@
     ['Ловля мошек', 'nin1', 'Ловкий язык', 'Наберите 100 очков в «Ловле мошек».', 100, 10, function () { return state.me.nin; }],
     ['Ловля мошек', 'nin2', 'Гроза мошкары', 'Наберите 500 очков в «Ловле мошек».', 500, 30, function () { return state.me.nin; }],
     ['Ловля мошек', 'sweep', 'Одним махом', 'Поймайте пять насекомых за один взмах языка.', 1, 20, function () { return state.ach.sweep; }],
+    ['Штурм ульев', 'ab1', 'Первый улей', 'Пройдите первый уровень «Штурма ульев».', 1, 5, function () { return abWon(); }],
+    ['Штурм ульев', 'ab15', 'Гроза пасеки', 'Пройдите 15 уровней «Штурма ульев».', 15, 40, function () { return abWon(); }],
+    ['Штурм ульев', 'ab30', 'Конец осиному царству', 'Пройдите все 30 уровней «Штурма ульев».', 30, 120, function () { return abWon(); }],
     ['Оборона болота', 'td1', 'Первая оборона', 'Пройдите первый уровень.', 1, 5, function () { return tdWon(1); }],
     ['Оборона болота', 'td10', 'Половина болота', 'Пройдите 10 уровней.', 10, 30, function () { return tdWon(1); }],
     ['Оборона болота', 'td20', 'Хозяин болота', 'Пройдите 20 уровней.', 20, 100, function () { return tdWon(1); }],
@@ -2929,7 +3472,7 @@
   var NET_ACH_MAX = 100;
   // правила базы принимают счёт обороны не больше 2060 (20 уровней на три звезды); уровни сверх этого в таблицу пока не попадают
   var NET_TD_MAX = 2060;
-  var TOPS = [['kvak', 'Кваки'], ['jump', 'Прыжки'], ['td', 'Оборона болота'], ['ach', 'Достижения']];
+  var TOPS = [['kvak', 'Кваки'], ['jump', 'Прыжки'], ['td', 'Оборона болота'], ['nin', 'Ловля мошек'], ['ab', 'Штурм ульев'], ['ach', 'Достижения']];
   var net = { db: null, uid: '', ok: false, sent: '', board: 'kvak', err: '' };
   function loadScript(src, done) {
     var s = document.createElement('script');
@@ -2966,8 +3509,8 @@
   function netMine() {
     keepRecords();
     return {
-      // после имени через черту идёт код вида питомца: правила базы принимают только известные поля, а имя — одно из них
-      name: (state.me.name.replace(/\|/g, ' ').trim().slice(0, 18) || 'Лягушка ' + net.uid.slice(0, 4).toUpperCase()) + '|' + petCode(),
+      // после имени через черту идут код вида питомца и рекорды двух мини-игр: правила базы принимают только известные поля, а имя — одно из них
+      name: (state.me.name.replace(/\|/g, ' ').trim().slice(0, 17) || 'Лягушка ' + net.uid.slice(0, 4).toUpperCase()) + '|' + petCode() + enc2(state.rec.nin) + enc2(state.rec.ab),
       // в таблицу идут лучшие результаты за все жизни: перерождение их не обнуляет
       kvak: Math.min(1e8, state.rec.kvak), jump: Math.min(1e6, state.rec.jump),
       td: Math.min(NET_TD_MAX, state.rec.td), ach: Math.min(NET_ACH_MAX, ACH.filter(function (a) { return state.ach.got[a[1]]; }).length)
@@ -2995,12 +3538,18 @@
     WARDROBE.forEach(function (slot, k) { wear[slot] = slotItems(slot)[n(3 + k) - 1] || ''; });
     return petLook(Math.min(4, n(0)), n(1), n(2), wear, false);
   }
-  // имя из базы: «имя|код вида»; у строк, записанных до появления кода, кода нет
+  // числа до 7920 двумя знаками: так в хвост имени помещаются рекорд ловли мошек и счёт штурма ульев (уровни × 91 + звёзды)
+  var B89 = '';
+  (function () { for (var c = 33; c < 127; c++) if ('"\'\\`|'.indexOf(String.fromCharCode(c)) < 0) B89 += String.fromCharCode(c); })();
+  function enc2(n) { n = Math.max(0, Math.min(B89.length * B89.length - 1, Math.floor(n || 0))); return B89[Math.floor(n / B89.length)] + B89[n % B89.length]; }
+  function dec2(s) { var a = B89.indexOf(s.charAt(0)), b = B89.indexOf(s.charAt(1)); return a < 0 || b < 0 ? 0 : a * B89.length + b; }
+  // имя из базы: «имя|код вида и рекорды»; возвращает имя, код вида, рекорд ловли и счёт штурма. У старых строк хвост короче или его нет вовсе
   function netName(raw) {
-    var s = String(raw || 'Лягушка'), cut = s.lastIndexOf('|');
-    return cut > 0 && s.length - cut - 1 === 8 ? [s.slice(0, cut), s.slice(cut + 1)] : [s, ''];
+    var s = String(raw || 'Лягушка'), cut = s.lastIndexOf('|'), tail = cut > 0 ? s.slice(cut + 1) : '';
+    if (tail.length === 12) return [s.slice(0, cut), tail.slice(0, 8), dec2(tail.slice(8, 10)), dec2(tail.slice(10, 12))];
+    return tail.length === 8 ? [s.slice(0, cut), tail, 0, 0] : [s, '', 0, 0];
   }
-  function netValue(key, v) { return key === 'td' ? Math.floor(v / 100) + ' ур. · ' + (v % 100) + ' ★' : fmt(v); }
+  function netValue(key, v) { return key === 'td' ? Math.floor(v / 100) + ' ур. · ' + (v % 100) + ' ★' : key === 'ab' ? Math.floor(v / 91) + ' ур. · ' + (v % 91) + ' ★' : fmt(v); }
   function netBoard(key) {
     var tabs = $('top-tabs'), note = $('top-note'), table = $('top-table');
     net.board = key;
@@ -3015,10 +3564,14 @@
     if (!net.ok) { note.textContent = net.err || 'Подключаемся к общей базе…'; return; }
     note.textContent = 'Загружаем таблицу…';
     netPush();
-    net.db.ref('players').orderByChild(key).limitToLast(20).once('value').then(function (snap) {
+    // рекорды ловли и штурма лежат в хвосте имени, база по ним сортировать не умеет: берём до трёхсот игроков и сортируем сами
+    var inName = key === 'nin' ? 2 : key === 'ab' ? 3 : 0;
+    (inName ? net.db.ref('players').orderByChild('kvak').limitToLast(300) : net.db.ref('players').orderByChild(key).limitToLast(20)).once('value').then(function (snap) {
       if (net.board !== key || curView !== 'top') return;
       var rows = [], mine = netMine(), found = false;
-      snap.forEach(function (c) { var v = c.val(); if (v && v[key] > 0) { var who = netName(v.name); rows.unshift({ id: c.key, name: who[0], v: v[key], pet: who[1] }); } });
+      mine.nin = state.rec.nin; mine.ab = state.rec.ab;
+      snap.forEach(function (c) { var v = c.val(), who = v ? netName(v.name) : null, val = !v ? 0 : inName ? who[inName] : v[key]; if (val > 0) rows.unshift({ id: c.key, name: who[0], v: val, pet: who[1] }); });
+      if (inName) { rows.sort(function (p, q) { return q.v - p.v; }); rows = rows.slice(0, 20); }
       table.textContent = '';
       rows.forEach(function (r, k) {
         var tr = document.createElement('tr');
@@ -3831,7 +4384,7 @@
     }
   }
   function tdFit() { fitGame('td-play'); }
-  window.addEventListener('resize', function () { fitGame('td-play'); fitGame('nin-play'); });
+  window.addEventListener('resize', function () { fitGame('td-play'); fitGame('nin-play'); fitGame('ab-play'); });
   function tdSay(text) { tdNote = text; tdNoteT = 2.4; }
   function tdEvent(name, i) {
     if (name === 'shot') {
@@ -4074,8 +4627,9 @@
   refreshHeader();
   if (location.hash === '#oborona') curGame = 'td';
   if (location.hash === '#lovlya') curGame = 'nin';
+  if (location.hash === '#ulyi') curGame = 'ab';
   netStart();
-  show(location.hash === '#moya' ? 'mine' : location.hash === '#achivki' ? 'ach' : location.hash === '#lidery' && FIREBASE ? 'top' : location.hash === '#pryzhki' || location.hash === '#oborona' || location.hash === '#lovlya' || location.hash === '#igry' ? 'games' : 'pond');
+  show(location.hash === '#moya' ? 'mine' : location.hash === '#achivki' ? 'ach' : location.hash === '#lidery' && FIREBASE ? 'top' : location.hash === '#pryzhki' || location.hash === '#oborona' || location.hash === '#lovlya' || location.hash === '#ulyi' || location.hash === '#igry' ? 'games' : 'pond');
   checkAch();
   setInterval(function () { checkAch(); save(); }, 2000);
   document.addEventListener('visibilitychange', save);
