@@ -187,6 +187,11 @@
   @keyframes fxTwinkle { 0%, 100% { opacity: 0; transform: scale(0.3) rotate(0); } 50% { opacity: 1; transform: scale(1.15) rotate(45deg); } }
   @media (prefers-reduced-motion: reduce) { .pet .frog .fxl svg { animation: none; opacity: 0.8; } }
 
+  /* вылетающая цифра: сколько кваков дало нажатие */
+  .plus { position: absolute; top: 18%; transform: translateX(-50%); pointer-events: none; font-family: var(--font-display); font-weight: 700; font-size: 1.5rem; color: var(--lily); text-shadow: 0 2px 0 var(--surface), 0 0 6px var(--surface); white-space: nowrap; animation: plusUp 0.85s ease-out forwards; }
+  @keyframes plusUp { 0% { opacity: 0; margin-top: 16px; } 20% { opacity: 1; } 100% { opacity: 0; margin-top: -54px; } }
+  @media (prefers-reduced-motion: reduce) { .plus { animation-duration: 0.5s; } }
+
   /* громкость и справка «Как играть» */
   .vol { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; font-weight: 700; color: var(--ink-soft); }
   .vol input { width: 96px; accent-color: var(--lily); }
@@ -409,6 +414,7 @@
           <button class="act" id="td-speed" type="button">Скорость ×1</button>
           <button class="act" id="td-auto" type="button" aria-pressed="false">Волны подряд</button>
           <button class="act" id="td-pause" type="button">Пауза</button>
+          <button class="act" id="td-restart" type="button">Заново</button>
           <span class="meta" id="td-foe"></span>
         </div>
         <div class="td-info" id="td-info"></div>
@@ -1390,8 +1396,16 @@
     if (state.taps % 10 === 0) state.flies += 1;
     audio();
     sing(f, 0);
-    gain(f, levelOf(st.n));
+    var got = levelOf(st.n), fed = state.taps % 10 === 0;
+    gain(f, got);
     bounce(cards[f.i].btn);
+    // над лягушкой вылетает, сколько кваков дало нажатие; на каждом десятом — ещё и корм
+    var plus = document.createElement('span');
+    plus.className = 'plus';
+    plus.textContent = '+' + got + (fed ? ' и корм' : '');
+    plus.style.left = (30 + Math.random() * 40) + '%';
+    cards[f.i].btn.appendChild(plus);
+    setTimeout(function () { if (plus.parentNode) plus.parentNode.removeChild(plus); }, 900);
   }
   // Ограничение скорости: одна лягушка принимает нажатие не чаще раза в 110 мс, а все вместе — не больше 9 нажатий в секунду.
   // Лишние нажатия не дают ни звука, ни кваков, так что автокликер и нажатие всеми пальцами разом ничего не ускоряют.
@@ -2719,7 +2733,7 @@
   var TD_W = TD_COLS * TD_CELL, TD_H = TD_ROWS * TD_CELL;
   var tdCv = $('td-cv'), tg = tdCv.getContext('2d'), tdBg = document.createElement('canvas'), tdDpr = Math.min(2, window.devicePixelRatio || 1);
   var tdPlaying = false, tdRaf = 0, tdLast = 0, tdSpeed = 1, tdAuto = false, tdAutoT = 0, tdPick = -1, tdSel = null, tdHover = null;
-  var tdNote = '', tdNoteT = 0, tdVeil = '', tdSig = '', tdInfoSig = '', tdShop = [], tdDecor = [], tdFrogImg = {}, tdBugImg = {}, tdNext = null, tdShotAt = 0, tdBackArmed = false;
+  var tdNote = '', tdNoteT = 0, tdVeil = '', tdSig = '', tdInfoSig = '', tdShop = [], tdDecor = [], tdFrogImg = {}, tdBugImg = {}, tdNext = null, tdShotAt = 0, tdBackArmed = false, tdRestartArmed = false;
   tdCv.width = tdBg.width = TD_W * tdDpr; tdCv.height = tdBg.height = TD_H * tdDpr;
   tg.setTransform(tdDpr, 0, 0, tdDpr, 0, 0);
 
@@ -3097,6 +3111,7 @@
     tdMakeDecor(); tdBake(); tdBuildShop();
     tdPick = -1; tdSel = null; tdHover = null; tdSig = ''; tdInfoSig = ''; tdAutoT = 0; tdNext = null; tdBackArmed = false;
     $('td-back').textContent = 'К уровням';
+    tdRestartArmed = false; $('td-restart').textContent = 'Заново';
     $('td-title').textContent = L + '. ' + TD_LEVELS[L - 1][0];
     $('td-map').hidden = true; $('td-play').hidden = false;
     tdSay(TD_LEVELS[L - 1][0]);
@@ -3223,6 +3238,12 @@
   $('td-speed').addEventListener('click', function () { tdSpeed = tdSpeed % 3 + 1; });
   $('td-auto').addEventListener('click', function () { tdAuto = !tdAuto; });
   $('td-pause').addEventListener('click', tdPause);
+  // «Заново» начинает тот же уровень с первой волны; если бой уже идёт, просит нажать второй раз
+  $('td-restart').addEventListener('click', function () {
+    if (!td) return;
+    if (td.wave > 0 && !td.over && !tdRestartArmed) { tdRestartArmed = true; this.textContent = 'Точно заново?'; return; }
+    tdStartLevel(td.L);
+  });
   $('td-back').addEventListener('click', function () {
     if (td && !td.over && td.wave > 0 && !tdBackArmed) { tdBackArmed = true; this.textContent = 'Выйти? Бой не сохранится'; return; }
     tdShowMap();
