@@ -158,6 +158,22 @@
   .act[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--surface); }
   .act:disabled { opacity: 0.45; cursor: default; }
 
+  /* достижения: карточки по разделам и всплывающее сообщение о новом */
+  .achs { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 10px; }
+  .ach { display: flex; gap: 12px; align-items: flex-start; border: 2px solid var(--line); border-radius: 14px; padding: 10px 12px; font-size: 0.86rem; line-height: 1.3; color: var(--ink-soft); min-width: 0; }
+  .ach > div { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+  .ach b { font-family: var(--font-display); font-weight: 800; font-size: 0.9rem; color: var(--ink); overflow-wrap: anywhere; }
+  .ach small { font-weight: 700; font-size: 0.76rem; font-variant-numeric: tabular-nums; }
+  .ach .meter { height: 6px; }
+  .ach svg { width: 38px; height: 38px; flex: none; }
+  .ach.got { background: var(--surface); border-color: var(--lily); }
+  .ach.got small { color: var(--lily); }
+  .ach:not(.got) svg { filter: grayscale(1); opacity: 0.45; }
+  .toast { position: fixed; left: 50%; bottom: 22px; transform: translateX(-50%); z-index: 5; max-width: min(92vw, 460px); background: var(--ink); color: var(--surface); font-weight: 700; font-size: 0.95rem; text-align: center; border-radius: 16px; padding: 12px 20px; border: 2px solid var(--lily); }
+  .toast.pop { animation: toastIn 0.35s ease-out; }
+  @keyframes toastIn { 0% { opacity: 0; transform: translate(-50%, 20px); } 100% { opacity: 1; transform: translate(-50%, 0); } }
+  @media (prefers-reduced-motion: reduce) { .toast.pop { animation: none; } }
+
   /* инвентарь: сундуки и добыча из них */
   .inv { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; margin-top: 14px; padding-top: 18px; border-top: 2px dashed var(--line); }
   .chest { display: flex; align-items: center; gap: 10px; font-size: 0.86rem; font-weight: 700; border: 2px solid var(--line); border-radius: 14px; background: var(--surface); padding: 6px 14px 6px 8px; cursor: pointer; text-align: left; line-height: 1.25; }
@@ -214,6 +230,7 @@
     <button class="tab" id="tab-pond" role="tab" type="button" aria-selected="true">Пруд</button>
     <button class="tab" id="tab-mine" role="tab" type="button" aria-selected="false">Моя лягушка</button>
     <button class="tab" id="tab-games" role="tab" type="button" aria-selected="false">Мини-игры</button>
+    <button class="tab" id="tab-ach" role="tab" type="button" aria-selected="false">Достижения</button>
     <span class="spacer"></span>
     <button class="act" id="btn-chord" type="button">Все разом</button>
     <button class="act" id="btn-stop" type="button">Остановить хор</button>
@@ -254,6 +271,18 @@
     </div>
     <p class="note" style="margin-top:28px"><button class="act" id="btn-reset" type="button">Начать игру заново</button></p>
   </section>
+
+  <section id="view-ach" hidden>
+    <div class="td">
+      <div class="goal">
+        <span id="ach-text">Достижения</span>
+        <div class="meter"><i id="ach-bar"></i></div>
+      </div>
+      <div id="ach-list" class="td"></div>
+      <p class="note">За каждое достижение дают корм для вашей лягушки. Достижения проверяются сами, пока вы играете.</p>
+    </div>
+  </section>
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
   <section id="view-games" hidden>
     <div class="tabs sub" role="tablist">
@@ -428,7 +457,8 @@
       total: 0, taps: 0, flies: 0,
       frogs: FROGS.map(function (f) { return { n: 0, open: f.i < 3, auto: false, m: 0 }; }),
       me: { xp: 0, name: '', skin: 0, best: 0, wear: { neck: '', hat: '', eyes: '', suit: '', back: '' } },
-      td: { done: TD_LEVELS.map(function () { return 0; }), chests: [0, 0, 0], loot: {} }
+      td: { done: TD_LEVELS.map(function () { return 0; }), chests: [0, 0, 0], loot: {} },
+      ach: { got: {}, kills: 0, bosses: 0, opened: 0, gold: 0, rides: 0, stomps: 0, close: 0, solo: 0, squad: 0, choir: 0 }
     };
   }
   function load() {
@@ -441,6 +471,8 @@
     if (typeof s.me.best !== 'number') s.me.best = 0;
     if (typeof s.me.wear.suit !== 'string') s.me.wear.suit = '';
     if (!s.td || !s.td.done || s.td.done.length !== TD_LEVELS.length || !s.td.chests || !s.td.loot) s.td = f.td;
+    if (!s.ach || !s.ach.got) s.ach = f.ach;
+    Object.keys(f.ach).forEach(function (k) { if (s.ach[k] === undefined) s.ach[k] = f.ach[k]; });
     return s;
   }
   function save() {
@@ -1241,6 +1273,7 @@
     singBtn.addEventListener('click', function () {
       var st = state.frogs[f.i];
       st.auto = !st.auto;
+      if (state.frogs.filter(function (x) { return x.auto; }).length >= 5) { state.ach.choir = 1; dirty = true; }
       refreshCard(f);
       syncTransport();
     });
@@ -1386,6 +1419,8 @@
     var t = state.td;
     if (t.chests[tier] < 1) return;
     t.chests[tier] -= 1;
+    state.ach.opened += 1;
+    if (tier === 2) state.ach.gold = 1;
     var roll = Math.random() * 100, acc = 0, r;
     for (r = 0; r < 4; r++) { acc += CHESTS[tier][1][r]; if (roll < acc) break; }
     var free = LOOT_IDS.filter(function (id) { return LOOT[id][2] === r && !t.loot[id]; });
@@ -1401,6 +1436,7 @@
     dirty = true; save();
     if (audio()) [0, 2, 4, 7 + r].forEach(function (d, k) { play(r >= 3 ? 'choir' : 'pluck', freq(d + r, 2), ac.currentTime + k * 0.1); });
     buildInv(); buildWardrobe(); refreshPet(); refreshHeader();
+    checkAch();
     sparkle(r >= 2 ? 'star' : 'heart', RARITY[r][1]);
   }
   $('pet-feed').addEventListener('click', function () {
@@ -1482,7 +1518,7 @@
 
   // ---------- вкладки и кнопки ----------
 
-  var VIEWS = { pond: '#prud', mine: '#moya', games: '#igry' }, GAMES = { jump: '#pryzhki', td: '#oborona' }, curView = 'pond', curGame = 'jump';
+  var VIEWS = { pond: '#prud', mine: '#moya', games: '#igry', ach: '#achivki' }, GAMES = { jump: '#pryzhki', td: '#oborona' }, curView = 'pond', curGame = 'jump';
   function show(view) {
     curView = view;
     Object.keys(VIEWS).forEach(function (v) {
@@ -1490,6 +1526,7 @@
       $('tab-' + v).setAttribute('aria-selected', v === view ? 'true' : 'false');
     });
     if (view === 'mine') { mineBuilt = true; $('pet-name').value = state.me.name; buildWardrobe(); buildInv(); refreshPet(); }
+    if (view === 'ach') { checkAch(); buildAch(); }
     showGame(curGame);
   }
   // на вкладке «Мини-игры» открыта одна игра; вторая и обе при уходе с вкладки встают на паузу
@@ -1628,12 +1665,13 @@
       r.items = r.items.filter(function (it) {
         if (Math.abs(it.x - r.x) > 30 || Math.abs(it.y - (r.y - 30)) > 34) return true;
         r.fly = 1.7;
+        state.ach.rides += 1; dirty = true;
         play('choir', freq(2, 2), 0);
         return false;
       });
       r.foes.forEach(function (f) {
         if (f.dead || r.x < f.x - 16 || r.x > f.x + f.w + 16 || r.y < f.y || r.y - 44 > f.y + f.h) return;
-        if (r.fly > 0 || (r.vy > 0 && prev <= f.y + 12)) { f.dead = true; if (r.fly <= 0) r.vy = -640; play('tok', freq(3, 3), 0); }
+        if (r.fly > 0 || (r.vy > 0 && prev <= f.y + 12)) { f.dead = true; if (r.fly <= 0) { r.vy = -640; state.ach.stomps += 1; dirty = true; } play('tok', freq(3, 3), 0); }
         else die();
       });
       r.pools.forEach(function (o) {
@@ -1829,6 +1867,108 @@
     refreshHeader(); show('mine');
   });
 
+  // ---------- достижения ----------
+
+  function frogsAt(lvl) { return state.frogs.filter(function (x) { return x.open && levelOf(x.n) >= lvl; }).length; }
+  function tdWon(stars) { return state.td.done.filter(function (x) { return x >= stars; }).length; }
+  function lootGot(rare) { return LOOT_IDS.filter(function (id) { return state.td.loot[id] && (rare === undefined || LOOT[id][2] === rare); }).length; }
+  // раздел, код, название, условие, сколько нужно, награда кормом, как посчитать сделанное
+  var ACH = [
+    ['Пруд', 'kvak1', 'Первый квак', 'Нажмите на лягушку в пруду.', 1, 2, function () { return state.total; }],
+    ['Пруд', 'kvak1k', 'Тысяча кваков', 'Наберите 1 000 кваков.', 1000, 5, function () { return state.total; }],
+    ['Пруд', 'kvak10k', 'Квакофония', 'Наберите 10 000 кваков.', 10000, 15, function () { return state.total; }],
+    ['Пруд', 'kvak100k', 'Болото гудит', 'Наберите 100 000 кваков.', 100000, 50, function () { return state.total; }],
+    ['Пруд', 'open5', 'Квинтет', 'Разбудите 5 лягушек.', 5, 5, function () { return frogsAt(1); }],
+    ['Пруд', 'open13', 'Половина пруда', 'Разбудите 13 лягушек.', 13, 15, function () { return frogsAt(1); }],
+    ['Пруд', 'open25', 'Полный пруд', 'Разбудите всех 25 лягушек.', 25, 40, function () { return frogsAt(1); }],
+    ['Пруд', 'lvl5', 'Примадонна', 'Вырастите любую лягушку до 5-го уровня.', 1, 10, function () { return frogsAt(5); }],
+    ['Пруд', 'lvl5all', 'Консерватория', 'Вырастите всех 25 лягушек до 5-го уровня.', 25, 100, function () { return frogsAt(5); }],
+    ['Пруд', 'choir', 'Хор без дирижёра', 'Пусть 5 лягушек поют сами одновременно.', 1, 10, function () { return state.ach.choir; }],
+    ['Моя лягушка', 'named', 'Знакомство', 'Дайте своей лягушке имя.', 1, 2, function () { return state.me.name.trim() ? 1 : 0; }],
+    ['Моя лягушка', 'hatch', 'Вылупился!', 'Выкормите яйцо до головастика.', 1, 5, function () { return stageOf(state.me.xp); }],
+    ['Моя лягушка', 'grown', 'Толстая и довольная', 'Вырастите питомца до толстой лягушки.', 4, 30, function () { return stageOf(state.me.xp); }],
+    ['Моя лягушка', 'dress', 'При полном параде', 'Наденьте на питомца вещи сразу во все пять разделов гардероба.', 5, 20, function () { return WARDROBE.filter(function (s) { return state.me.wear[s]; }).length; }],
+    ['Прыжки', 'jump1', 'Выше камышей', 'Наберите 1 500 очков в «Прыжках».', 1500, 5, function () { return state.me.best; }],
+    ['Прыжки', 'jump2', 'Ночной прыгун', 'Наберите 8 000 очков и доберитесь до ночного болота.', 8000, 15, function () { return state.me.best; }],
+    ['Прыжки', 'jump3', 'До луны', 'Наберите 14 000 очков и доберитесь до лунной выси.', 14000, 30, function () { return state.me.best; }],
+    ['Прыжки', 'jump4', 'Выше звёзд', 'Наберите 50 000 очков в «Прыжках».', 50000, 100, function () { return state.me.best; }],
+    ['Прыжки', 'ride', 'Верхом на стрекозе', 'Прокатитесь на стрекозе 10 раз.', 10, 10, function () { return state.ach.rides; }],
+    ['Прыжки', 'stomp', 'Гроза жуков', 'Прыгните сверху на 25 жуков-плавунцов.', 25, 15, function () { return state.ach.stomps; }],
+    ['Оборона болота', 'td1', 'Первая оборона', 'Пройдите первый уровень.', 1, 5, function () { return tdWon(1); }],
+    ['Оборона болота', 'td10', 'Половина болота', 'Пройдите 10 уровней.', 10, 30, function () { return tdWon(1); }],
+    ['Оборона болота', 'td20', 'Хозяин болота', 'Пройдите все 20 уровней.', 20, 100, function () { return tdWon(1); }],
+    ['Оборона болота', 'clean', 'Ни царапины', 'Пройдите уровень, не потеряв ни одной жизни.', 1, 20, function () { return tdWon(3); }],
+    ['Оборона болота', 'clean20', 'Неприступное озеро', 'Пройдите все 20 уровней без потери жизней.', 20, 200, function () { return tdWon(3); }],
+    ['Оборона болота', 'close', 'На волоске', 'Победите, когда у озера осталось не больше 3 жизней.', 1, 15, function () { return state.ach.close; }],
+    ['Оборона болота', 'solo', 'Один голос', 'Пройдите уровень лягушками только одного приёма.', 1, 30, function () { return state.ach.solo; }],
+    ['Оборона болота', 'squad', 'Звёздный отряд', 'Держите на поле 5 лягушек, улучшенных до трёх звёзд.', 1, 15, function () { return state.ach.squad; }],
+    ['Оборона болота', 'kills', 'Гроза стрекоз', 'Сбейте 5 000 стрекоз.', 5000, 30, function () { return state.ach.kills; }],
+    ['Оборона болота', 'boss', 'Охотник на маток', 'Сбейте 25 маток.', 25, 30, function () { return state.ach.bosses; }],
+    ['Сундуки', 'chest1', 'Что внутри?', 'Откройте первый сундук.', 1, 3, function () { return state.ach.opened; }],
+    ['Сундуки', 'chest20', 'Кладоискатель', 'Откройте 20 сундуков.', 20, 25, function () { return state.ach.opened; }],
+    ['Сундуки', 'gold', 'Золотая лихорадка', 'Откройте золотой сундук.', 1, 10, function () { return state.ach.gold; }],
+    ['Сундуки', 'legend', 'Легенда болота', 'Получите легендарную вещь.', 1, 30, function () { return lootGot(4); }],
+    ['Сундуки', 'loot13', 'Коллекционер', 'Соберите 13 вещей из сундуков.', 13, 30, function () { return lootGot(); }],
+    ['Сундуки', 'lootall', 'Полная коллекция', 'Соберите все 26 вещей из сундуков.', 26, 150, function () { return lootGot(); }]
+  ];
+  var toastQ = [], toastBusy = false;
+  function nextToast() {
+    var el = $('toast');
+    if (!toastQ.length) { toastBusy = false; el.hidden = true; return; }
+    toastBusy = true;
+    el.textContent = toastQ.shift();
+    el.hidden = false;
+    el.classList.remove('pop'); void el.offsetWidth; el.classList.add('pop');
+    setTimeout(nextToast, 3400);
+  }
+  function toast(text) { toastQ.push(text); if (!toastBusy) nextToast(); }
+  function checkAch() {
+    var got = state.ach.got, news = [], flies = 0;
+    ACH.forEach(function (a) {
+      if (got[a[1]] || a[6]() < a[4]) return;
+      got[a[1]] = 1; state.flies += a[5]; flies += a[5];
+      news.push(a);
+    });
+    if (!news.length) return;
+    dirty = true;
+    if (news.length > 2) toast('Новых достижений: ' + news.length + '. Корма в награду: ' + flies);
+    else news.forEach(function (a) { toast('Достижение «' + a[2] + '»: +' + a[5] + ' корма'); });
+    if (ac) [0, 2, 4, 7].forEach(function (d, k) { play('pluck', freq(d, 3), ac.currentTime + k * 0.07, 0.5); });
+    refreshHeader();
+    if (mineBuilt) refreshPet();
+    if (curView === 'ach') buildAch();
+  }
+  function drawMedal() {
+    var s = S('svg', { viewBox: '0 0 40 40', 'aria-hidden': 'true' });
+    S('path', { d: 'M11 2 L20 18 L29 2 Z', fill: '#3a86ff' }, s);
+    S('circle', { cx: 20, cy: 25, r: 13, fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 3 }, s);
+    S('polygon', { points: star(20, 25, 8), fill: '#b58900' }, s);
+    return s;
+  }
+  function buildAch() {
+    var box = $('ach-list'), got = state.ach.got, n = ACH.filter(function (a) { return got[a[1]]; }).length, group = '', grid = null;
+    $('ach-text').textContent = 'Получено достижений: ' + n + ' из ' + ACH.length;
+    $('ach-bar').style.width = (n / ACH.length * 100) + '%';
+    box.textContent = '';
+    ACH.forEach(function (a) {
+      if (a[0] !== group) {
+        group = a[0];
+        var h = document.createElement('h2'); h.textContent = group; box.appendChild(h);
+        grid = document.createElement('div'); grid.className = 'achs'; box.appendChild(grid);
+      }
+      var done = !!got[a[1]], cur = Math.min(a[4], Math.floor(a[6]()));
+      var el = document.createElement('div'), col = document.createElement('div'), b = document.createElement('b'), t = document.createElement('span'), sm = document.createElement('small');
+      el.className = 'ach' + (done ? ' got' : ''); el.id = 'ach-' + a[1];
+      b.textContent = a[2]; t.textContent = a[3];
+      sm.textContent = (done ? 'Получено' : a[4] > 1 ? fmt(cur) + ' из ' + fmt(a[4]) : 'Не получено') + ' · +' + a[5] + ' корма';
+      col.appendChild(b); col.appendChild(t);
+      if (!done && a[4] > 1) { var m = document.createElement('div'), i = document.createElement('i'); m.className = 'meter'; i.style.width = (cur / a[4] * 100) + '%'; m.appendChild(i); col.appendChild(m); }
+      col.appendChild(sm);
+      el.appendChild(drawMedal()); el.appendChild(col);
+      grid.appendChild(el);
+    });
+  }
+
   // ---------- оборона болота: правила ----------
 
   var TD_COLS = 16, TD_ROWS = 10, TD_CELL = 50, TD_WAVES = 25, TD_LIVES = 20;
@@ -1968,7 +2108,7 @@
     grid[e[1]][e[0]] = 2;
     td = {
       L: L, pts: pts, seg: seg, len: total, grid: grid, end: pts[pts.length - 1], towers: [], mobs: [], shots: [], fx: [],
-      gold: Math.round(TD_START_GOLD * Math.pow(TD_GOLD_L, L - 1)), lives: TD_LIVES, wave: 0, queue: [], qi: 0, wt: 0, active: false, t: 0, over: '', born: 0
+      gold: Math.round(TD_START_GOLD * Math.pow(TD_GOLD_L, L - 1)), lives: TD_LIVES, wave: 0, queue: [], qi: 0, wt: 0, active: false, t: 0, over: '', born: 0, kills: 0, bosses: 0, used: {}
     };
   }
   function tdAt(m) {
@@ -1985,6 +2125,7 @@
     if (!tdFrogLvl(i) || !tdCanBuild(cx, cy) || td.gold < cost) return null;
     td.gold -= cost;
     var t = { i: i, cls: FROGS[i].voice, cx: cx, cy: cy, x: (cx + 0.5) * TD_CELL, y: (cy + 0.5) * TD_CELL, stars: 1, lvl: tdFrogLvl(i), s: tdStat(i, 1), cd: 0.2, hop: 0, spent: cost };
+    td.used[t.cls] = 1;
     td.towers.push(t);
     td.towers.sort(function (p, q) { return p.y - q.y; });
     return t;
@@ -2024,6 +2165,8 @@
     m.hp -= dmg;
     if (m.hp > 0) return;
     m.dead = true;
+    td.kills += 1;
+    if (m.boss) td.bosses += 1;
     td.gold += m.gold;
     td.fx.push({ type: 'pop', x: m.x, y: m.y, t: 0, dur: m.boss ? 0.7 : 0.32, big: m.boss });
     if (m.boss) tdEvent('boss');
@@ -2561,6 +2704,8 @@
       var tier = state.td.done[L - 1] ? 0 : tdChestOf(L), stars = td.lives >= TD_LIVES ? 3 : td.lives >= 12 ? 2 : 1;
       state.td.chests[tier] += 1;
       state.td.done[L - 1] = Math.max(state.td.done[L - 1], stars);
+      if (td.lives <= 3) state.ach.close = 1;
+      if (Object.keys(td.used).length === 1) state.ach.solo = 1;
       dirty = true; save();
       tdVeil = L < TD_LEVELS.length ? 'next' : 'map';
       $('td-veil-title').textContent = 'Победа! ' + tdStars(stars);
@@ -2577,6 +2722,7 @@
     $('td-veil-alt').hidden = tdVeil === 'map';
     tdSig = ''; tdHud();
     $('td-veil').hidden = false;
+    checkAch();
   }
   // подписи и кнопки обновляются только когда что-то изменилось, чтобы кнопка не пересоздавалась под пальцем
   function tdHud() {
@@ -2613,7 +2759,7 @@
         var u = document.createElement('button'), x = document.createElement('button'), t = tdSel;
         u.type = 'button'; u.className = 'act'; u.id = 'td-up';
         x.type = 'button'; x.className = 'act'; x.id = 'td-sell'; x.textContent = 'Убрать (+' + fmt(Math.floor(t.spent * 0.7)) + ')';
-        u.addEventListener('click', function () { if (tdUpgrade(t)) { play(t.cls, freq(FROGS[t.i].deg + t.stars, FROGS[t.i].oct), 0, 0.7); } else tdSay('Не хватает мошек'); });
+        u.addEventListener('click', function () { if (tdUpgrade(t)) { if (td.towers.filter(function (q) { return q.stars >= 3; }).length >= 5) { state.ach.squad = 1; dirty = true; } play(t.cls, freq(FROGS[t.i].deg + t.stars, FROGS[t.i].oct), 0, 0.7); } else tdSay('Не хватает мошек'); });
         x.addEventListener('click', function () { tdSell(t); tdSel = null; tdBake(); });
         box.appendChild(u); box.appendChild(x);
       }
@@ -2630,6 +2776,8 @@
     var dt = tdLast ? Math.min(0.04, (ts - tdLast) / 1000) : 0.016, k;
     tdLast = ts;
     for (k = 0; k < tdSpeed && !td.over; k++) tdStep(dt);
+    // сбитые стрекозы сразу идут в счёт достижений, даже если бой не доигран
+    if (td.kills) { state.ach.kills += td.kills; state.ach.bosses += td.bosses; td.kills = td.bosses = 0; dirty = true; }
     if (tdNoteT > 0) tdNoteT -= dt;
     if (tdAuto && !td.over && td.wave > 0 && td.wave < TD_WAVES && !td.active) {
       tdAutoT += dt * tdSpeed;
@@ -2686,8 +2834,9 @@
   FROGS.forEach(function (f) { paintFrog(f); refreshCard(f); });
   refreshHeader();
   if (location.hash === '#oborona') curGame = 'td';
-  show(location.hash === '#moya' ? 'mine' : location.hash === '#pryzhki' || location.hash === '#oborona' || location.hash === '#igry' ? 'games' : 'pond');
-  setInterval(save, 2000);
+  show(location.hash === '#moya' ? 'mine' : location.hash === '#achivki' ? 'ach' : location.hash === '#pryzhki' || location.hash === '#oborona' || location.hash === '#igry' ? 'games' : 'pond');
+  checkAch();
+  setInterval(function () { checkAch(); save(); }, 2000);
   document.addEventListener('visibilitychange', save);
   window.addEventListener('pagehide', save);
 })();
