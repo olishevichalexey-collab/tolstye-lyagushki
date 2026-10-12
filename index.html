@@ -370,6 +370,7 @@
         <li><b>Моя лягушка.</b> Кормите яйцо, и оно вырастет: головастик, лягушонок, лягушка, толстая лягушка. С лягушонка можно надевать вещи.</li>
         <li><b>Перерождение.</b> Выросшую лягушку можно превратить в новое яйцо. Весь прогресс обнулится, кроме достижений, сундуков и вещей из них, зато вылупится другая порода — от обычной до секретной, а каждое перерождение навсегда прибавляет 10% к получаемым квакам.</li>
         <li><b>Прыжки.</b> ← и → ведут лягушку вверх по кувшинкам. Пробел или быстрое касание — язык по мухе.</li>
+        <li><b>Ловля мошек.</b> Насекомые вылетают из камышей — ловите их языком нажатием или взмахом. Ос не трогайте.</li>
         <li><b>Оборона болота.</b> Сажайте лягушек у тропы и не пускайте стрекоз к озеру. Чем круче лягушка в пруду, тем сильнее она бьёт. У каждой лягушки свой приём и стихия; стрекоза с цветным ободком боится одной стихии и почти не замечает свою. За победу дают сундук.</li>
         <li><b>Сундуки.</b> Открываются в инвентаре на вкладке «Моя лягушка». Внутри вещи пяти редкостей.</li>
         <li><b>Достижения и лидеры.</b> Достижения засчитываются сами. В таблице лидеров вы под именем своей лягушки.</li>
@@ -383,6 +384,7 @@
     <div class="tabs sub" role="tablist">
       <button class="tab" id="game-jump" role="tab" type="button" aria-selected="true">Прыжки</button>
       <button class="tab" id="game-td" role="tab" type="button" aria-selected="false">Оборона болота</button>
+      <button class="tab" id="game-nin" role="tab" type="button" aria-selected="false">Ловля мошек</button>
     </div>
     <div class="jump" id="pane-jump">
       <div class="stage">
@@ -453,6 +455,46 @@
         </div>
         <div class="td-line"><span id="td-foe"></span><span id="td-info"></span></div>
         <div class="shop" id="td-shop"></div>
+       </div>
+      </div>
+    </div>
+
+    <div class="td" id="pane-nin" hidden>
+      <h2>Ловля мошек</h2>
+      <p class="note">Насекомые вылетают из камышей, а ваша лягушка ловит их языком. Нажмите на насекомое или проведите по нескольким сразу: три и больше за один взмах — комбо с надбавкой. Упустили насекомое или поймали осу — минус жизнь, жизней три. Личинка возвращает одну жизнь.</p>
+      <ul class="legend">
+        <li><b>Муха</b> — 1 очко, <b>комар</b> и <b>моль</b> — 2, <b>бабочка</b> и <b>таракан</b> — 3.</li>
+        <li><b>Стрекоза</b> проносится через поле, за неё 5 очков, а упустить её не страшно.</li>
+        <li><b>Личинка</b> попадается редко: 4 очка и жизнь.</li>
+        <li><b>Оса</b> — опасность: она в красном мигающем круге с восклицательным знаком. Её не трогайте.</li>
+      </ul>
+      <div class="row" style="justify-content:flex-start"><button class="big" id="nin-go" type="button">Играть</button></div>
+      <p class="meta" id="nin-record">Рекорд: 0</p>
+      <div class="td-game" id="nin-play" hidden>
+       <div class="td-frame">
+        <div class="td-hud">
+          <b>Ловля мошек</b>
+          <div class="stats">
+            <div>Улов<b id="nin-score">0</b></div>
+            <div>Жизни<b id="nin-lives">3</b></div>
+            <div>Рекорд<b id="nin-best">0</b></div>
+          </div>
+          <span class="spacer"></span>
+          <button class="act" id="nin-pause" type="button">Пауза</button>
+          <button class="act" id="nin-again" type="button">Заново</button>
+          <button class="exit" id="nin-exit" type="button">✕ Выйти</button>
+        </div>
+        <div class="td-stage">
+          <canvas id="nin-cv" width="800" height="500" aria-label="Поле ловли: насекомые летят над прудом, лягушка ловит их языком"></canvas>
+          <div class="veil" id="nin-veil" hidden>
+            <h2 id="nin-veil-title"></h2>
+            <p class="note" id="nin-veil-text"></p>
+            <div class="row">
+              <button class="big" id="nin-veil-btn" type="button">Продолжить</button>
+              <button class="act" id="nin-veil-alt" type="button">Выйти</button>
+            </div>
+          </div>
+        </div>
        </div>
       </div>
     </div>
@@ -583,9 +625,9 @@
     return {
       total: 0, taps: 0, flies: 0,
       frogs: FROGS.map(function (f) { return { n: 0, open: f.i < 3, auto: false, m: 0 }; }),
-      me: { xp: 0, name: '', skin: 0, kind: 0, best: 0, wear: { neck: '', hat: '', eyes: '', suit: '', back: '' } },
+      me: { xp: 0, name: '', skin: 0, kind: 0, best: 0, nin: 0, wear: { neck: '', hat: '', eyes: '', suit: '', back: '' } },
       td: { done: TD_LEVELS.map(function () { return 0; }), chests: [0, 0, 0], loot: {} },
-      ach: { got: {}, kills: 0, bosses: 0, opened: 0, gold: 0, rides: 0, stomps: 0, close: 0, solo: 0, squad: 0, choir: 0, licks: 0, tickles: 0, tdLost: 0, hid: {}, rebirths: 0, kinds: { 0: 1 } },
+      ach: { got: {}, kills: 0, bosses: 0, opened: 0, gold: 0, rides: 0, stomps: 0, close: 0, solo: 0, squad: 0, choir: 0, licks: 0, sweep: 0, tickles: 0, tdLost: 0, hid: {}, rebirths: 0, kinds: { 0: 1 } },
       rec: { kvak: 0, jump: 0, td: 0 }
     };
   }
@@ -599,6 +641,7 @@
     while (s.frogs.length < FROGS.length) s.frogs.push({ n: 0, open: false, auto: false, m: 0 });
     if (typeof s.taps !== 'number') s.taps = 0;
     if (typeof s.me.best !== 'number') s.me.best = 0;
+    if (typeof s.me.nin !== 'number') s.me.nin = 0;
     if (typeof s.me.wear.suit !== 'string') s.me.wear.suit = '';
     if (!s.td || !s.td.done || !s.td.chests || !s.td.loot) s.td = f.td;
     while (s.td.done.length < TD_LEVELS.length) s.td.done.push(0);
@@ -1753,6 +1796,7 @@
     dirty = true; save();
     petSig = ''; petStage = -1; lastReady = -2; dropText = ''; rebArmed = false;
     pauseJump(); run = null;
+    ninPlaying = false; nin = null; $('nin-play').hidden = true;
     tdShowMap();
     syncTransport();
     FROGS.forEach(function (f) { paintFrog(f); refreshCard(f); });
@@ -2017,7 +2061,7 @@
 
   // ---------- вкладки и кнопки ----------
 
-  var VIEWS = { pond: '#prud', mine: '#moya', games: '#igry', ach: '#achivki', top: '#lidery' }, GAMES = { jump: '#pryzhki', td: '#oborona' }, curView = 'pond', curGame = 'jump';
+  var VIEWS = { pond: '#prud', mine: '#moya', games: '#igry', ach: '#achivki', top: '#lidery' }, GAMES = { jump: '#pryzhki', td: '#oborona', nin: '#lovlya' }, curView = 'pond', curGame = 'jump';
   function show(view) {
     curView = view;
     Object.keys(VIEWS).forEach(function (v) {
@@ -2039,6 +2083,7 @@
     });
     if (on && game === 'jump') openJump(); else pauseJump();
     if (on && game === 'td') tdOpen(); else tdPause();
+    if (on && game === 'nin') ninOpen(); else ninPause();
     try { history.replaceState(null, '', on ? GAMES[game] : VIEWS[curView]); } catch (e) { /* адрес не меняется, вкладки работают */ }
   }
   Object.keys(VIEWS).forEach(function (v) { $('tab-' + v).addEventListener('click', function () { show(v); }); });
@@ -2387,7 +2432,7 @@
   }
   window.addEventListener('keydown', function (ev) { key(ev, true); });
   window.addEventListener('keyup', function (ev) { key(ev, false); });
-  document.addEventListener('visibilitychange', function () { if (document.hidden) { pauseJump(); tdPause(); } });
+  document.addEventListener('visibilitychange', function () { if (document.hidden) { pauseJump(); tdPause(); ninPause(); } });
   $('btn-stop').addEventListener('click', function () {
     state.frogs.forEach(function (x) { x.auto = false; });
     FROGS.forEach(refreshCard);
@@ -2413,6 +2458,322 @@
     resetArmed = false; this.textContent = 'Начать игру заново';
     state = fresh();
     afterWipe();
+  });
+
+  // ---------- мини-игра «Ловля мошек» ----------
+
+  // насекомые вылетают снизу по дуге, как фрукты; лягушка ловит их языком там, куда нажали, и по всему пути взмаха.
+  // вид: очки, радиус, как летит (toss — дугой, flutter — порхая, dash — прямо через поле), вредная ли
+  var NIN_KIND = {
+    fly: { ru: 'муха', pts: 1, r: 21, move: 'toss' },
+    mosquito: { ru: 'комар', pts: 2, r: 18, move: 'toss' },
+    moth: { ru: 'моль', pts: 2, r: 22, move: 'flutter' },
+    butterfly: { ru: 'бабочка', pts: 3, r: 25, move: 'flutter' },
+    cockroach: { ru: 'таракан', pts: 3, r: 22, move: 'toss' },
+    larva: { ru: 'личинка', pts: 4, r: 22, move: 'toss', heal: 1 },
+    dragonfly: { ru: 'стрекоза', pts: 5, r: 25, move: 'dash' },
+    wasp: { ru: 'оса', pts: 0, r: 24, move: 'toss', bad: 1 }
+  };
+  var NW = 800, NH = 500, NIN_MOUTH = { x: 400, y: 424 };
+  var ninCv = $('nin-cv'), ng = ninCv.getContext('2d'), ninDpr = Math.min(2, window.devicePixelRatio || 1);
+  var nin = null, ninPlaying = false, ninRaf = 0, ninLast = 0, ninImg = null, ninVeil = '';
+  ninCv.width = NW * ninDpr; ninCv.height = NH * ninDpr;
+  ng.setTransform(ninDpr, 0, 0, ninDpr, 0, 0);
+
+  function ninSprite() {
+    ninImg = null;
+    var s = petSvg();
+    ['.pad', '.sac'].forEach(function (q) { var e = s.querySelector(q); if (e) e.parentNode.removeChild(e); });
+    s.setAttribute('xmlns', NS); s.setAttribute('width', '300'); s.setAttribute('height', '310');
+    var img = new Image();
+    img.onload = function () { ninImg = img; if (!ninPlaying) ninDraw(); };
+    img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(s));
+  }
+  function ninToss(kind, delay) {
+    var k = NIN_KIND[kind], it = { k: kind, r: k.r, bad: !!k.bad, t: -delay, rot: Math.random() * 6, spin: (Math.random() - 0.5) * 4, ph: Math.random() * 6, caught: 0, up: false };
+    if (k.move === 'dash') {
+      var left = Math.random() < 0.5;
+      it.x = left ? -30 : NW + 30; it.y = 60 + Math.random() * 180; it.vx = (left ? 1 : -1) * (360 + Math.random() * 120); it.vy = 0; it.g = 0;
+    } else {
+      it.x = 90 + Math.random() * (NW - 180); it.y = NH + 30;
+      it.vx = (NW / 2 - it.x) * (0.3 + Math.random() * 0.5) + (Math.random() - 0.5) * 90;
+      it.g = k.move === 'flutter' ? 300 : 560;
+      it.vy = -(k.move === 'flutter' ? 420 + Math.random() * 70 : 600 + Math.random() * 130);
+    }
+    nin.items.push(it);
+  }
+  // чем дольше игра, тем чаще и гуще пачки и тем больше в них ос
+  function ninWave() {
+    var hard = Math.min(1, nin.t / 90), n = 1 + Math.floor(Math.random() * (1.6 + hard * 3.4)), k, roll;
+    for (k = 0; k < n; k++) {
+      roll = Math.random();
+      ninToss(roll < 0.07 + hard * 0.15 ? 'wasp' : roll < 0.46 ? 'fly' : roll < 0.6 ? 'mosquito' : roll < 0.72 ? 'moth' : roll < 0.84 ? 'cockroach' : roll < 0.95 ? 'butterfly' : 'larva', k * 0.16);
+    }
+    if (Math.random() < 0.14) ninToss('dragonfly', 0.3);
+    nin.next = 1.7 - hard * 0.8;
+  }
+  function ninStart() {
+    audio();
+    ninSprite();
+    nin = { t: 0, score: 0, lives: 3, items: [], fx: [], next: 0.6, down: false, tx: NIN_MOUTH.x, ty: NIN_MOUTH.y, swipe: 0, show: 0, flash: 0, over: false };
+    ninPlaying = true; ninLast = 0;
+    $('nin-veil').hidden = true;
+    cancelAnimationFrame(ninRaf);
+    ninRaf = requestAnimationFrame(ninFrame);
+    ninHud();
+  }
+  function ninHud() {
+    $('nin-score').textContent = fmt(nin ? nin.score : 0);
+    $('nin-lives').textContent = nin ? nin.lives : 3;
+    $('nin-best').textContent = fmt(state.me.nin);
+  }
+  function ninMiss() {
+    nin.lives -= 1; nin.flash = 0.25;
+    play('kick', freq(0, 0), 0, 0.8);
+    ninHud();
+  }
+  // язык прошёл от (x0, y0) до (x1, y1): всё, что задел по пути, поймано
+  function ninLick(x0, y0, x1, y1) {
+    var dx = x1 - x0, dy = y1 - y0, len2 = dx * dx + dy * dy || 1;
+    nin.items.forEach(function (it) {
+      if (it.caught || it.t < 0) return;
+      var u = Math.max(0, Math.min(1, ((it.x - x0) * dx + (it.y - y0) * dy) / len2)), px = x0 + dx * u - it.x, py = y0 + dy * u - it.y;
+      if (px * px + py * py > (it.r + 16) * (it.r + 16)) return;
+      it.caught = 0.001;
+      if (it.bad) {
+        nin.swipe = 0;
+        nin.fx.push({ x: it.x, y: it.y, t: 0, text: 'Ой! Оса', bad: true });
+        ninMiss();
+        play('bass', freq(1, 1), 0, 0.8);
+        return;
+      }
+      var k = NIN_KIND[it.k];
+      nin.swipe += 1;
+      nin.score += k.pts;
+      if (k.heal && nin.lives < 3) { nin.lives += 1; nin.fx.push({ x: it.x, y: it.y - 20, t: 0, text: '+1 жизнь' }); }
+      nin.fx.push({ x: it.x, y: it.y, t: 0, text: '+' + k.pts });
+      play('pluck', freq(nin.swipe % 5, 3), 0, 0.6);
+      if (nin.swipe >= 5) { state.ach.sweep = 1; dirty = true; }
+      ninHud();
+    });
+  }
+  function ninEndSwipe() {
+    if (!nin || !nin.down) return;
+    nin.down = false;
+    // три и больше за один взмах — надбавка по очку за каждое насекомое
+    if (nin.swipe >= 3) { nin.score += nin.swipe; nin.fx.push({ x: nin.tx, y: nin.ty - 26, t: 0, text: 'Комбо ×' + nin.swipe + ': +' + nin.swipe, big: true }); play('choir', freq(2, 2), 0, 0.6); ninHud(); }
+    nin.swipe = 0;
+  }
+  function ninStep(dt) {
+    nin.t += dt;
+    nin.next -= dt;
+    if (nin.next <= 0) ninWave();
+    if (nin.flash > 0) nin.flash -= dt;
+    nin.show = nin.down ? 1 : Math.max(0, nin.show - dt * 6);
+    nin.items = nin.items.filter(function (it) {
+      it.t += dt;
+      if (it.t < 0) return true;
+      if (it.caught) {
+        // пойманное насекомое язык утягивает ко рту
+        it.caught += dt;
+        var u = Math.min(1, it.caught / 0.18);
+        it.x += (NIN_MOUTH.x - it.x) * u; it.y += (NIN_MOUTH.y - it.y) * u;
+        return it.caught < 0.2;
+      }
+      it.vy += it.g * dt;
+      it.x += it.vx * dt + (NIN_KIND[it.k].move === 'flutter' ? Math.sin(nin.t * 5 + it.ph) * 60 * dt : 0);
+      it.y += it.vy * dt;
+      it.rot += it.spin * dt;
+      if (it.y < NH - 20) it.up = true;
+      if (it.g && it.up && it.y > NH + 40) { if (!it.bad) ninMiss(); return false; }
+      return it.x > -60 && it.x < NW + 60;
+    });
+    nin.fx = nin.fx.filter(function (f) { f.t += dt; return f.t < 0.9; });
+    if (nin.lives <= 0) { nin.lives = 0; nin.over = true; }
+  }
+  // насекомые нарисованы как лягушки: круглое тельце, большие белые глаза с бликом, улыбка и розовые щёки
+  function ninBug(it) {
+    var x = it.x, y = it.y, r = it.r, flap = Math.sin(nin.t * 40 + it.ph), s;
+    ng.save();
+    ng.translate(x, y);
+    if (it.caught) ng.scale(0.7, 0.7);
+    ng.lineCap = 'round'; ng.lineJoin = 'round';
+    function oval(cx, cy, rx, ry, rot) { ng.beginPath(); ng.ellipse(cx, cy, rx, ry, rot || 0, 0, Math.PI * 2); }
+    function wings(col, edge, w, h, lift) {
+      ng.fillStyle = col; ng.strokeStyle = edge; ng.lineWidth = 1.5;
+      for (s = -1; s <= 1; s += 2) { oval(s * (r * 0.95), -r * lift + flap * 2, w, h, s * (0.5 + flap * 0.25)); ng.fill(); ng.stroke(); }
+    }
+    // мордочка: fy — высота глаз, d — расстояние между ними, er — размер глаза, mood — улыбка (1) или злой оскал (-1)
+    function face(fy, d, er, mood, pupil) {
+      for (s = -1; s <= 1; s += 2) {
+        ng.fillStyle = '#ffffff'; ng.strokeStyle = '#1c2b22'; ng.lineWidth = 1.2; oval(s * d, fy, er, er); ng.fill(); ng.stroke();
+        ng.fillStyle = pupil || '#1c2b22'; oval(s * d + s * er * 0.15, fy + er * 0.12, er * 0.5, er * 0.5); ng.fill();
+        ng.fillStyle = '#ffffff'; oval(s * d + s * er * 0.15 - er * 0.18, fy - er * 0.12, er * 0.17, er * 0.17); ng.fill();
+        ng.fillStyle = 'rgba(242,155,181,0.85)'; oval(s * (d + er * 0.9), fy + er * 1.25, er * 0.5, er * 0.3); ng.fill();
+        if (mood < 0) { ng.strokeStyle = '#1c2b22'; ng.lineWidth = 2.2; ng.beginPath(); ng.moveTo(s * (d + er), fy - er * 1.3); ng.lineTo(s * (d - er * 0.7), fy - er * 0.45); ng.stroke(); }
+      }
+      ng.strokeStyle = '#1c2b22'; ng.lineWidth = 1.8; ng.beginPath();
+      if (mood > 0) ng.arc(0, fy + er * 0.9, d * 0.7, 0.2 * Math.PI, 0.8 * Math.PI); else ng.arc(0, fy + er * 2.1, d * 0.6, 1.2 * Math.PI, 1.8 * Math.PI);
+      ng.stroke();
+    }
+    if (it.k === 'butterfly' || it.k === 'moth') {
+      // бабочка яркая, моль серо-бурая и мохнатая, с перистыми усиками
+      var moth = it.k === 'moth', open = 0.55 + Math.abs(flap) * 0.45;
+      var cols = moth ? ['#b8a58e', '#d9cbb8', '#8a7560'] : [['#ff70a6', '#ffd670', '#c9457a'], ['#4cc9f0', '#c8f7ff', '#1d7fa3'], ['#c77dff', '#ffd6ff', '#7b2cbf']][Math.floor(it.ph) % 3];
+      ng.lineWidth = 2; ng.strokeStyle = cols[2];
+      for (s = -1; s <= 1; s += 2) {
+        ng.fillStyle = cols[0]; oval(s * r * 0.8 * open, -r * 0.3, r * 0.9 * open, r * 0.72, s * 0.4); ng.fill(); ng.stroke();
+        ng.fillStyle = cols[1]; oval(s * r * 0.62 * open, r * 0.5, r * 0.62 * open, r * 0.5, s * -0.3); ng.fill(); ng.stroke();
+        ng.fillStyle = cols[2]; oval(s * r * 0.85 * open, -r * 0.35, r * 0.22 * open, r * 0.2); ng.fill();
+        ng.beginPath(); ng.moveTo(s * 3, -r * 0.75); ng.quadraticCurveTo(s * r * 0.5, -r * 1.35, s * r * 0.7, -r * 1.2); ng.stroke();
+        if (moth) for (var q = 0; q < 3; q++) { ng.beginPath(); ng.moveTo(s * r * (0.3 + q * 0.14), -r * (1.05 + q * 0.07)); ng.lineTo(s * r * (0.2 + q * 0.14), -r * (1.3 + q * 0.03)); ng.stroke(); }
+      }
+      ng.fillStyle = moth ? '#8a7560' : '#3d405b'; oval(0, 0, r * 0.36, r * 0.8); ng.fill();
+      face(-r * 0.38, r * 0.2, r * 0.19, 1);
+    } else if (it.k === 'dragonfly') {
+      if (it.vx < 0) ng.scale(-1, 1);
+      wings('rgba(225,246,255,0.85)', '#5fa8c9', r * 1.15, 5.5, 0.55);
+      for (s = 4; s >= 0; s--) { ng.fillStyle = s % 2 ? '#1f7391' : '#3aa7c9'; oval(-r * 0.5 - s * r * 0.36, 0, r * (0.34 - s * 0.04), r * (0.3 - s * 0.035)); ng.fill(); }
+      ng.fillStyle = '#3aa7c9'; oval(r * 0.35, 0, r * 0.72, r * 0.66); ng.fill();
+      ng.fillStyle = '#d6f1f7'; oval(r * 0.35, r * 0.2, r * 0.42, r * 0.34); ng.fill();
+      ng.translate(r * 0.4, 0); face(-r * 0.32, r * 0.3, r * 0.26, 1);
+    } else if (it.k === 'cockroach') {
+      // таракан: рыжий овал с надкрыльями, длинными усами и шестью лапками
+      ng.rotate(Math.sin(it.rot) * 0.5);
+      ng.strokeStyle = '#5c3210'; ng.lineWidth = 2.2;
+      for (s = -1; s <= 1; s += 2) {
+        for (var leg = -1; leg <= 1; leg++) { ng.beginPath(); ng.moveTo(s * r * 0.55, leg * r * 0.4 + 2); ng.lineTo(s * r * 1.15, leg * r * 0.55 + 4 + flap * 2 * leg); ng.stroke(); }
+        ng.beginPath(); ng.moveTo(s * r * 0.2, -r * 0.85); ng.quadraticCurveTo(s * r * 0.9, -r * 1.7, s * r * 1.2, -r * 1.25 + flap * 2); ng.stroke();
+      }
+      ng.fillStyle = '#a0522d'; oval(0, r * 0.1, r * 0.72, r); ng.fill();
+      ng.fillStyle = '#c2622a'; oval(0, r * 0.25, r * 0.6, r * 0.78); ng.fill();
+      ng.strokeStyle = '#5c3210'; ng.lineWidth = 1.6; ng.beginPath(); ng.moveTo(0, -r * 0.35); ng.lineTo(0, r); ng.stroke();
+      ng.fillStyle = '#8a4212'; oval(0, -r * 0.6, r * 0.56, r * 0.42); ng.fill();
+      face(-r * 0.66, r * 0.26, r * 0.22, 1);
+    } else if (it.k === 'larva') {
+      // личинка: пухлая гусеничка из сегментов, слегка извивается
+      ng.rotate(Math.sin(it.rot * 0.6) * 0.4);
+      for (s = 3; s >= 1; s--) { ng.fillStyle = s % 2 ? '#f3e2a9' : '#e6cf7f'; ng.strokeStyle = '#b89a3e'; ng.lineWidth = 1.5; oval(-s * r * 0.55, Math.sin(nin.t * 8 + it.ph + s) * 3 + r * 0.1, r * (0.62 - s * 0.07), r * (0.6 - s * 0.07)); ng.fill(); ng.stroke(); }
+      ng.fillStyle = '#f7ecc0'; ng.strokeStyle = '#b89a3e'; oval(r * 0.15, 0, r * 0.78, r * 0.74); ng.fill(); ng.stroke();
+      ng.translate(r * 0.2, 0); face(-r * 0.18, r * 0.3, r * 0.24, 1);
+    } else if (it.k === 'wasp') {
+      // оса — опасность: вокруг неё мигает красное пятно, над головой восклицательный знак
+      var pulse = 0.5 + 0.5 * Math.sin(nin.t * 9 + it.ph);
+      ng.fillStyle = 'rgba(230,30,30,' + (0.2 + pulse * 0.22).toFixed(2) + ')'; oval(0, 0, r * (1.9 + pulse * 0.3), r * (1.9 + pulse * 0.3)); ng.fill();
+      ng.strokeStyle = 'rgba(208,0,0,' + (0.6 + pulse * 0.4).toFixed(2) + ')'; ng.lineWidth = 3; ng.setLineDash([7, 6]); oval(0, 0, r * 1.75, r * 1.75); ng.stroke(); ng.setLineDash([]);
+      ng.fillStyle = '#d00000'; ng.strokeStyle = '#ffffff'; ng.lineWidth = 2; oval(0, -r * 2.05, r * 0.5, r * 0.5); ng.fill(); ng.stroke();
+      ng.fillStyle = '#ffffff'; ng.fillRect(-1.6, -r * 2.36, 3.2, r * 0.42); oval(0, -r * 1.8, 1.9, 1.9); ng.fill();
+      wings('rgba(235,248,255,0.9)', '#8aa7b8', r * 0.85, r * 0.36, 0.85);
+      ng.fillStyle = '#22223b'; ng.beginPath(); ng.moveTo(-3.5, r * 0.9); ng.lineTo(0, r * 1.55); ng.lineTo(3.5, r * 0.9); ng.fill();
+      ng.fillStyle = '#ffd60a'; oval(0, 0, r * 0.82, r); ng.fill();
+      ng.save(); ng.clip(); ng.fillStyle = '#22223b'; [0.05, 0.45, 0.85].forEach(function (p) { ng.fillRect(-r, r * p, r * 2, r * 0.22); }); ng.restore();
+      face(-r * 0.4, r * 0.34, r * 0.27, -1, '#d00000');
+    } else {
+      // муха и комар: у мухи тельце круглое, у комара тонкое, с длинным носом и лапками
+      var thin = it.k === 'mosquito';
+      wings('rgba(235,248,255,0.9)', '#8aa7b8', r * 0.85, r * 0.38, 0.75);
+      if (thin) {
+        ng.strokeStyle = '#3d405b'; ng.lineWidth = 1.6; ng.beginPath();
+        for (s = -1; s <= 1; s += 2) { ng.moveTo(s * 3, r * 0.3); ng.lineTo(s * r * 0.9, r * 1.2); ng.lineTo(s * r * 1.05, r * 1.5); }
+        ng.moveTo(0, -r * 0.1); ng.lineTo(0, r * 1.5); ng.stroke();
+      }
+      ng.fillStyle = thin ? '#7d86a8' : '#4a4e69'; oval(0, 0, thin ? r * 0.55 : r * 0.82, thin ? r * 0.85 : r * 0.88); ng.fill();
+      ng.fillStyle = thin ? '#c9d0e6' : '#9a8c98'; oval(0, r * 0.3, thin ? r * 0.32 : r * 0.5, r * 0.42); ng.fill();
+      face(-r * 0.38, thin ? r * 0.3 : r * 0.36, thin ? r * 0.26 : r * 0.3, 1);
+    }
+    ng.restore();
+  }
+  function ninDraw() {
+    var bg = ng.createLinearGradient(0, 0, 0, NH), k;
+    bg.addColorStop(0, '#bfe8dc'); bg.addColorStop(0.75, '#8fd0c0'); bg.addColorStop(1, '#5fa38e');
+    ng.fillStyle = bg; ng.fillRect(0, 0, NW, NH);
+    for (k = 0; k < 11; k++) {
+      var rx = 20 + k * 76 + (k % 3) * 9, top = 250 + (k * 53) % 120;
+      ng.strokeStyle = '#4f8f6a'; ng.lineWidth = 5; ng.lineCap = 'round';
+      ng.beginPath(); ng.moveTo(rx, NH); ng.quadraticCurveTo(rx + (k % 2 ? 10 : -10), (NH + top) / 2, rx, top); ng.stroke();
+      ng.fillStyle = '#6b4226'; ng.beginPath(); ng.ellipse(rx, top + 8, 6, 20, 0, 0, Math.PI * 2); ng.fill();
+    }
+    ng.fillStyle = '#4fa354'; ng.strokeStyle = '#2f7a3a'; ng.lineWidth = 3;
+    ng.beginPath(); ng.ellipse(NIN_MOUTH.x, NH - 16, 110, 20, 0, 0, Math.PI * 2); ng.fill(); ng.stroke();
+    if (!nin) { if (ninImg) ng.drawImage(ninImg, NIN_MOUTH.x - 62, NH - 140, 124, 128); return; }
+    if (nin.show > 0) {
+      ng.globalAlpha = nin.show;
+      ng.strokeStyle = '#f06292'; ng.lineWidth = 9; ng.lineCap = 'round';
+      ng.beginPath(); ng.moveTo(NIN_MOUTH.x, NIN_MOUTH.y); ng.lineTo(nin.tx, nin.ty); ng.stroke();
+      ng.fillStyle = '#f06292'; ng.beginPath(); ng.arc(nin.tx, nin.ty, 9, 0, Math.PI * 2); ng.fill();
+      ng.globalAlpha = 1;
+    }
+    if (ninImg) ng.drawImage(ninImg, NIN_MOUTH.x - 62, NH - 140, 124, 128);
+    nin.items.forEach(function (it) { if (it.t >= 0) ninBug(it); });
+    ng.textAlign = 'center';
+    nin.fx.forEach(function (f) {
+      ng.globalAlpha = Math.max(0, 1 - f.t / 0.9);
+      ng.font = 'bold ' + (f.big ? 26 : 20) + 'px "Balsamiq Sans", "Comic Sans MS", sans-serif';
+      ng.lineWidth = 4; ng.strokeStyle = '#ffffff'; ng.strokeText(f.text, f.x, f.y - f.t * 46);
+      ng.fillStyle = f.bad ? '#d00000' : f.big ? '#d9437f' : '#17362a'; ng.fillText(f.text, f.x, f.y - f.t * 46);
+    });
+    ng.globalAlpha = 1;
+    if (nin.flash > 0) { ng.fillStyle = 'rgba(208,0,0,' + (nin.flash * 1.2).toFixed(2) + ')'; ng.fillRect(0, 0, NW, NH); }
+  }
+  function ninFrame(ts) {
+    if (!ninPlaying || !nin) return;
+    var dt = ninLast ? Math.min(0.04, (ts - ninLast) / 1000) : 0.016;
+    ninLast = ts;
+    ninStep(dt);
+    ninDraw();
+    if (nin.over) ninFinish(); else ninRaf = requestAnimationFrame(ninFrame);
+  }
+  function ninFinish() {
+    ninPlaying = false;
+    if (nin.score > state.me.nin) { state.me.nin = nin.score; dirty = true; save(); }
+    ninVeil = 'again';
+    $('nin-veil-title').textContent = 'Улов: ' + fmt(nin.score);
+    $('nin-veil-text').textContent = 'Рекорд: ' + fmt(state.me.nin) + '. Три упущенных насекомых или пойманных осы — и ловля окончена.';
+    $('nin-veil-btn').textContent = 'Ещё раз';
+    $('nin-veil').hidden = false;
+    if (ac) [4, 2, 0].forEach(function (d, k) { play('bass', freq(d, 1), ac.currentTime + k * 0.16); });
+    ninHud(); checkAch();
+  }
+  function ninPause() {
+    if (!ninPlaying) return;
+    ninPlaying = false;
+    cancelAnimationFrame(ninRaf);
+    ninVeil = 'resume';
+    $('nin-veil-title').textContent = 'Пауза';
+    $('nin-veil-text').textContent = 'Улов: ' + fmt(nin.score) + '. Лягушка ждёт.';
+    $('nin-veil-btn').textContent = 'Продолжить';
+    $('nin-veil').hidden = false;
+  }
+  function ninShow(on) {
+    $('nin-play').hidden = !on;
+    if (!on) { ninPlaying = false; cancelAnimationFrame(ninRaf); nin = null; $('nin-record').textContent = 'Рекорд: ' + fmt(state.me.nin); return; }
+    fitGame('nin-play');
+    ninStart();
+  }
+  function ninOpen() { $('nin-record').textContent = 'Рекорд: ' + fmt(state.me.nin); }
+  function ninPoint(ev) { var box = ninCv.getBoundingClientRect(); return [(ev.clientX - box.left) / box.width * NW, (ev.clientY - box.top) / box.height * NH]; }
+  ninCv.addEventListener('pointerdown', function (ev) {
+    if (!ninPlaying) return;
+    ev.preventDefault();
+    var p = ninPoint(ev);
+    nin.down = true; nin.swipe = 0; nin.tx = p[0]; nin.ty = p[1];
+    ninLick(p[0], p[1], p[0], p[1]);
+  });
+  ninCv.addEventListener('pointermove', function (ev) {
+    if (!ninPlaying || !nin.down) return;
+    var p = ninPoint(ev);
+    ninLick(nin.tx, nin.ty, p[0], p[1]);
+    nin.tx = p[0]; nin.ty = p[1];
+  });
+  ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (n) { ninCv.addEventListener(n, ninEndSwipe); });
+  $('nin-go').addEventListener('click', function () { ninShow(true); });
+  $('nin-exit').addEventListener('click', function () { ninShow(false); });
+  $('nin-pause').addEventListener('click', ninPause);
+  $('nin-again').addEventListener('click', ninStart);
+  $('nin-veil-alt').addEventListener('click', function () { ninShow(false); });
+  $('nin-veil-btn').addEventListener('click', function () {
+    if (ninVeil === 'resume') { ninPlaying = true; $('nin-veil').hidden = true; ninLast = 0; ninRaf = requestAnimationFrame(ninFrame); }
+    else ninStart();
   });
 
   // ---------- достижения ----------
@@ -2444,6 +2805,9 @@
     ['Прыжки', 'ride', 'Верхом на стрекозе', 'Прокатитесь на стрекозе 10 раз.', 10, 10, function () { return state.ach.rides; }],
     ['Прыжки', 'stomp', 'Гроза жуков', 'Прыгните сверху на 25 жуков-плавунцов.', 25, 15, function () { return state.ach.stomps; }],
     ['Прыжки', 'lick', 'Мухолов', 'Достаньте языком 50 мух.', 50, 15, function () { return state.ach.licks; }],
+    ['Ловля мошек', 'nin1', 'Ловкий язык', 'Наберите 100 очков в «Ловле мошек».', 100, 10, function () { return state.me.nin; }],
+    ['Ловля мошек', 'nin2', 'Гроза мошкары', 'Наберите 500 очков в «Ловле мошек».', 500, 30, function () { return state.me.nin; }],
+    ['Ловля мошек', 'sweep', 'Одним махом', 'Поймайте пять насекомых за один взмах языка.', 1, 20, function () { return state.ach.sweep; }],
     ['Оборона болота', 'td1', 'Первая оборона', 'Пройдите первый уровень.', 1, 5, function () { return tdWon(1); }],
     ['Оборона болота', 'td10', 'Половина болота', 'Пройдите 10 уровней.', 10, 30, function () { return tdWon(1); }],
     ['Оборона болота', 'td20', 'Хозяин болота', 'Пройдите 20 уровней.', 20, 100, function () { return tdWon(1); }],
@@ -3452,15 +3816,16 @@
   function tdNum(x) { return x >= 100 ? fmt(x) : String(Math.round(x * 10) / 10).replace('.', ','); }
   function tdStars(n) { var s = ''; for (var k = 0; k < n; k++) s += '★'; return s; }
   // окно боя подгоняется под экран: поле занимает всю высоту, что осталась от панели, подсказки и магазина
-  function tdFit() {
-    var frame = document.querySelector('.td-frame'), stage = document.querySelector('.td-game .td-stage'), k, extra;
-    if ($('td-play').hidden) return;
+  function fitGame(id) {
+    var play = $(id), frame = play.querySelector('.td-frame'), stage = play.querySelector('.td-stage'), k, extra;
+    if (play.hidden) return;
     for (k = 0; k < 3; k++) {
       extra = frame.offsetHeight - stage.offsetHeight;
       frame.style.width = Math.max(300, Math.min(window.innerWidth, (window.innerHeight - extra) * TD_W / TD_H)) + 'px';
     }
   }
-  window.addEventListener('resize', tdFit);
+  function tdFit() { fitGame('td-play'); }
+  window.addEventListener('resize', function () { fitGame('td-play'); fitGame('nin-play'); });
   function tdSay(text) { tdNote = text; tdNoteT = 2.4; }
   function tdEvent(name, i) {
     if (name === 'shot') {
@@ -3702,8 +4067,9 @@
   FROGS.forEach(function (f) { paintFrog(f); refreshCard(f); });
   refreshHeader();
   if (location.hash === '#oborona') curGame = 'td';
+  if (location.hash === '#lovlya') curGame = 'nin';
   netStart();
-  show(location.hash === '#moya' ? 'mine' : location.hash === '#achivki' ? 'ach' : location.hash === '#lidery' && FIREBASE ? 'top' : location.hash === '#pryzhki' || location.hash === '#oborona' || location.hash === '#igry' ? 'games' : 'pond');
+  show(location.hash === '#moya' ? 'mine' : location.hash === '#achivki' ? 'ach' : location.hash === '#lidery' && FIREBASE ? 'top' : location.hash === '#pryzhki' || location.hash === '#oborona' || location.hash === '#lovlya' || location.hash === '#igry' ? 'games' : 'pond');
   checkAch();
   setInterval(function () { checkAch(); save(); }, 2000);
   document.addEventListener('visibilitychange', save);
