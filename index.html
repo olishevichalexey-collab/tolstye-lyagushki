@@ -7,7 +7,7 @@
 <style>body{margin:0}[hidden]{display:none!important}</style>
 <title>Толстые лягушки</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='%236fbf4b'%3E%3Ccircle cx='19' cy='19' r='13'/%3E%3Ccircle cx='45' cy='19' r='13'/%3E%3Cellipse cx='32' cy='39' rx='29' ry='22'/%3E%3C/g%3E%3Ccircle cx='19' cy='19' r='8.5' fill='%23fff'/%3E%3Ccircle cx='45' cy='19' r='8.5' fill='%23fff'/%3E%3Ccircle cx='20.5' cy='20' r='4.5' fill='%231c2b22'/%3E%3Ccircle cx='46.500' cy='20' r='4.5' fill='%231c2b22'/%3E%3Ccircle cx='19' cy='18' r='1.5' fill='%23fff'/%3E%3Ccircle cx='45' cy='18' r='1.5' fill='%23fff'/%3E%3Cellipse cx='11' cy='43' rx='5' ry='3' fill='%23f29bb5'/%3E%3Cellipse cx='53' cy='43' rx='5' ry='3' fill='%23f29bb5'/%3E%3Cpath d='M15 40 Q32 54 49 40' fill='none' stroke='%231c2b22' stroke-width='3.500' stroke-linecap='round'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;800&family=Nunito:wght@500;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Balsamiq+Sans:wght@400;700&display=swap">
 <style>
   /* Макет: шапка со счётчиками и двумя вкладками; «Пруд» — сетка листов кувшинки с лягушками-кнопками; «Моя лягушка» — питомец слева, гардероб справа. */
   :root {
@@ -20,8 +20,8 @@
     --lily: #d9437f;
     --surface: #f4fbf7;
     --line: #9cc7b8;
-    --font-display: "Unbounded", "Arial Black", "Segoe UI", sans-serif;
-    --font-body: "Nunito", "Segoe UI", system-ui, sans-serif;
+    --font-display: "Balsamiq Sans", "Comic Sans MS", "Segoe UI", sans-serif;
+    --font-body: "Balsamiq Sans", "Comic Sans MS", "Segoe UI", system-ui, sans-serif;
   }
   @media (prefers-color-scheme: dark) {
     :root:not([data-theme="light"]) {
@@ -65,18 +65,18 @@
   button { font-family: inherit; color: inherit; }
 
   header { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 14px 24px; }
-  h1 { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.7rem, 6vw, 3.1rem); line-height: 1; letter-spacing: -0.02em; margin: 0; }
+  h1 { font-family: var(--font-display); font-weight: 700; font-size: clamp(2rem, 7vw, 3.6rem); line-height: 1; margin: 0; transform: rotate(-2deg); transform-origin: left bottom; text-shadow: 0 3px 0 var(--surface), 0 6px 0 var(--line); }
   h1 span { color: var(--lily); }
-  h2 { font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; margin: 0; }
+  h2 { font-family: var(--font-display); font-weight: 700; font-size: 1.4rem; margin: 0; }
 
   .stats { display: flex; flex-wrap: wrap; gap: 8px 22px; font-weight: 700; color: var(--ink-soft); font-variant-numeric: tabular-nums; }
-  .stats b { font-family: var(--font-display); font-weight: 800; color: var(--ink); font-size: 1.2rem; margin-left: 6px; }
+  .stats b { font-family: var(--font-display); font-weight: 700; color: var(--ink); font-size: 1.45rem; margin-left: 6px; }
 
   .tabs { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; }
   .tab, .act {
     font-family: var(--font-display);
     font-weight: 500;
-    font-size: 0.86rem;
+    font-size: 1rem;
     border: 2px solid var(--ink);
     border-radius: 999px;
     padding: 9px 18px;
@@ -84,7 +84,7 @@
     cursor: pointer;
   }
   .tab[aria-selected="true"] { background: var(--ink); color: var(--surface); }
-  .act { border-color: var(--line); color: var(--ink-soft); font-size: 0.78rem; padding: 8px 14px; }
+  .act { border-color: var(--line); color: var(--ink-soft); font-size: 0.9rem; padding: 8px 14px; }
   .act:hover, .tab:hover { border-color: var(--lily); }
   .spacer { flex: 1 1 auto; }
 
@@ -101,7 +101,7 @@
   .sac { transform-origin: 150px 220px; transform: scale(0.2); opacity: 0; }
   .frog.croak .body { animation: squish 0.32s ease-out; }
   .frog.croak .sac { animation: puff 0.32s ease-out; }
-  .name { font-family: var(--font-display); font-weight: 800; font-size: 0.92rem; overflow-wrap: anywhere; }
+  .name { font-family: var(--font-display); font-weight: 700; font-size: 1.1rem; overflow-wrap: anywhere; }
   .meta { font-size: 0.82rem; color: var(--ink-soft); font-weight: 700; }
   .card .meter { width: 78%; height: 6px; }
   .sing { font-size: 0.78rem; font-weight: 700; border: 2px solid var(--line); border-radius: 999px; background: transparent; padding: 3px 12px; cursor: pointer; color: var(--ink-soft); }
@@ -187,6 +187,13 @@
   @keyframes fxTwinkle { 0%, 100% { opacity: 0; transform: scale(0.3) rotate(0); } 50% { opacity: 1; transform: scale(1.15) rotate(45deg); } }
   @media (prefers-reduced-motion: reduce) { .pet .frog .fxl svg { animation: none; opacity: 0.8; } }
 
+  /* громкость и справка «Как играть» */
+  .vol { display: flex; align-items: center; gap: 8px; font-size: 0.78rem; font-weight: 700; color: var(--ink-soft); }
+  .vol input { width: 96px; accent-color: var(--lily); }
+  .help { position: fixed; inset: 0; z-index: 6; background: rgba(10, 31, 38, 0.6); display: flex; align-items: center; justify-content: center; padding: 16px; }
+  .help-card { background: var(--surface); border: 3px solid var(--pad-edge); border-radius: 18px; padding: 22px 24px; max-width: 640px; max-height: 100%; overflow: auto; display: flex; flex-direction: column; gap: 14px; }
+  .help-card .legend { gap: 8px; }
+
   /* таблица лидеров */
   .top { border-collapse: collapse; width: 100%; max-width: 620px; font-weight: 700; font-variant-numeric: tabular-nums; }
   .top td { padding: 7px 10px; border-bottom: 2px solid var(--line); overflow-wrap: anywhere; }
@@ -209,7 +216,7 @@
   .pet input { font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; text-align: center; color: var(--ink); background: transparent; border: 0; border-bottom: 2px dashed var(--line); padding: 4px 8px; width: min(100%, 300px); }
   .pet .meter { width: min(100%, 320px); }
   .row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
-  .big { font-family: var(--font-display); font-weight: 500; font-size: 0.9rem; color: var(--surface); background: var(--ink); border: 0; border-radius: 999px; padding: 12px 20px; cursor: pointer; }
+  .big { font-family: var(--font-display); font-weight: 700; font-size: 1.05rem; color: var(--surface); background: var(--ink); border: 0; border-radius: 999px; padding: 12px 20px; cursor: pointer; }
   .big:disabled { opacity: 0.45; cursor: default; }
   .wardrobe { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
   .slot { display: flex; flex-direction: column; gap: 8px; }
@@ -254,6 +261,8 @@
     <button class="tab" id="tab-ach" role="tab" type="button" aria-selected="false">Достижения</button>
     <button class="tab" id="tab-top" role="tab" type="button" aria-selected="false" hidden>Лидеры</button>
     <span class="spacer"></span>
+    <label class="vol">Громкость<input id="vol" type="range" min="0" max="100" step="5" value="100"></label>
+    <button class="act" id="btn-help" type="button">Как играть</button>
     <button class="act" id="btn-chord" type="button">Все разом</button>
     <button class="act" id="btn-stop" type="button">Остановить хор</button>
   </div>
@@ -315,6 +324,23 @@
     </div>
   </section>
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+  <div class="help" id="help" role="dialog" aria-modal="true" aria-labelledby="help-title" hidden>
+    <div class="help-card">
+      <h2 id="help-title">Как играть</h2>
+      <ul class="legend">
+        <li><b>Пруд.</b> Нажимайте на лягушек — получаете кваки. За кваки просыпаются новые лягушки, а от нажатий растёт их уровень, до 5-го. С 3-го уровня лягушка умеет петь сама.</li>
+        <li><b>Корм.</b> Каждые 10 нажатий дают 1 корм. Ещё корм дают за достижения.</li>
+        <li><b>Моя лягушка.</b> Кормите яйцо, и оно вырастет: головастик, лягушонок, лягушка, толстая лягушка. С лягушонка можно надевать вещи.</li>
+        <li><b>Перерождение.</b> Выросшую лягушку можно превратить в новое яйцо. Весь прогресс обнулится, кроме достижений, сундуков и вещей из них, зато вылупится другая порода — от обычной до секретной.</li>
+        <li><b>Прыжки.</b> ← и → ведут лягушку вверх по кувшинкам. Пробел или быстрое касание — язык по мухе.</li>
+        <li><b>Оборона болота.</b> Сажайте лягушек у тропы и не пускайте стрекоз к озеру. Чем круче лягушка в пруду, тем сильнее она бьёт. За победу дают сундук.</li>
+        <li><b>Сундуки.</b> Открываются в инвентаре на вкладке «Моя лягушка». Внутри вещи пяти редкостей.</li>
+        <li><b>Достижения и лидеры.</b> Достижения засчитываются сами. В таблице лидеров вы под именем своей лягушки.</li>
+      </ul>
+      <p class="note">Прогресс хранится в этом браузере. Громкость — ползунок вверху страницы.</p>
+      <div class="row"><button class="big" id="help-close" type="button">Понятно</button></div>
+    </div>
+  </div>
 
   <section id="view-games" hidden>
     <div class="tabs sub" role="tablist">
@@ -332,7 +358,7 @@
       </div>
       <div class="how">
         <h2>Как играть</h2>
-        <p class="note">Клавиши ← и → (или A и D). На телефоне держите палец на левой или правой половине поля. За край экрана можно выйти и появиться с другой стороны.</p>
+        <p class="note">Клавиши ← и → (или A и D). На телефоне держите палец на левой или правой половине поля. За край экрана можно выйти и появиться с другой стороны. Пробел, ↑ или быстрое касание — выстрел языком по ближайшей мухе.</p>
         <ul class="legend">
           <li><b>Зелёный лист</b> держит всегда.</li>
           <li><b>Бирюзовый лист</b> плавает из стороны в сторону.</li>
@@ -342,6 +368,7 @@
           <li><b>Стрекоза</b> несёт вверх пару секунд, и в полёте ничего не страшно.</li>
           <li><b>Жук-плавунец</b>: на него можно прыгнуть сверху, но нельзя врезаться.</li>
           <li><b>Омут</b> затягивает, его нужно облетать.</li>
+          <li><b>Муха</b>: достаньте её языком и получите 150 очков.</li>
         </ul>
         <p class="note">Чем выше, тем реже листья и больше опасностей. Болото вокруг меняется: мелководье, камыши, туманная топь, ночное болото и лунная высь.</p>
         <p class="meta" id="jump-best">Рекорд: 0</p>
@@ -365,6 +392,7 @@
             <div>Волна<b id="td-wave">0 из 25</b></div>
           </div>
         </div>
+        <p class="note">Выберите лягушку внизу и нажмите на свободное место у тропы. Нажмите на посаженную лягушку, чтобы улучшить её или убрать. У каждого голоса свой приём: язык, скорострел, грязевая бомба, снайпер, магия, мороз и яд.</p>
         <div class="td-stage">
           <canvas id="td-cv" width="800" height="500" aria-label="Поле обороны: тропа от гнезда стрекоз до озера лягушек"></canvas>
           <div class="veil" id="td-veil" hidden>
@@ -385,7 +413,6 @@
         </div>
         <div class="td-info" id="td-info"></div>
         <div class="shop" id="td-shop"></div>
-        <p class="note">Выберите лягушку внизу и нажмите на свободное место у тропы. Нажмите на посаженную лягушку, чтобы улучшить её или убрать. У каждого голоса свой приём: язык, скорострел, грязевая бомба, снайпер, магия, мороз и яд.</p>
       </div>
     </div>
   </section>
@@ -504,7 +531,7 @@
       frogs: FROGS.map(function (f) { return { n: 0, open: f.i < 3, auto: false, m: 0 }; }),
       me: { xp: 0, name: '', skin: 0, kind: 0, best: 0, wear: { neck: '', hat: '', eyes: '', suit: '', back: '' } },
       td: { done: TD_LEVELS.map(function () { return 0; }), chests: [0, 0, 0], loot: {} },
-      ach: { got: {}, kills: 0, bosses: 0, opened: 0, gold: 0, rides: 0, stomps: 0, close: 0, solo: 0, squad: 0, choir: 0, rebirths: 0, kinds: { 0: 1 } },
+      ach: { got: {}, kills: 0, bosses: 0, opened: 0, gold: 0, rides: 0, stomps: 0, close: 0, solo: 0, squad: 0, choir: 0, licks: 0, rebirths: 0, kinds: { 0: 1 } },
       rec: { kvak: 0, jump: 0, td: 0 }
     };
   }
@@ -1154,7 +1181,25 @@
 
   // ---------- звук ----------
 
-  var ac = null, master = null;
+  var ac = null, master = null, volume = 1;
+  // громкость и то, что справку уже показывали, хранятся отдельно от сохранения: перерождение и сброс игры их не трогают
+  try { var vol0 = localStorage.getItem('fatFrogs.volume'); if (vol0 !== null && !isNaN(+vol0)) volume = Math.max(0, Math.min(1, +vol0)); } catch (e) { volume = 1; }
+  document.getElementById('vol').value = Math.round(volume * 100);
+  document.getElementById('vol').addEventListener('input', function () {
+    volume = this.value / 100;
+    if (master) master.gain.value = 0.55 * volume;
+    try { localStorage.setItem('fatFrogs.volume', String(volume)); } catch (e) { /* громкость просто не запомнится */ }
+  });
+  function helpShow(on) {
+    document.getElementById('help').hidden = !on;
+    if (on) document.getElementById('help-close').focus();
+    else { try { localStorage.setItem('fatFrogs.help', '1'); } catch (e) { /* справка покажется ещё раз */ } }
+  }
+  document.getElementById('btn-help').addEventListener('click', function () { helpShow(true); });
+  document.getElementById('help-close').addEventListener('click', function () { helpShow(false); });
+  document.getElementById('help').addEventListener('click', function (ev) { if (ev.target === this) helpShow(false); });
+  window.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') helpShow(false); });
+  try { if (!localStorage.getItem('fatFrogs.help')) helpShow(true); } catch (e) { /* без хранилища справка не навязывается */ }
   var C2 = 65.41, SCALE = [0, 2, 4, 7, 9]; // пентатоника: любые ноты из неё звучат вместе без фальши
   function audio() {
     if (!ac) {
@@ -1164,7 +1209,7 @@
       var comp = ac.createDynamicsCompressor();
       comp.threshold.value = -16; comp.ratio.value = 6;
       master = ac.createGain();
-      master.gain.value = 0.55;
+      master.gain.value = 0.55 * volume;
       master.connect(comp);
       comp.connect(ac.destination);
     }
@@ -1793,11 +1838,12 @@
     if (Math.random() < 0.08 + d * 0.22) run.plats.push({ x: (p.x + 110 + Math.random() * 120) % (GW - 68), y: run.topY - 18 + Math.random() * 36, w: 68, type: 'rot', vx: 0 });
     if (run.score > 800 && Math.random() < 0.03 + d * 0.09) run.foes.push({ x: Math.random() * (GW - 44), y: run.topY - 44, w: 44, h: 30, vx: Math.random() < 0.5 ? 0 : 40 + d * 70 });
     if (run.score > 3000 && Math.random() < 0.02 + d * 0.05) run.pools.push({ x: (p.x + 34 + GW / 2) % GW, y: run.topY - 30, r: 22 });
+    if (Math.random() < 0.1) run.flies.push({ x: 30 + Math.random() * (GW - 60), y: run.topY - 24, ph: Math.random() * 6 });
   }
   function startJump() {
     audio();
     makeSprite();
-    run = { x: GW / 2, y: GH - 70, vx: 0, vy: -640, score: 0, plats: [{ x: GW / 2 - 34, y: GH - 60, w: 68, type: 'pad', vx: 0 }], foes: [], pools: [], items: [], topY: GH - 60, fly: 0, face: 1, zone: 0, msg: 2.2, dying: false, hops: 0, t: 0 };
+    run = { x: GW / 2, y: GH - 70, vx: 0, vy: -640, score: 0, plats: [{ x: GW / 2 - 34, y: GH - 60, w: 68, type: 'pad', vx: 0 }], foes: [], pools: [], items: [], flies: [], lick: null, lickCd: 0, topY: GH - 60, fly: 0, face: 1, zone: 0, msg: 2.2, dying: false, hops: 0, t: 0 };
     while (run.topY > -60) addRow();
     playing = true;
     $('veil').hidden = true;
@@ -1894,14 +1940,18 @@
       r.y = line;
       r.topY += up;
       r.score += up;
-      [r.plats, r.foes, r.pools, r.items].forEach(function (list) { list.forEach(function (o) { o.y += up; }); });
+      [r.plats, r.foes, r.pools, r.items, r.flies].forEach(function (list) { list.forEach(function (o) { o.y += up; }); });
+      if (r.lick) r.lick.y += up;
       while (r.topY > -60) addRow();
       var alive = function (o) { return o.y < GH + 80; };
-      r.plats = r.plats.filter(alive); r.foes = r.foes.filter(alive); r.pools = r.pools.filter(alive); r.items = r.items.filter(alive);
+      r.plats = r.plats.filter(alive); r.foes = r.foes.filter(alive); r.pools = r.pools.filter(alive); r.items = r.items.filter(alive); r.flies = r.flies.filter(alive);
       var z = zoneOf(r.score);
       if (z !== r.zone) { r.zone = z; r.msg = 2.6; play('choir', freq(z, 2), 0); }
     }
     r.plats.forEach(function (p) { if (p.fall) p.y += 420 * dt; });
+    r.flies.forEach(function (f) { f.x += Math.cos(r.t * 2.2 + f.ph) * 46 * dt; f.y += Math.sin(r.t * 3.1 + f.ph) * 14 * dt; });
+    if (r.lickCd > 0) r.lickCd -= dt;
+    if (r.lick) { r.lick.t -= dt; if (r.lick.t <= 0) r.lick = null; }
     if (r.msg > 0) r.msg -= dt;
     if (r.y - 90 > GH) endJump();
   }
@@ -2001,15 +2051,26 @@
     else { g2.fillStyle = '#6fbf4b'; g2.beginPath(); g2.ellipse(0, -22, 24, 22, 0, 0, Math.PI * 2); g2.fill(); }
     g2.restore();
     if (r.fly > 0) drawFly(r.x, r.y - 84, t);
+    r.flies.forEach(function (f) {
+      g2.fillStyle = 'rgba(235,248,255,0.85)';
+      [-1, 1].forEach(function (s) { g2.beginPath(); g2.ellipse(f.x + s * 5, f.y - 4 + Math.sin(t * 50 + f.ph) * 1.5, 6, 3, s * 0.5, 0, Math.PI * 2); g2.fill(); });
+      g2.fillStyle = '#22223b'; g2.beginPath(); g2.ellipse(f.x, f.y, 4.5, 5.5, 0, 0, Math.PI * 2); g2.fill();
+      g2.fillStyle = '#d00000'; g2.beginPath(); g2.arc(f.x - 2, f.y - 3, 1.4, 0, Math.PI * 2); g2.arc(f.x + 2, f.y - 3, 1.4, 0, Math.PI * 2); g2.fill();
+    });
+    if (r.lick) {
+      g2.strokeStyle = '#f06292'; g2.lineWidth = 5; g2.lineCap = 'round';
+      g2.beginPath(); g2.moveTo(r.x, r.y - 34); g2.lineTo(r.lick.x, r.lick.y); g2.stroke();
+      g2.fillStyle = '#f06292'; g2.beginPath(); g2.arc(r.lick.x, r.lick.y, 5, 0, Math.PI * 2); g2.fill();
+    }
     var dark = z >= 3;
-    g2.font = 'bold 20px "Unbounded", "Arial Black", sans-serif';
+    g2.font = 'bold 20px "Balsamiq Sans", "Comic Sans MS", sans-serif';
     g2.textAlign = 'left';
     g2.fillStyle = dark ? '#e4f5ec' : '#17362a';
     g2.fillText(fmt(score), 14, 30);
     if (r.msg > 0) {
       g2.globalAlpha = Math.min(1, r.msg);
       g2.textAlign = 'center';
-      g2.font = 'bold 17px "Unbounded", "Arial Black", sans-serif';
+      g2.font = 'bold 17px "Balsamiq Sans", "Comic Sans MS", sans-serif';
       g2.fillText(cur.name, GW / 2, 86);
       g2.globalAlpha = 1;
     }
@@ -2034,9 +2095,30 @@
     var box = cv.getBoundingClientRect(), left = ev.clientX < box.left + box.width / 2;
     held.l = left; held.r = !left;
   }
-  cv.addEventListener('pointerdown', function (ev) { if (playing) { steer(ev); ev.preventDefault(); } });
+  // язык достаёт ближайшую муху в пределах 170 пикселей; мимо — просто выстрел вверх
+  function jumpLick() {
+    var r = run, best = null, bd = 170 * 170;
+    if (!playing || !r || r.dying || r.lickCd > 0) return;
+    r.lickCd = 0.3;
+    r.flies.forEach(function (f) { var dx = f.x - r.x, dy = f.y - (r.y - 34), d2 = dx * dx + dy * dy; if (d2 < bd) { bd = d2; best = f; } });
+    if (!best) { r.lick = { x: r.x + r.face * 26, y: r.y - 120, t: 0.12 }; play('tok', freq(1, 3), 0, 0.4); return; }
+    r.flies.splice(r.flies.indexOf(best), 1);
+    r.lick = { x: best.x, y: best.y, t: 0.16 };
+    r.score += 150;
+    state.ach.licks += 1; dirty = true;
+    play('pluck', freq(4, 3), 0);
+  }
+  var tapAt = 0;
+  cv.addEventListener('pointerdown', function (ev) { if (playing) { tapAt = performance.now(); steer(ev); ev.preventDefault(); } });
+  cv.addEventListener('pointerup', function () { if (playing && performance.now() - tapAt < 200) jumpLick(); });
   cv.addEventListener('pointermove', function (ev) { if (playing && ev.buttons) steer(ev); });
   ['pointerup', 'pointercancel', 'pointerleave'].forEach(function (n) { cv.addEventListener(n, function () { held.l = held.r = false; }); });
+  window.addEventListener('keydown', function (ev) {
+    var k = ev.key;
+    if (!playing || ev.repeat || (k !== ' ' && k !== 'ArrowUp' && k !== 'w' && k !== 'W' && k !== 'ц' && k !== 'Ц')) return;
+    ev.preventDefault();
+    jumpLick();
+  });
   function key(ev, down) {
     var k = ev.key, left = k === 'ArrowLeft' || k === 'a' || k === 'A' || k === 'ф' || k === 'Ф', right = k === 'ArrowRight' || k === 'd' || k === 'D' || k === 'в' || k === 'В';
     if (!left && !right) return;
@@ -2100,6 +2182,7 @@
     ['Прыжки', 'jump4', 'Выше звёзд', 'Наберите 50 000 очков в «Прыжках».', 50000, 100, function () { return state.me.best; }],
     ['Прыжки', 'ride', 'Верхом на стрекозе', 'Прокатитесь на стрекозе 10 раз.', 10, 10, function () { return state.ach.rides; }],
     ['Прыжки', 'stomp', 'Гроза жуков', 'Прыгните сверху на 25 жуков-плавунцов.', 25, 15, function () { return state.ach.stomps; }],
+    ['Прыжки', 'lick', 'Мухолов', 'Достаньте языком 50 мух.', 50, 15, function () { return state.ach.licks; }],
     ['Оборона болота', 'td1', 'Первая оборона', 'Пройдите первый уровень.', 1, 5, function () { return tdWon(1); }],
     ['Оборона болота', 'td10', 'Половина болота', 'Пройдите 10 уровней.', 10, 30, function () { return tdWon(1); }],
     ['Оборона болота', 'td20', 'Хозяин болота', 'Пройдите все 20 уровней.', 20, 100, function () { return tdWon(1); }],
@@ -2428,7 +2511,7 @@
     while (k < s.length - 1 && m.d > s[k].end) k++;
     var g = s[k], f = Math.max(0, Math.min(g.len, m.d - g.start));
     m.x = g.x + g.ux * f; m.y = g.y + g.uy * f;
-    if (g.ux) m.dir = g.ux;
+    m.ux = g.ux; m.uy = g.uy;
   }
   function tdTowerAt(cx, cy) { for (var k = 0; k < td.towers.length; k++) if (td.towers[k].cx === cx && td.towers[k].cy === cy) return td.towers[k]; return null; }
   function tdCanBuild(cx, cy) { return cx >= 0 && cy >= 0 && cx < TD_COLS && cy < TD_ROWS && td.grid[cy][cx] === 0 && !tdTowerAt(cx, cy); }
@@ -2467,7 +2550,7 @@
   }
   function tdSpawn(q) {
     var kd = TD_KIND[q.k];
-    var m = { k: q.k, hp: q.hp, max: q.hp, gold: q.gold, tier: q.tier, d: 0, x: 0, y: 0, dir: 1, sp: kd.sp * 1.15 * TD_CELL, armor: !!kd.armor, ghost: !!kd.ghost, heal: !!kd.heal, boss: !!kd.boss, lives: kd.boss ? 5 : 1, st: 0, sf: 1, pt: 0, pd: 0, ht: 2, ph: (td.born++) * 1.7, dead: false };
+    var m = { k: q.k, hp: q.hp, max: q.hp, gold: q.gold, tier: q.tier, d: 0, x: 0, y: 0, ux: 1, uy: 0, sp: kd.sp * 1.15 * TD_CELL, armor: !!kd.armor, ghost: !!kd.ghost, heal: !!kd.heal, boss: !!kd.boss, lives: kd.boss ? 5 : 1, st: 0, sf: 1, pt: 0, pd: 0, ht: 2, ph: (td.born++) * 1.7, dead: false };
     tdAt(m);
     td.mobs.push(m);
   }
@@ -2664,7 +2747,6 @@
     b.scale(2, 2); b.translate(size / 2, size / 2 + 2);
     b.lineCap = 'round'; b.lineJoin = 'round';
     if (tier >= 7 || kind === 'boss') { b.strokeStyle = 'rgba(255,80,80,0.45)'; b.lineWidth = 3; tdOval(b, 0, 0, rx + 7, ry + 7); b.stroke(); }
-    for (k = 4; k >= 0; k--) { b.fillStyle = tier >= 1 && k % 2 ? L[2] : L[0]; tdDot(b, rx * 0.55 + k * rx * 0.36, ry * 0.5 + k * ry * 0.3, Math.max(2, rx * (0.4 - k * 0.055))); }
     if (tier >= 2) { b.fillStyle = L[2]; for (k = -1; k <= 1; k++) { b.beginPath(); b.moveTo(k * rx * 0.3 - 3.5, -ry + 3); b.lineTo(k * rx * 0.3, -ry - 6 - (k ? 0 : 2)); b.lineTo(k * rx * 0.3 + 3.5, -ry + 3); b.fill(); } }
     b.fillStyle = L[0]; tdOval(b, 0, 0, rx, ry); b.fill();
     b.save(); b.clip(); b.fillStyle = L[2];
@@ -2857,7 +2939,15 @@
       tdOval(tg, s * rx * 1.55, -ry * 0.4, rx * 0.85, rx * 0.28, s * (-0.45 + flap)); tg.fill(); tg.stroke();
       tdOval(tg, s * rx * 1.4, ry * 0.08, rx * 0.65, rx * 0.22, s * (0.25 + flap)); tg.fill(); tg.stroke();
     }
-    if (m.dir < 0) tg.scale(-1, 1);
+    // хвост тянется позади, против движения, и плавно разворачивается на поворотах тропы
+    if (m.ax === undefined) { m.ax = -m.ux; m.ay = -m.uy; }
+    m.ax += (-m.ux - m.ax) * 0.14; m.ay += (-m.uy - m.ay) * 0.14;
+    var tl = Math.sqrt(m.ax * m.ax + m.ay * m.ay) || 1, tx = m.ax / tl, ty = m.ay / tl, tk, td0, sway;
+    for (tk = 4; tk >= 0; tk--) {
+      td0 = rx * 0.8 + tk * rx * 0.4; sway = Math.sin(td.t * 7 + m.ph + tk * 0.8) * (1 + tk * 0.6);
+      tg.fillStyle = m.tier >= 1 && tk % 2 ? L[2] : L[0];
+      tdDot(tg, tx * td0 - ty * sway, ty * td0 * (ry / rx) + ry * 0.2 + tx * sway, Math.max(2, rx * (0.4 - tk * 0.055)));
+    }
     tg.drawImage(tdBugSprite(m.k, m.tier), -size / 2, -size / 2 - 2 * sc, size, size);
     tg.restore();
     if (m.st > 0) { tg.strokeStyle = 'rgba(150,220,255,0.9)'; tg.lineWidth = 2; tdOval(tg, x, y, rx + 4, ry + 4); tg.stroke(); }
@@ -2915,12 +3005,12 @@
       tg.globalAlpha = 1;
     }
     tdWeather(th[9], td.t);
-    tg.font = 'bold 15px "Unbounded", "Arial Black", sans-serif'; tg.textAlign = 'center';
+    tg.font = 'bold 15px "Balsamiq Sans", "Comic Sans MS", sans-serif'; tg.textAlign = 'center';
     tg.fillStyle = 'rgba(0,0,0,0.45)'; tdOval(tg, td.end.x, td.end.y - 46, 26, 12); tg.fill();
     tg.fillStyle = td.lives > 6 ? '#ffffff' : '#ff8fa3'; tg.fillText(String(td.lives), td.end.x, td.end.y - 41);
     if (tdNoteT > 0) {
       tg.globalAlpha = Math.min(1, tdNoteT);
-      tg.font = 'bold 19px "Unbounded", "Arial Black", sans-serif';
+      tg.font = 'bold 19px "Balsamiq Sans", "Comic Sans MS", sans-serif';
       var tw = tg.measureText(tdNote).width + 36;
       tg.fillStyle = 'rgba(15,35,30,0.72)'; tg.beginPath(); tg.rect(TD_W / 2 - tw / 2, 22, tw, 38); tg.fill();
       tg.fillStyle = '#ffffff'; tg.fillText(tdNote, TD_W / 2, 48);
@@ -2990,8 +3080,11 @@
       b.type = 'button'; b.className = 'buy'; b.id = 'td-buy-' + f.i;
       b.appendChild(drawFrog({ skin: f.skin, belly: f.belly, mark: f.mark, pattern: f.pattern, shape: f.shape, rx: f.rx, ry: f.ry, wear: wearOf(f, lvl) }));
       s.appendChild(document.createTextNode(f.name));
-      sm.textContent = TD_CLASS[f.voice].ru + ' · ' + fmt(cost);
-      s.appendChild(sm); b.appendChild(s);
+      var st = tdStat(f.i, 1), sm2 = document.createElement('small'), sm3 = document.createElement('small');
+      sm.textContent = TD_CLASS[f.voice].ru + ' · ур. ' + lvl;
+      sm2.textContent = 'урон ' + tdNum(st.dmg) + (st.poison ? ' + яд ' + tdNum(st.poison * 4) : '') + ' · ' + tdNum(st.rate) + '/с · дальн. ' + tdNum(st.range / TD_CELL);
+      sm3.textContent = 'цена ' + fmt(cost);
+      s.appendChild(sm); s.appendChild(sm2); s.appendChild(sm3); b.appendChild(s);
       b.addEventListener('click', function () { tdPick = tdPick === f.i ? -1 : f.i; tdSel = null; audio(); });
       box.appendChild(b);
       tdShop.push({ i: f.i, b: b, cost: cost });
