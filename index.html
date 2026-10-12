@@ -2891,7 +2891,7 @@
     if (L >= 13 && rnd() < 0.55) { parts.push({ t: 'isle', x: x0 - 80, y: 170 + rnd() * 90, foe: rnd() < 0.4 ? 'bee' : 'wasp' }); foes++; }
     var open = Math.min(AB_FROGS, 1 + Math.floor(L / 2)), shots = Math.min(7, 3 + Math.ceil(foes / 2.2)), squad = [];
     for (k = 0; k < shots; k++) squad.push(k === 0 && L % 2 === 0 && L / 2 < AB_FROGS ? L / 2 : Math.floor(rnd() * open));
-    return { parts: parts, squad: squad, zone: Math.min(5, Math.floor((L - 1) / 5)), wind: [9, 17, 23, 28].indexOf(L) >= 0 ? (L % 2 ? -1 : 1) * 0.00035 : 0, lowg: L === 19 || L === 27 };
+    return { parts: parts, squad: squad, zone: Math.min(5, Math.floor((L - 1) / 5)), wind: [9, 17, 23, 28].indexOf(L) >= 0 ? (L % 2 ? -0.00014 : 0.00035) : 0, lowg: L === 19 || L === 27 };
   }
   function abBody(b, kind, hp, extra) {
     b.ab = { kind: kind, hp: hp, max: hp, burn: 0, cold: false };
@@ -3123,9 +3123,9 @@
       ag.beginPath(); ag.moveTo(AB_SLING.x - 16, AB_SLING.y - 6); ag.lineTo(px, py); ag.lineTo(AB_SLING.x + 16, AB_SLING.y - 6); ag.stroke();
       if (ab.pull) {
         // пунктир показывает, куда полетит лягушка
-        var vx = (AB_SLING.x - px) * 0.14, vy = (AB_SLING.y - py) * 0.14, tx = px, ty = py, g = 0.278 * (ab.plan.lowg ? 0.55 : 1);
+        var vx = (AB_SLING.x - px) * 0.14, vy = (AB_SLING.y - py) * 0.14, tx = px, ty = py, g = 0.278 * (ab.plan.lowg ? 0.55 : 1), wx = ab.plan.wind * 278;
         ag.fillStyle = night ? 'rgba(255,255,255,0.8)' : 'rgba(23,54,42,0.55)';
-        for (k = 0; k < 46; k++) { vx *= 0.996; vy = vy * 0.996 + g; tx += vx; ty += vy; if (k % 3 === 0) { ag.beginPath(); ag.arc(tx, ty, 3, 0, Math.PI * 2); ag.fill(); } if (ty > AB_GROUND) break; }
+        for (k = 0; k < 46; k++) { vx = vx * 0.996 + wx; vy = vy * 0.996 + g; tx += vx; ty += vy; if (k % 3 === 0) { ag.beginPath(); ag.arc(tx, ty, 3, 0, Math.PI * 2); ag.fill(); } if (ty > AB_GROUND) break; }
       }
       abFrogDraw(ab.cur.i, px, py, 0, 44);
     }
