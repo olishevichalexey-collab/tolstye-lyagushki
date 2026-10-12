@@ -150,6 +150,32 @@
   .td-bar { gap: 8px; }
   .td-stage { position: relative; width: 100%; max-width: 980px; }
   .td-stage canvas { display: block; width: 100%; height: auto; border-radius: 18px; border: 3px solid var(--pad-edge); touch-action: none; cursor: pointer; }
+  .td-pop { position: absolute; z-index: 1; display: flex; gap: 6px; padding: 6px; background: var(--surface); border: 2px solid var(--pad-edge); border-radius: 16px; white-space: nowrap; }
+  .td-stage .veil { z-index: 2; }
+  .td-pop .act { background: var(--surface); color: var(--ink); border-color: var(--line); padding: 6px 12px; }
+  .td-pop .act:hover:not(:disabled) { border-color: var(--lily); }
+  /* бой идёт в отдельном окне поверх страницы: сверху показатели и кнопки, посередине поле, снизу подсказка и магазин лягушек.
+     Ширина окна подобрана так, чтобы всё это помещалось в высоту экрана без прокрутки */
+  .td-game { position: fixed; inset: 0; z-index: 4; background: #0a1f26; display: flex; align-items: center; justify-content: center; }
+  .td-frame { width: min(100vw, calc((100vh - 252px) * 1.6)); max-width: 100vw; display: flex; flex-direction: column; background: #17362a; border: 4px solid #3f7d43; border-radius: 18px; overflow: hidden; box-sizing: border-box; }
+  .td-hud { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 6px 10px; color: #e4f5ec; }
+  .td-hud #td-title { font-family: var(--font-display); font-size: 1.05rem; }
+  .td-hud .stats { color: #a9cbbb; gap: 4px 14px; font-size: 0.9rem; }
+  .td-hud .stats b { color: #ffffff; font-size: 1.25rem; margin-left: 4px; }
+  .td-hud .act { color: #e4f5ec; border-color: #3f7d43; padding: 5px 11px; font-size: 0.85rem; }
+  .td-hud .act[aria-pressed="true"] { background: #e4f5ec; color: #17362a; border-color: #e4f5ec; }
+  .td-hud .big { background: var(--lily); color: #ffffff; padding: 7px 16px; font-size: 0.95rem; }
+  .td-game .td-stage { max-width: none; }
+  .td-game .td-stage canvas { border: 0; border-radius: 0; }
+  .td-line { display: flex; flex-direction: column; justify-content: center; gap: 1px; min-height: 2.9em; padding: 4px 12px; background: #f4fbf7; color: #3d5f51; font-size: 0.8rem; font-weight: 700; line-height: 1.25; }
+  .td-line b { color: #17362a; margin-right: 6px; }
+  .td-line span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .td-game .shop { flex-wrap: nowrap; overflow-x: auto; gap: 6px; padding: 8px; scrollbar-width: thin; }
+  .td-game .buy { flex: none; flex-direction: column; gap: 0; width: 104px; padding: 4px 4px 5px; border: 3px solid var(--line); border-radius: 12px; background: #f4fbf7; color: #17362a; text-align: center; font-size: 0.8rem; box-shadow: inset 0 -14px 0 rgba(23, 54, 42, 0.07); }
+  .td-game .buy svg { width: 50px; }
+  .td-game .buy small { color: #3d5f51; font-size: 0.68rem; line-height: 1.2; overflow-wrap: anywhere; }
+  .td-game .buy .price { font-family: var(--font-display); font-size: 0.86rem; color: #17362a; }
+  .td-game .buy[aria-pressed="true"] { outline: 3px solid var(--lily); outline-offset: -1px; box-shadow: none; background: #ffffff; }
   .shop { display: flex; flex-wrap: wrap; gap: 8px; }
   .buy { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 700; border: 2px solid var(--line); border-radius: 14px; background: var(--surface); padding: 4px 12px 4px 6px; cursor: pointer; text-align: left; line-height: 1.2; }
   .buy svg { width: 40px; height: auto; flex: none; overflow: visible; }
@@ -338,7 +364,7 @@
         <li><b>Моя лягушка.</b> Кормите яйцо, и оно вырастет: головастик, лягушонок, лягушка, толстая лягушка. С лягушонка можно надевать вещи.</li>
         <li><b>Перерождение.</b> Выросшую лягушку можно превратить в новое яйцо. Весь прогресс обнулится, кроме достижений, сундуков и вещей из них, зато вылупится другая порода — от обычной до секретной.</li>
         <li><b>Прыжки.</b> ← и → ведут лягушку вверх по кувшинкам. Пробел или быстрое касание — язык по мухе.</li>
-        <li><b>Оборона болота.</b> Сажайте лягушек у тропы и не пускайте стрекоз к озеру. Чем круче лягушка в пруду, тем сильнее она бьёт. За победу дают сундук.</li>
+        <li><b>Оборона болота.</b> Сажайте лягушек у тропы и не пускайте стрекоз к озеру. Чем круче лягушка в пруду, тем сильнее она бьёт. У каждой лягушки свой приём и стихия; стрекоза с цветным ободком боится одной стихии и почти не замечает свою. За победу дают сундук.</li>
         <li><b>Сундуки.</b> Открываются в инвентаре на вкладке «Моя лягушка». Внутри вещи пяти редкостей.</li>
         <li><b>Достижения и лидеры.</b> Достижения засчитываются сами. В таблице лидеров вы под именем своей лягушки.</li>
       </ul>
@@ -384,22 +410,32 @@
       <div class="td" id="td-map">
         <h2>Оборона болота</h2>
         <p class="note">Стрекозы летят по тропе к озеру ваших лягушек. Рассаживайте вдоль тропы лягушек, которых разбудили в пруду: чем круче лягушка и чем выше её уровень, тем сильнее она бьёт. В каждом уровне 25 волн, у озера 20 жизней. За победу дают сундук с вещами для вашей лягушки — он ждёт в инвентаре на вкладке «Моя лягушка».</p>
+        <p class="note">Выберите лягушку внизу игрового окна и нажмите на свободное место у тропы. Нажмите на посаженную лягушку — над ней появятся кнопки «Улучшить» и «Продать». У каждой лягушки свой приём и своя стихия. Стихийных стрекоз видно по цветному ободку: своя стихия наносит им половину урона, а та, которой они боятся, — полтора. Вода тушит огонь, огонь топит лёд, лёд морозит природу, природа крошит землю, земля гасит молнию, молния бьёт воду.</p>
         <div class="levels" id="td-levels"></div>
       </div>
-      <div class="td" id="td-play" hidden>
-        <div class="td-top">
+      <div class="td-game" id="td-play" hidden>
+       <div class="td-frame">
+        <div class="td-hud">
           <button class="act" id="td-back" type="button">К уровням</button>
-          <h2 id="td-title"></h2>
-          <span class="spacer"></span>
+          <b id="td-title"></b>
           <div class="stats">
             <div>Жизни<b id="td-lives">20</b></div>
             <div>Мошки<b id="td-gold">0</b></div>
             <div>Волна<b id="td-wave">0 из 25</b></div>
           </div>
+          <span class="spacer"></span>
+          <button class="big" id="td-next" type="button">Начать волну</button>
+          <button class="act" id="td-speed" type="button">Скорость ×1</button>
+          <button class="act" id="td-auto" type="button" aria-pressed="false">Волны подряд</button>
+          <button class="act" id="td-pause" type="button">Пауза</button>
+          <button class="act" id="td-restart" type="button">Заново</button>
         </div>
-        <p class="note">Выберите лягушку внизу и нажмите на свободное место у тропы. Нажмите на посаженную лягушку, чтобы улучшить её или убрать. У каждого голоса свой приём: язык, скорострел, грязевая бомба, снайпер, магия, мороз и яд.</p>
         <div class="td-stage">
           <canvas id="td-cv" width="800" height="500" aria-label="Поле обороны: тропа от гнезда стрекоз до озера лягушек"></canvas>
+          <div class="td-pop" id="td-pop" hidden>
+            <button class="act" id="td-up" type="button">Улучшить</button>
+            <button class="act" id="td-sell" type="button">Продать</button>
+          </div>
           <div class="veil" id="td-veil" hidden>
             <h2 id="td-veil-title"></h2>
             <p class="note" id="td-veil-text"></p>
@@ -409,16 +445,9 @@
             </div>
           </div>
         </div>
-        <div class="td-bar">
-          <button class="big" id="td-next" type="button">Начать волну</button>
-          <button class="act" id="td-speed" type="button">Скорость ×1</button>
-          <button class="act" id="td-auto" type="button" aria-pressed="false">Волны подряд</button>
-          <button class="act" id="td-pause" type="button">Пауза</button>
-          <button class="act" id="td-restart" type="button">Заново</button>
-          <span class="meta" id="td-foe"></span>
-        </div>
-        <div class="td-info" id="td-info"></div>
+        <div class="td-line"><span id="td-foe"></span><span id="td-info"></span></div>
         <div class="shop" id="td-shop"></div>
+       </div>
       </div>
     </div>
   </section>
@@ -2203,7 +2232,7 @@
     ['Оборона болота', 'clean', 'Ни царапины', 'Пройдите уровень, не потеряв ни одной жизни.', 1, 20, function () { return tdWon(3); }],
     ['Оборона болота', 'clean20', 'Неприступное озеро', 'Пройдите все 20 уровней без потери жизней.', 20, 200, function () { return tdWon(3); }],
     ['Оборона болота', 'close', 'На волоске', 'Победите, когда у озера осталось не больше 3 жизней.', 1, 15, function () { return state.ach.close; }],
-    ['Оборона болота', 'solo', 'Один голос', 'Пройдите уровень лягушками только одного приёма.', 1, 30, function () { return state.ach.solo; }],
+    ['Оборона болота', 'solo', 'Один голос', 'Пройдите уровень, сажая лягушек только одного вида.', 1, 30, function () { return state.ach.solo; }],
     ['Оборона болота', 'squad', 'Звёздный отряд', 'Держите на поле 5 лягушек, улучшенных до трёх звёзд.', 1, 15, function () { return state.ach.squad; }],
     ['Оборона болота', 'kills', 'Гроза стрекоз', 'Сбейте 5 000 стрекоз.', 5000, 30, function () { return state.ach.kills; }],
     ['Оборона болота', 'boss', 'Охотник на маток', 'Сбейте 25 маток.', 25, 30, function () { return state.ach.bosses; }],
@@ -2385,16 +2414,42 @@
   var TD_HP_W = 1.16, TD_HP_L = 1.29, TD_GOLD_W = 1.095, TD_GOLD_L = 1.2, TD_LVL_STEP = 2, TD_WAVE_GOLD = 27, TD_START_GOLD = 100;
   // множители силы: уровень лягушки в пруду, звёзды улучшения в бою; цена звезды — доля цены самой лягушки
   var TD_POND = [1, 1.25, 1.55, 1.9, 2.4], TD_STAR = [1, 1.9, 3.4], TD_STAR_RANGE = [1, 1.08, 1.16], TD_STAR_COST = [0, 0.9, 1.6];
-  // приём зависит от голоса лягушки. pen — доля урона, которая проходит сквозь панцирь
-  var TD_CLASS = {
-    croak: { ru: 'Язык', cost: 1, dmg: 1, rate: 1, range: 2.4, pen: 0.7, info: 'Бьёт языком ту стрекозу, что ближе всех к озеру.' },
-    pluck: { ru: 'Скорострел', cost: 1, dmg: 0.42, rate: 3.2, range: 2.2, pen: 0.4, info: 'Плюётся каплями очень часто, но панцирь пробивает плохо.' },
-    bass: { ru: 'Грязевая бомба', cost: 1.25, dmg: 1.3, rate: 0.55, range: 2.7, pen: 0.7, splash: 1.05, info: 'Кидает ком грязи: достаётся всем стрекозам рядом со взрывом.' },
-    tok: { ru: 'Снайпер', cost: 1.3, dmg: 5.5, rate: 0.3, range: 4.8, pen: 1, info: 'Редко, далеко и очень больно. Целится в самую живучую стрекозу, панцирь не помеха.' },
-    chirp: { ru: 'Магия', cost: 1.3, dmg: 0.75, rate: 0.85, range: 2.5, pen: 1, chain: 3, info: 'Молния перескакивает со стрекозы на стрекозу и не замечает панцирь.' },
-    choir: { ru: 'Мороз', cost: 1.2, dmg: 0.3, rate: 0.9, range: 2, pen: 0.6, slow: [0.7, 0.62, 0.55], info: 'Поёт так, что все стрекозы вокруг мёрзнут и летят медленнее.' },
-    kick: { ru: 'Яд', cost: 1.15, dmg: 0.2, rate: 1, range: 2.4, pen: 1, poison: 0.5, info: 'Отравляет: стрекоза теряет здоровье ещё четыре секунды. Выбирает неотравленных.' }
-  };
+  // стихии: название и цвет. Стрекоза стихии-ключа получает полуторный урон от стихии-значения:
+  // вода тушит огонь, огонь топит лёд, лёд морозит природу, природа крошит землю, земля гасит молнию, молния бьёт воду
+  var TD_EL = { fire: ['огонь', '#ff7b00'], ice: ['лёд', '#7fdcff'], water: ['вода', '#3a86ff'], earth: ['земля', '#a9713a'], bolt: ['молния', '#ffd60a'], nature: ['природа', '#6fbf4b'], all: ['все стихии', '#ff70a6'] };
+  var TD_ELS = ['fire', 'ice', 'water', 'earth', 'bolt', 'nature'];
+  var TD_WEAK = { fire: 'water', ice: 'fire', nature: 'ice', earth: 'nature', bolt: 'earth', water: 'bolt' };
+  // у каждой лягушки свой приём, по порядку лягушек в пруду. mode — как бьёт: hit — мгновенно по одной, shot — снаряд, bomb — взрыв по площади,
+  // chain — цепь, pulse — по всем вокруг, multi — по нескольким сразу, beam — луч насквозь. pen — доля урона сквозь панцирь.
+  // Сверх урона: slow — замедление, stun — оглушение, knock — отбрасывание назад по тропе, poison и burn — урон в секунду после попадания,
+  // mark — метка (стрекоза получает больше урона от всех), exec — множитель по раненым, crit — шанс тройного урона, gold — множитель мошек, ramp — разгон по одной цели
+  var TD_ATK = [
+    { ru: 'Язык', el: 'nature', mode: 'hit', cost: 1, dmg: 1, rate: 1, range: 2.4, pen: 0.7, info: 'Бьёт языком стрекозу, что ближе всех к озеру.' },
+    { ru: 'Капельница', el: 'water', mode: 'shot', cost: 1, dmg: 0.42, rate: 3.2, range: 2.2, pen: 0.4, info: 'Плюётся каплями очень часто, но панцирь пробивает плохо.' },
+    { ru: 'Грязевая бомба', el: 'earth', mode: 'bomb', cost: 1.25, dmg: 1.3, rate: 0.55, range: 2.7, pen: 0.7, splash: 1.05, info: 'Кидает ком грязи: достаётся всем рядом со взрывом.' },
+    { ru: 'Семечко-снайпер', el: 'nature', mode: 'hit', cost: 1.3, dmg: 5.5, rate: 0.3, range: 4.8, pen: 1, pref: 'strong', info: 'Редко, далеко и очень больно. Целится в самую живучую стрекозу.' },
+    { ru: 'Искра', el: 'bolt', mode: 'chain', cost: 1.3, dmg: 0.75, rate: 0.85, range: 2.5, pen: 1, chain: 3, info: 'Молния перескакивает со стрекозы на стрекозу.' },
+    { ru: 'Морозный хор', el: 'ice', mode: 'pulse', cost: 1.2, dmg: 0.3, rate: 0.9, range: 2, pen: 0.6, slow: 0.7, slowT: 1.6, info: 'Все стрекозы вокруг мёрзнут и летят медленнее.' },
+    { ru: 'Ядовитый плевок', el: 'nature', mode: 'shot', cost: 1.15, dmg: 0.2, rate: 1, range: 2.4, pen: 1, poison: 0.5, pref: 'fresh', info: 'Отравляет на четыре секунды. Выбирает неотравленных.' },
+    { ru: 'Уголёк', el: 'fire', mode: 'shot', cost: 1.15, dmg: 0.45, rate: 1.1, range: 2.4, pen: 0.8, burn: 0.6, pref: 'fresh', info: 'Поджигает: стрекоза горит три секунды. Выбирает тех, кто ещё не горит.' },
+    { ru: 'Водяная пушка', el: 'water', mode: 'hit', cost: 1.2, dmg: 1.3, rate: 0.6, range: 2.5, pen: 0.8, knock: 34, info: 'Струя отбрасывает стрекозу назад по тропе.' },
+    { ru: 'Тройной разряд', el: 'bolt', mode: 'multi', cost: 1.25, dmg: 0.62, rate: 1, range: 2.5, pen: 1, multi: 3, info: 'Бьёт сразу по трём стрекозам.' },
+    { ru: 'Огненный шар', el: 'fire', mode: 'bomb', cost: 1.3, dmg: 1, rate: 0.5, range: 2.7, pen: 0.7, splash: 1, burn: 0.25, info: 'Взрыв поджигает всех, кого задел.' },
+    { ru: 'Косточка-оглушалка', el: 'earth', mode: 'shot', cost: 1.2, dmg: 1.5, rate: 0.55, range: 2.5, pen: 0.9, stun: 0.6, info: 'Попадание оглушает: стрекоза ненадолго зависает на месте.' },
+    { ru: 'Ледяная игла', el: 'ice', mode: 'beam', cost: 1.3, dmg: 1.1, rate: 0.6, range: 3.4, pen: 1, info: 'Игла летит насквозь и ранит всех на своём пути.' },
+    { ru: 'Клеймо', el: 'fire', mode: 'hit', cost: 1.25, dmg: 0.7, rate: 0.8, range: 2.8, pen: 1, mark: 0.3, pref: 'unmarked', info: 'Метит самую живучую стрекозу: четыре секунды она получает больше урона от всех.' },
+    { ru: 'Волна', el: 'water', mode: 'pulse', cost: 1.25, dmg: 0.4, rate: 0.4, range: 2, pen: 0.7, knock: 22, info: 'Волна отталкивает назад всех стрекоз вокруг.' },
+    { ru: 'Секатор', el: 'nature', mode: 'hit', cost: 1.2, dmg: 1.1, rate: 0.9, range: 2.4, pen: 0.8, exec: 3, pref: 'weak', info: 'Добивает: по стрекозам, у которых осталось меньше трети здоровья, бьёт втрое сильнее.' },
+    { ru: 'Землетрясение', el: 'earth', mode: 'pulse', cost: 1.3, dmg: 0.6, rate: 0.35, range: 2.2, pen: 1, stun: 0.3, info: 'Трясёт землю: ранит и на миг оглушает всех вокруг.' },
+    { ru: 'Огнемёт', el: 'fire', mode: 'multi', cost: 1.25, dmg: 0.16, rate: 4, range: 1.8, pen: 0.6, multi: 3, burn: 0.2, info: 'Бьёт близко, зато без остановки и сразу по трём, и все они загораются.' },
+    { ru: 'Гроза', el: 'bolt', mode: 'hit', cost: 1.35, dmg: 3.4, rate: 0.4, range: 99, pen: 1, pref: 'strong', info: 'Молния с неба достаёт самую живучую стрекозу в любой точке поля.' },
+    { ru: 'Пузырьковая очередь', el: 'water', mode: 'bomb', cost: 1.25, dmg: 0.4, rate: 1.5, range: 2.4, pen: 0.6, splash: 0.7, info: 'Частые пузыри лопаются маленькими взрывами.' },
+    { ru: 'Вьюга', el: 'ice', mode: 'pulse', cost: 1.35, dmg: 0.5, rate: 0.28, range: 2.3, pen: 0.8, stun: 1, info: 'Редкая, но сильная: на секунду замораживает всех стрекоз вокруг.' },
+    { ru: 'Золотой шип', el: 'earth', mode: 'hit', cost: 1.2, dmg: 1.5, rate: 0.7, range: 2.4, pen: 0.9, gold: 1.5, info: 'За сбитых этой лягушкой стрекоз дают в полтора раза больше мошек.' },
+    { ru: 'Катушка', el: 'bolt', mode: 'hit', cost: 1.3, dmg: 0.3, rate: 4, range: 2.3, pen: 1, ramp: 0.12, info: 'Чем дольше бьёт одну и ту же стрекозу, тем сильнее, вплоть до четырёхкратного урона.' },
+    { ru: 'Ледяное копьё', el: 'ice', mode: 'hit', cost: 1.35, dmg: 4.2, rate: 0.35, range: 4.5, pen: 1, crit: 0.3, slow: 0.6, slowT: 2, pref: 'strong', info: 'Дальний удар с замедлением; почти каждый третий наносит тройной урон.' },
+    { ru: 'Радужный луч', el: 'all', mode: 'beam', cost: 1.4, dmg: 1.5, rate: 0.8, range: 3.6, pen: 1, info: 'Луч насквозь, который у любой стихийной стрекозы находит слабое место.' }
+  ];
   // виды стрекоз: доля здоровья, скорость и особенности; cap — наибольшая доля вида в волне
   var TD_KIND = {
     basic: { ru: 'стрекозы', hp: 1, sp: 1 },
@@ -2441,12 +2496,16 @@
     };
   }
   function tdFrogLvl(i) { var st = state.frogs[i]; return st.open ? levelOf(st.n) : 0; }
-  function tdCost(i) { return Math.round(40 * Math.pow(1.17, i) * TD_CLASS[FROGS[i].voice].cost / 5) * 5; }
+  function tdCost(i) { return Math.round(40 * Math.pow(1.17, i) * TD_ATK[i].cost / 5) * 5; }
+  // сила приёма: растёт с номером лягушки, её уровнем в пруду и звёздами; звёзды усиливают и побочные действия приёма
   function tdStat(i, stars) {
-    var c = TD_CLASS[FROGS[i].voice], p = Math.pow(1.2, i) * TD_POND[Math.max(1, tdFrogLvl(i)) - 1] * TD_STAR[stars - 1];
+    var a = TD_ATK[i], n = stars - 1, p = Math.pow(1.2, i) * TD_POND[Math.max(1, tdFrogLvl(i)) - 1] * TD_STAR[n];
     return {
-      dmg: c.dmg * p, rate: c.rate, range: c.range * TD_STAR_RANGE[stars - 1] * TD_CELL, pen: c.pen, poison: (c.poison || 0) * p,
-      slow: c.slow ? c.slow[stars - 1] : 1, chain: c.chain ? c.chain + stars - 1 : 0, splash: c.splash ? (c.splash + (stars - 1) * 0.1) * TD_CELL : 0
+      el: a.el, mode: a.mode, pref: a.pref || '', dmg: a.dmg * p, rate: a.rate, range: a.range * TD_STAR_RANGE[n] * TD_CELL, pen: a.pen,
+      splash: a.splash ? (a.splash + n * 0.1) * TD_CELL : 0, chain: a.chain ? a.chain + n : 0, multi: a.multi ? a.multi + n : 0,
+      slow: a.slow ? a.slow - n * 0.07 : 1, slowT: a.slowT || 0, stun: a.stun ? a.stun * (1 + n * 0.25) : 0, knock: a.knock ? a.knock * (1 + n * 0.2) : 0,
+      poison: (a.poison || 0) * p, burn: (a.burn || 0) * p, mark: a.mark ? a.mark + n * 0.1 : 0,
+      exec: a.exec || 0, crit: a.crit || 0, gold: a.gold || 0, ramp: a.ramp || 0
     };
   }
   // состав волны: всегда один и тот же для своего уровня и номера. Здоровье делится между видами так,
@@ -2493,7 +2552,12 @@
     list.forEach(function (q) { total += q.hp; });
     var gold = TD_WAVE_GOLD * Math.pow(TD_GOLD_W, w - 1) * Math.pow(TD_GOLD_L, L - 1);
     list.forEach(function (q) { q.gold = gold * q.hp / total; });
-    return { ml: ml, list: list, boss: boss, kinds: kinds };
+    // стихийные стрекозы: со второго уровня и с четвёртой волны в части волн три из каждых пяти стрекоз несут стихию, с восьмого уровня стихий бывает две
+    var els = [];
+    if (L >= 2 && w >= 4 && rnd() < 0.6) els.push(TD_ELS[Math.floor(rnd() * 6)]);
+    if (L >= 8 && els.length && rnd() < 0.45) { s = TD_ELS[Math.floor(rnd() * 6)]; if (s !== els[0]) els.push(s); }
+    list.forEach(function (q, idx) { q.el = !els.length ? '' : q.k === 'boss' ? els[0] : idx % 5 < 3 ? els[Math.floor(idx / 5) % els.length] : ''; });
+    return { ml: ml, list: list, boss: boss, kinds: kinds, els: els };
   }
   function tdNew(L) {
     var def = TD_LEVELS[L - 1][1], grid = [], pts = [], seg = [], total = 0, c, r, k;
@@ -2517,7 +2581,7 @@
     grid[e[1]][e[0]] = 2;
     td = {
       L: L, pts: pts, seg: seg, len: total, grid: grid, end: pts[pts.length - 1], towers: [], mobs: [], shots: [], fx: [],
-      gold: Math.round(TD_START_GOLD * Math.pow(TD_GOLD_L, L - 1)), lives: TD_LIVES, wave: 0, queue: [], qi: 0, wt: 0, active: false, t: 0, over: '', born: 0, kills: 0, bosses: 0, used: {}
+      gold: Math.round(TD_START_GOLD * Math.pow(TD_GOLD_L, L - 1)), lives: TD_LIVES, wave: 0, queue: [], qi: 0, wt: 0, active: false, t: 0, over: '', born: 0, kills: 0, bosses: 0, used: {}, bonus: 1
     };
   }
   function tdAt(m) {
@@ -2533,8 +2597,8 @@
     var cost = tdCost(i);
     if (!tdFrogLvl(i) || !tdCanBuild(cx, cy) || td.gold < cost) return null;
     td.gold -= cost;
-    var t = { i: i, cls: FROGS[i].voice, cx: cx, cy: cy, x: (cx + 0.5) * TD_CELL, y: (cy + 0.5) * TD_CELL, stars: 1, lvl: tdFrogLvl(i), s: tdStat(i, 1), cd: 0.2, hop: 0, spent: cost };
-    td.used[t.cls] = 1;
+    var t = { i: i, cls: FROGS[i].voice, heat: 1, last: null, cx: cx, cy: cy, x: (cx + 0.5) * TD_CELL, y: (cy + 0.5) * TD_CELL, stars: 1, lvl: tdFrogLvl(i), s: tdStat(i, 1), cd: 0.2, hop: 0, spent: cost };
+    td.used[i] = 1;
     td.towers.push(t);
     td.towers.sort(function (p, q) { return p.y - q.y; });
     return t;
@@ -2564,60 +2628,98 @@
   }
   function tdSpawn(q) {
     var kd = TD_KIND[q.k];
-    var m = { k: q.k, hp: q.hp, max: q.hp, gold: q.gold, tier: q.tier, d: 0, x: 0, y: 0, ux: 1, uy: 0, sp: kd.sp * 1.15 * TD_CELL, armor: !!kd.armor, ghost: !!kd.ghost, heal: !!kd.heal, boss: !!kd.boss, lives: kd.boss ? 5 : 1, st: 0, sf: 1, pt: 0, pd: 0, ht: 2, ph: (td.born++) * 1.7, dead: false };
+    var m = {
+      k: q.k, el: q.el || '', hp: q.hp, max: q.hp, gold: q.gold, tier: q.tier, d: 0, x: 0, y: 0, ux: 1, uy: 0, sp: kd.sp * 1.15 * TD_CELL,
+      armor: !!kd.armor, ghost: !!kd.ghost, heal: !!kd.heal, boss: !!kd.boss, lives: kd.boss ? 5 : 1,
+      // замедление, яд, ожог, оглушение и защита от него, защита от отбрасывания, метка
+      st: 0, sf: 1, pt: 0, pd: 0, bt: 0, bd: 0, zt: 0, zi: 0, ki: 0, mt: 0, mm: 0, ht: 2, ph: (td.born++) * 1.7, dead: false
+    };
     tdAt(m);
     td.mobs.push(m);
   }
-  function tdHurt(m, dmg, pen) {
+  // стихии: своя стихия наносит стрекозе половину урона, противоположная — полтора; «все стихии» всегда бьют в слабое место
+  function tdMul(m, el) {
+    if (!m.el) return 1;
+    if (el === 'all') return 1.5;
+    if (el === m.el) return 0.5;
+    return TD_WEAK[m.el] === el ? 1.5 : 1;
+  }
+  function tdHurt(m, dmg, pen, el) {
     if (m.dead) return;
     if (m.armor && pen < 1) dmg *= pen;
+    dmg *= tdMul(m, el);
+    if (m.mt > 0) dmg *= 1 + m.mm;
     m.hp -= dmg;
     if (m.hp > 0) return;
     m.dead = true;
     td.kills += 1;
     if (m.boss) td.bosses += 1;
-    td.gold += m.gold;
+    td.gold += m.gold * td.bonus;
     td.fx.push({ type: 'pop', x: m.x, y: m.y, t: 0, dur: m.boss ? 0.7 : 0.32, big: m.boss });
     if (m.boss) tdEvent('boss');
   }
+  // попадание приёма лягушки t по стрекозе m: урон и всё, что приём делает сверх урона. part — доля урона (цепь слабеет)
+  function tdApply(t, m, part) {
+    var s = t.s, dmg = s.dmg * (part || 1), v;
+    if (m.dead) return;
+    if (s.crit && Math.random() < s.crit) { dmg *= 3; td.fx.push({ type: 'pop', x: m.x, y: m.y, t: 0, dur: 0.3, big: true }); }
+    if (s.exec && m.hp < m.max * 0.35) dmg *= s.exec;
+    if (s.ramp) { t.heat = t.last === m ? Math.min(4, t.heat + s.ramp) : 1; t.last = m; dmg *= t.heat; }
+    td.bonus = s.gold || 1;
+    tdHurt(m, dmg, s.pen, s.el);
+    td.bonus = 1;
+    if (m.dead) return;
+    if (s.slow < 1 && !m.ghost) { v = m.boss ? 1 - (1 - s.slow) * 0.5 : s.slow; m.sf = m.st > 0 ? Math.min(m.sf, v) : v; m.st = s.slowT; }
+    // оглушить или отбросить одну и ту же стрекозу подряд нельзя, иначе её можно держать на месте вечно
+    if (s.stun && m.zi <= 0) { m.zt = s.stun * (m.boss ? 0.25 : 1); m.zi = m.zt + 1.4; }
+    if (s.knock && m.ki <= 0) { m.d = Math.max(0, m.d - s.knock * (m.boss ? 0.25 : 1)); m.ki = 0.8; tdAt(m); }
+    if (s.poison) { if (s.poison > m.pd || m.pt <= 0) m.pd = s.poison; m.pt = 4; }
+    if (s.burn) { if (s.burn > m.bd || m.bt <= 0) m.bd = s.burn; m.bt = 3; }
+    if (s.mark) { m.mm = Math.max(m.mt > 0 ? m.mm : 0, s.mark); m.mt = 4; }
+  }
   // выстрел лягушки; возвращает false, если бить некого
   function tdFire(t) {
-    var s = t.s, r2 = s.range * s.range, list = td.mobs, best = null, bv = -1, k, m, v, dx, dy, any = false;
-    if (t.cls === 'choir') {
-      for (k = 0; k < list.length; k++) {
-        m = list[k]; dx = m.x - t.x; dy = m.y - t.y;
-        if (m.dead || dx * dx + dy * dy > r2) continue;
-        any = true;
-        tdHurt(m, s.dmg, s.pen);
-        if (m.ghost) continue;
-        v = m.boss ? 1 - (1 - s.slow) * 0.5 : s.slow;
-        m.sf = m.st > 0 ? Math.min(m.sf, v) : v;
-        m.st = 1.6;
-      }
-      if (any) td.fx.push({ type: 'ring', x: t.x, y: t.y, r: s.range, t: 0, dur: 0.45 });
-      return any;
-    }
+    var s = t.s, r2 = s.range * s.range, list = td.mobs, near = [], best = null, bv = -1e18, col = t.i ? TD_EL[s.el][1] : '#f06292';
+    var ox = t.x, oy = t.y - 12, k, m, v, dx, dy, n;
     for (k = 0; k < list.length; k++) {
       m = list[k]; dx = m.x - t.x; dy = m.y - t.y;
       if (m.dead || dx * dx + dy * dy > r2) continue;
-      v = t.cls === 'tok' ? m.hp : t.cls === 'kick' ? (m.pt > 0.6 ? 0 : 1e6) + m.d : m.d;
+      near.push(m);
+      v = s.pref === 'strong' ? m.hp : s.pref === 'weak' ? -m.hp : s.pref === 'fresh' ? ((s.burn ? m.bt : m.pt) > 0.6 ? 0 : 1e6) + m.d : s.pref === 'unmarked' ? (m.mt > 0.5 ? 0 : 1e9) + m.hp : m.d;
       if (v > bv) { bv = v; best = m; }
     }
     if (!best) return false;
-    if (t.cls === 'croak' || t.cls === 'tok') {
-      td.fx.push({ type: t.cls === 'tok' ? 'beam' : 'tongue', x: t.x, y: t.y - 12, x2: best.x, y2: best.y, t: 0, dur: t.cls === 'tok' ? 0.22 : 0.14 });
-      tdHurt(best, s.dmg, s.pen);
-    } else if (t.cls === 'pluck') {
-      td.shots.push({ type: 'drop', x: t.x, y: t.y - 12, tx: best.x, ty: best.y, m: best, dmg: s.dmg, pen: s.pen, v: 620 });
-    } else if (t.cls === 'kick') {
-      td.shots.push({ type: 'spit', x: t.x, y: t.y - 12, tx: best.x, ty: best.y, m: best, dmg: s.dmg, pen: s.pen, pd: s.poison, v: 460 });
-    } else if (t.cls === 'bass') {
+    if (s.mode === 'pulse') {
+      near.forEach(function (o) { tdApply(t, o); });
+      td.fx.push({ type: 'ring', x: t.x, y: t.y, r: s.range, c: col, t: 0, dur: 0.45 });
+    } else if (s.mode === 'hit') {
+      // «Гроза» бьёт с неба по всей карте, остальные — от самой лягушки
+      td.fx.push({ type: t.i ? 'beam' : 'tongue', x: s.range > 2000 ? best.x - 24 : ox, y: s.range > 2000 ? -10 : oy, x2: best.x, y2: best.y, c: col, t: 0, dur: t.i ? 0.2 : 0.14 });
+      tdApply(t, best);
+    } else if (s.mode === 'multi') {
+      near.sort(function (p, q) { return q.d - p.d; });
+      for (n = 0; n < s.multi && n < near.length; n++) {
+        td.fx.push({ type: 'beam', x: ox, y: oy, x2: near[n].x, y2: near[n].y, c: col, t: 0, dur: 0.14 });
+        tdApply(t, near[n]);
+      }
+    } else if (s.mode === 'beam') {
+      // луч пробивает всех, кто оказался на его пути
+      dx = best.x - ox; dy = best.y - oy; v = Math.sqrt(dx * dx + dy * dy) || 1; dx /= v; dy /= v;
+      for (k = 0; k < list.length; k++) {
+        m = list[k];
+        var px = m.x - ox, py = m.y - oy, along = px * dx + py * dy;
+        if (!m.dead && along >= 0 && along <= s.range && Math.abs(px * dy - py * dx) < 20) tdApply(t, m);
+      }
+      td.fx.push({ type: 'ray', x: ox, y: oy, x2: ox + dx * s.range, y2: oy + dy * s.range, c: col, rainbow: s.el === 'all', t: 0, dur: 0.25 });
+    } else if (s.mode === 'shot') {
+      td.shots.push({ type: 'drop', x: ox, y: oy, tx: best.x, ty: best.y, m: best, t: t, c: col, v: 560 });
+    } else if (s.mode === 'bomb') {
       dx = best.x - t.x; dy = best.y - t.y;
-      td.shots.push({ type: 'bomb', x: t.x, y: t.y - 12, tx: best.x, ty: best.y, m: null, dmg: s.dmg, pen: s.pen, r: s.splash, v: 330, far: Math.sqrt(dx * dx + dy * dy) || 1 });
+      td.shots.push({ type: 'bomb', x: ox, y: oy, tx: best.x, ty: best.y, m: null, t: t, c: col, r: s.splash, v: 330, far: Math.sqrt(dx * dx + dy * dy) || 1 });
     } else {
-      // молния: с каждой следующей стрекозой слабеет на четверть
-      var hit = [best], cur = best, dmg = s.dmg, n, nx, nd, d2, line = [t.x, t.y - 12, best.x, best.y];
-      tdHurt(best, dmg, 1);
+      // молния перескакивает со стрекозы на стрекозу и с каждым прыжком слабеет на четверть
+      var hit = [best], cur = best, part = 1, nx, nd, d2, line = [ox, oy, best.x, best.y];
+      tdApply(t, best);
       for (n = 1; n < s.chain; n++) {
         nx = null; nd = 85 * 85;
         for (k = 0; k < list.length; k++) {
@@ -2627,12 +2729,12 @@
           if (d2 < nd) { nd = d2; nx = m; }
         }
         if (!nx) break;
-        dmg *= 0.75;
+        part *= 0.75;
         line.push(nx.x, nx.y);
-        tdHurt(nx, dmg, 1);
+        tdApply(t, nx, part);
         hit.push(nx); cur = nx;
       }
-      td.fx.push({ type: 'bolt', line: line, t: 0, dur: 0.2 });
+      td.fx.push({ type: 'bolt', line: line, c: col, t: 0, dur: 0.2 });
     }
     return true;
   }
@@ -2643,9 +2745,14 @@
     for (k = 0; k < list.length; k++) {
       m = list[k];
       if (m.dead) continue;
-      if (m.pt > 0) { m.pt -= dt; tdHurt(m, m.pd * dt, 1); if (m.dead) continue; }
+      if (m.pt > 0) { m.pt -= dt; tdHurt(m, m.pd * dt, 1, 'nature'); if (m.dead) continue; }
+      if (m.bt > 0) { m.bt -= dt; tdHurt(m, m.bd * dt, 1, 'fire'); if (m.dead) continue; }
+      if (m.mt > 0) m.mt -= dt;
+      if (m.zi > 0) m.zi -= dt;
+      if (m.ki > 0) m.ki -= dt;
       f = 1;
       if (m.st > 0) { m.st -= dt; f = m.sf; }
+      if (m.zt > 0) { m.zt -= dt; f = 0; }
       if (m.heal) {
         m.ht -= dt;
         if (m.ht <= 0) {
@@ -2681,12 +2788,9 @@
       if (dist > mv) { s.x += dx / dist * mv; s.y += dy / dist * mv; continue; }
       td.shots.splice(k, 1);
       if (s.type === 'bomb') {
-        for (j = 0; j < list.length; j++) { o = list[j]; dx = o.x - s.tx; dy = o.y - s.ty; if (!o.dead && dx * dx + dy * dy <= s.r * s.r) tdHurt(o, s.dmg, s.pen); }
-        td.fx.push({ type: 'boom', x: s.tx, y: s.ty, r: s.r, t: 0, dur: 0.3 });
-      } else if (s.m && !s.m.dead) {
-        tdHurt(s.m, s.dmg, s.pen);
-        if (s.pd && !s.m.dead) { if (s.pd > s.m.pd || s.m.pt <= 0) s.m.pd = s.pd; s.m.pt = 4; }
-      }
+        for (j = 0; j < list.length; j++) { o = list[j]; dx = o.x - s.tx; dy = o.y - s.ty; if (!o.dead && dx * dx + dy * dy <= s.r * s.r) tdApply(s.t, o); }
+        td.fx.push({ type: 'boom', x: s.tx, y: s.ty, r: s.r, c: s.c, t: 0, dur: 0.3 });
+      } else if (s.m && !s.m.dead) tdApply(s.t, s.m);
     }
     for (k = td.fx.length - 1; k >= 0; k--) { td.fx[k].t += dt; if (td.fx[k].t >= td.fx[k].dur) td.fx.splice(k, 1); }
     for (k = list.length - 1; k >= 0; k--) if (list[k].dead) list.splice(k, 1);
@@ -2965,6 +3069,14 @@
     tg.drawImage(tdBugSprite(m.k, m.tier), -size / 2, -size / 2 - 2 * sc, size, size);
     tg.restore();
     if (m.st > 0) { tg.strokeStyle = 'rgba(150,220,255,0.9)'; tg.lineWidth = 2; tdOval(tg, x, y, rx + 4, ry + 4); tg.stroke(); }
+    // стихия видна по цветному ободку и значку над стрекозой; дальше — ожог, оглушение и метка
+    if (m.el) {
+      tg.strokeStyle = TD_EL[m.el][1]; tg.lineWidth = 3; tdOval(tg, x, y, rx + 2, ry + 2); tg.stroke();
+      tg.fillStyle = TD_EL[m.el][1]; tg.strokeStyle = '#ffffff'; tg.lineWidth = 1.5; tg.beginPath(); tg.arc(x + rx * 0.9, y - ry - 2, 5, 0, Math.PI * 2); tg.fill(); tg.stroke();
+    }
+    if (m.bt > 0) { tg.fillStyle = 'rgba(255,123,0,0.95)'; tdDot(tg, x - rx * 0.2, y - ry - 4 - (td.t * 26 + m.ph) % 7, 2.4); tdDot(tg, x + rx * 0.7, y - ry - 2 - (td.t * 26 + m.ph + 4) % 7, 1.8); }
+    if (m.zt > 0) { tg.fillStyle = '#ffd60a'; for (var zk = 0; zk < 3; zk++) tdDot(tg, x + Math.cos(td.t * 6 + zk * 2.1) * rx * 0.8, y - ry - 8 + Math.sin(td.t * 6 + zk * 2.1) * 3, 2.2); }
+    if (m.mt > 0) { tg.strokeStyle = '#d00000'; tg.lineWidth = 2; tg.setLineDash([4, 4]); tdOval(tg, x, y, rx + 7, ry + 7); tg.stroke(); tg.setLineDash([]); }
     if (m.pt > 0) { tg.fillStyle = 'rgba(140,220,60,0.9)'; tdDot(tg, x - rx * 0.6, y - ry - 3 - (td.t * 20 + m.ph) % 6, 2.2); tdDot(tg, x + rx * 0.5, y - ry - 1 - (td.t * 20 + m.ph + 3) % 6, 1.8); }
     if (m.hp < m.max) {
       var bw = m.boss ? 54 : 24, by = y - ry - (m.boss ? 22 : 13) * sc;
@@ -2973,6 +3085,7 @@
     }
   }
   function tdRange(x, y, r, ok) {
+    if (r > 2000) r = 26; // приём на всё поле: круг дальности рисовать незачем, хватит отметки на самой клетке
     tg.fillStyle = ok ? 'rgba(255,255,255,0.16)' : 'rgba(255,80,80,0.2)'; tg.strokeStyle = ok ? 'rgba(255,255,255,0.8)' : 'rgba(255,80,80,0.9)'; tg.lineWidth = 2;
     tg.beginPath(); tg.arc(x, y, r, 0, Math.PI * 2); tg.fill(); tg.stroke();
   }
@@ -2998,21 +3111,27 @@
       s = td.shots[k];
       if (s.type === 'bomb') {
         var dx = s.tx - s.x, dy = s.ty - s.y, pr = 1 - Math.min(1, Math.sqrt(dx * dx + dy * dy) / s.far);
-        tg.fillStyle = '#6b4a2b'; tdDot(tg, s.x, s.y - Math.sin(pr * Math.PI) * 26, 6);
-      } else { tg.fillStyle = s.type === 'spit' ? '#8ac926' : '#4cc9f0'; tdDot(tg, s.x, s.y, s.type === 'spit' ? 4 : 3); }
+        tg.fillStyle = s.c; tdDot(tg, s.x, s.y - Math.sin(pr * Math.PI) * 26, 6);
+      } else { tg.fillStyle = s.c; tdDot(tg, s.x, s.y, 3.6); }
     }
     for (k = 0; k < td.fx.length; k++) {
       f = td.fx[k]; a = 1 - f.t / f.dur;
       tg.globalAlpha = Math.max(0, a);
       if (f.type === 'tongue') { tg.strokeStyle = '#f06292'; tg.lineWidth = 4; tg.lineCap = 'round'; tg.beginPath(); tg.moveTo(f.x, f.y); tg.lineTo(f.x2, f.y2); tg.stroke(); tg.fillStyle = '#f06292'; tdDot(tg, f.x2, f.y2, 4.5); }
-      else if (f.type === 'beam') { tg.strokeStyle = '#fff3b0'; tg.lineWidth = 3; tg.beginPath(); tg.moveTo(f.x, f.y); tg.lineTo(f.x2, f.y2); tg.stroke(); tg.fillStyle = '#ffd60a'; tdDot(tg, f.x2, f.y2, 7 * a + 2); }
+      else if (f.type === 'beam') { tg.strokeStyle = f.c; tg.lineWidth = 3.5; tg.lineCap = 'round'; tg.beginPath(); tg.moveTo(f.x, f.y); tg.lineTo(f.x2, f.y2); tg.stroke(); tg.fillStyle = f.c; tdDot(tg, f.x2, f.y2, 7 * a + 2); }
+      else if (f.type === 'ray') {
+        (f.rainbow ? ['#ff595e', '#ffca3a', '#8ac926', '#1982c4', '#c77dff'] : [f.c]).forEach(function (col, n, all) {
+          var off = (n - (all.length - 1) / 2) * 3, len = Math.sqrt((f.x2 - f.x) * (f.x2 - f.x) + (f.y2 - f.y) * (f.y2 - f.y)) || 1, nx = -(f.y2 - f.y) / len * off, ny = (f.x2 - f.x) / len * off;
+          tg.strokeStyle = col; tg.lineWidth = f.rainbow ? 3 : 6; tg.lineCap = 'round'; tg.beginPath(); tg.moveTo(f.x + nx, f.y + ny); tg.lineTo(f.x2 + nx, f.y2 + ny); tg.stroke();
+        });
+      }
       else if (f.type === 'bolt') {
         tg.strokeStyle = '#b8f3ff'; tg.lineWidth = 3; tg.lineJoin = 'round'; tg.beginPath(); tg.moveTo(f.line[0], f.line[1]);
         for (j = 2; j < f.line.length; j += 2) { tg.lineTo((f.line[j - 2] + f.line[j]) / 2 + ((j * 7) % 13 - 6), (f.line[j - 1] + f.line[j + 1]) / 2 + ((j * 5) % 11 - 5)); tg.lineTo(f.line[j], f.line[j + 1]); }
         tg.stroke();
       }
-      else if (f.type === 'ring') { tg.strokeStyle = '#bde0fe'; tg.lineWidth = 4; tg.beginPath(); tg.arc(f.x, f.y, f.r * (1 - a * 0.8), 0, Math.PI * 2); tg.stroke(); }
-      else if (f.type === 'boom') { tg.fillStyle = 'rgba(107,74,43,0.55)'; tdDot(tg, f.x, f.y, f.r * (1 - a * 0.5)); }
+      else if (f.type === 'ring') { tg.strokeStyle = f.c; tg.lineWidth = 4; tg.beginPath(); tg.arc(f.x, f.y, f.r * (1 - a * 0.8), 0, Math.PI * 2); tg.stroke(); }
+      else if (f.type === 'boom') { tg.globalAlpha = Math.max(0, a) * 0.55; tg.fillStyle = f.c; tdDot(tg, f.x, f.y, f.r * (1 - a * 0.5)); }
       else if (f.type === 'heal') { tg.strokeStyle = '#ff8fa3'; tg.lineWidth = 3; tg.beginPath(); tg.arc(f.x, f.y, 80 * (1 - a), 0, Math.PI * 2); tg.stroke(); }
       else if (f.type === 'splash') { tg.strokeStyle = '#ffffff'; tg.lineWidth = 3; tg.beginPath(); tg.arc(f.x, f.y, 6 + 26 * (1 - a), 0, Math.PI * 2); tg.stroke(); }
       else { tg.fillStyle = f.big ? '#ffd60a' : '#ffffff'; for (j = 0; j < 6; j++) tdDot(tg, f.x + Math.cos(j * 1.047) * (1 - a) * (f.big ? 46 : 16), f.y + Math.sin(j * 1.047) * (1 - a) * (f.big ? 46 : 16), f.big ? 5 : 2.6); }
@@ -3034,8 +3153,20 @@
 
   // ---------- оборона болота: управление ----------
 
+  function tdDot2(s) { return s.poison ? ' + яд ' + tdNum(s.poison * 4) : s.burn ? ' + ожог ' + tdNum(s.burn * 3) : ''; }
+  function tdReach(s) { return s.range > 2000 ? 'всё поле' : tdNum(s.range / TD_CELL); }
   function tdNum(x) { return x >= 100 ? fmt(x) : String(Math.round(x * 10) / 10).replace('.', ','); }
-  function tdStars(n) { var s = ''; for (var k = 0; k < 3; k++) s += k < n ? '★' : '☆'; return s; }
+  function tdStars(n) { var s = ''; for (var k = 0; k < n; k++) s += '★'; return s; }
+  // окно боя подгоняется под экран: поле занимает всю высоту, что осталась от панели, подсказки и магазина
+  function tdFit() {
+    var frame = document.querySelector('.td-frame'), stage = document.querySelector('.td-game .td-stage'), k, extra;
+    if ($('td-play').hidden) return;
+    for (k = 0; k < 3; k++) {
+      extra = frame.offsetHeight - stage.offsetHeight;
+      frame.style.width = Math.max(300, Math.min(window.innerWidth, (window.innerHeight - extra) * TD_W / TD_H)) + 'px';
+    }
+  }
+  window.addEventListener('resize', tdFit);
   function tdSay(text) { tdNote = text; tdNoteT = 2.4; }
   function tdEvent(name, i) {
     if (name === 'shot') {
@@ -3095,9 +3226,12 @@
       b.appendChild(drawFrog({ skin: f.skin, belly: f.belly, mark: f.mark, pattern: f.pattern, shape: f.shape, rx: f.rx, ry: f.ry, wear: wearOf(f, lvl) }));
       s.appendChild(document.createTextNode(f.name));
       var st = tdStat(f.i, 1), sm2 = document.createElement('small'), sm3 = document.createElement('small');
-      sm.textContent = TD_CLASS[f.voice].ru + ' · ур. ' + lvl;
-      sm2.textContent = 'урон ' + tdNum(st.dmg) + (st.poison ? ' + яд ' + tdNum(st.poison * 4) : '') + ' · ' + tdNum(st.rate) + '/с · дальн. ' + tdNum(st.range / TD_CELL);
-      sm3.textContent = 'цена ' + fmt(cost);
+      // рамка карточки — цвета стихии; полные характеристики появляются в строке над магазином, когда лягушка выбрана
+      b.style.borderColor = TD_EL[st.el][1];
+      b.title = TD_ATK[f.i].ru + ' (' + TD_EL[st.el][0] + '): урон ' + tdNum(st.dmg) + tdDot2(st) + ', ' + tdNum(st.rate) + ' в секунду, дальность ' + tdReach(st);
+      sm.textContent = TD_ATK[f.i].ru;
+      sm2.textContent = TD_EL[st.el][0] + ' · ур. ' + lvl;
+      sm3.className = 'price'; sm3.textContent = fmt(cost);
       s.appendChild(sm); s.appendChild(sm2); s.appendChild(sm3); b.appendChild(s);
       b.addEventListener('click', function () { tdPick = tdPick === f.i ? -1 : f.i; tdSel = null; audio(); });
       box.appendChild(b);
@@ -3114,6 +3248,7 @@
     tdRestartArmed = false; $('td-restart').textContent = 'Заново';
     $('td-title').textContent = L + '. ' + TD_LEVELS[L - 1][0];
     $('td-map').hidden = true; $('td-play').hidden = false;
+    tdFit();
     tdSay(TD_LEVELS[L - 1][0]);
     tdResume();
   }
@@ -3160,7 +3295,7 @@
     tdShop.forEach(function (x) { x.b.classList.toggle('poor', gold < x.cost); x.b.setAttribute('aria-pressed', tdPick === x.i ? 'true' : 'false'); });
     if (td.wave < TD_WAVES) {
       if (!tdNext || tdNext.w !== td.wave + 1) { tdNext = tdWave(td.L, td.wave + 1); tdNext.w = td.wave + 1; }
-      $('td-foe').textContent = 'Дальше: ' + tdNext.list.length + ' шт., ур. ' + tdNext.ml + ' — ' + tdNext.kinds.map(function (k) { return TD_KIND[k].ru; }).join(', ') + (tdNext.boss ? ' и матка' : '');
+      $('td-foe').textContent = 'Дальше: ' + tdNext.list.length + ' шт., ур. ' + tdNext.ml + ' — ' + tdNext.kinds.map(function (k) { return TD_KIND[k].ru; }).join(', ') + (tdNext.boss ? ' и матка' : '') + (tdNext.els.length ? ' · стихия: ' + tdNext.els.map(function (e) { return TD_EL[e][0] + ' (боится: ' + TD_EL[TD_WEAK[e]][0] + ')'; }).join(', ') : '');
     } else $('td-foe').textContent = '';
     tdInfo(gold);
   }
@@ -3169,28 +3304,39 @@
     if (sig !== tdInfoSig) {
       tdInfoSig = sig;
       box.textContent = '';
-      if (!tdSel && tdPick < 0) { box.textContent = 'Мошек дают за каждую сбитую стрекозу. Матка, долетев до озера, отнимает сразу 5 жизней.'; return; }
-      f = FROGS[tdSel ? tdSel.i : tdPick]; c = TD_CLASS[f.voice]; s = tdSel ? tdSel.s : tdStat(f.i, 1);
-      var b = document.createElement('b');
-      b.textContent = f.name + (tdSel ? ' ' + tdStars(tdSel.stars) : '');
-      box.appendChild(b);
-      box.appendChild(document.createTextNode(c.ru + ', ур. ' + (tdSel ? tdSel.lvl : tdFrogLvl(f.i)) + ' · урон ' + tdNum(s.dmg) + (s.poison ? ' + яд ' + tdNum(s.poison * 4) : '') + ' · ' + tdNum(c.rate) + ' в секунду · дальность ' + tdNum(s.range / TD_CELL) + ' · ' + c.info));
-      if (tdSel) {
-        var u = document.createElement('button'), x = document.createElement('button'), t = tdSel;
-        u.type = 'button'; u.className = 'act'; u.id = 'td-up';
-        x.type = 'button'; x.className = 'act'; x.id = 'td-sell'; x.textContent = 'Убрать (+' + fmt(Math.floor(t.spent * 0.7)) + ')';
-        u.addEventListener('click', function () { if (tdUpgrade(t)) { if (td.towers.filter(function (q) { return q.stars >= 3; }).length >= 5) { state.ach.squad = 1; dirty = true; } play(t.cls, freq(FROGS[t.i].deg + t.stars, FROGS[t.i].oct), 0, 0.7); } else tdSay('Не хватает мошек'); });
-        x.addEventListener('click', function () { tdSell(t); tdSel = null; tdBake(); });
-        box.appendChild(u); box.appendChild(x);
+      if (!tdSel && tdPick < 0) box.textContent = 'Мошек дают за каждую сбитую стрекозу. Матка, долетев до озера, отнимает сразу 5 жизней.';
+      else {
+        f = FROGS[tdSel ? tdSel.i : tdPick]; c = TD_ATK[f.i]; s = tdSel ? tdSel.s : tdStat(f.i, 1);
+        var b = document.createElement('b');
+        b.textContent = f.name + (tdSel ? ' ' + tdStars(tdSel.stars) : '');
+        box.appendChild(b);
+        box.appendChild(document.createTextNode(c.ru + ' (' + TD_EL[c.el][0] + '), ур. ' + (tdSel ? tdSel.lvl : tdFrogLvl(f.i)) + ' · урон ' + tdNum(s.dmg) + tdDot2(s) + ' · ' + tdNum(c.rate) + ' в секунду · дальность ' + tdReach(s) + ' · ' + c.info));
       }
     }
-    if (tdSel) {
-      up = tdUpCost(tdSel);
-      var ub = $('td-up');
-      ub.textContent = up ? 'Улучшить (' + fmt(up) + ')' : 'Улучшена до предела';
-      ub.disabled = !up || gold < up;
-    }
+    // кнопки «Улучшить» и «Продать» всплывают над выбранной лягушкой; у верхнего края поля — под ней
+    var pop = $('td-pop');
+    pop.hidden = !tdSel || !!td.over;
+    if (!tdSel) return;
+    var low = tdSel.y < 95;
+    pop.style.left = Math.max(14, Math.min(86, tdSel.x / TD_W * 100)) + '%';
+    pop.style.top = ((tdSel.y + (low ? 30 : -44)) / TD_H * 100) + '%';
+    pop.style.transform = 'translate(-50%, ' + (low ? '0' : '-100%') + ')';
+    up = tdUpCost(tdSel);
+    $('td-up').textContent = up ? 'Улучшить (' + fmt(up) + ')' : 'Предел';
+    $('td-up').disabled = !up || gold < up;
+    $('td-sell').textContent = 'Продать (+' + fmt(Math.floor(tdSel.spent * 0.7)) + ')';
   }
+  $('td-up').addEventListener('click', function () {
+    var t = tdSel;
+    if (!t || !td || td.over) return;
+    if (!tdUpgrade(t)) { tdSay('Не хватает мошек'); return; }
+    if (td.towers.filter(function (q) { return q.stars >= 3; }).length >= 5) { state.ach.squad = 1; dirty = true; }
+    play(t.cls, freq(FROGS[t.i].deg + t.stars, FROGS[t.i].oct), 0, 0.7);
+  });
+  $('td-sell').addEventListener('click', function () {
+    if (!tdSel || !td || td.over) return;
+    tdSell(tdSel); tdSel = null; tdBake();
+  });
   function tdFrame(ts) {
     if (!tdPlaying || !td) return;
     var dt = tdLast ? Math.min(0.04, (ts - tdLast) / 1000) : 0.016, k;
