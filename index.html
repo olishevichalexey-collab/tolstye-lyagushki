@@ -657,7 +657,9 @@
     try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) { /* без сохранения игра просто начнётся заново */ }
   }
   function levelOf(n) { var l = 1; for (var k = 1; k < LEVELS.length; k++) if (n >= LEVELS[k]) l = k + 1; return l; }
-  function stageOf(xp) { var s = 0; for (var k = 1; k < STAGES.length; k++) if (xp >= STAGES[k][1]) s = k; return s; }
+  // после каждого перерождения питомцу нужно на 5% больше роста на каждую стадию, чем в прошлой жизни
+  function stageNeed(k) { return Math.round(STAGES[k][1] * Math.pow(1.05, state ? state.ach.rebirths : 0)); }
+  function stageOf(xp) { var s = 0; for (var k = 1; k < STAGES.length; k++) if (xp >= stageNeed(k)) s = k; return s; }
   function fmt(n) { return Math.floor(n).toLocaleString('ru-RU'); }
   function itemOpen(id) { if (LOOT[id]) return !!state.td.loot[id]; var r = ITEM_FROM[id]; return !!r && state.frogs[r.frog].open && levelOf(state.frogs[r.frog].n) >= r.lvl; }
 
@@ -1715,7 +1717,7 @@
   function mySkin() { var f = FROGS[state.me.skin] || FROGS[0]; return { skin: f.skin, belly: f.belly, mark: f.mark, pattern: f.pattern, shape: f.shape }; }
   function petSvg() {
     var me = state.me;
-    return petLook(stageOf(me.xp), me.skin, me.kind, me.wear, me.xp >= STAGES[1][1] * 0.6);
+    return petLook(stageOf(me.xp), me.skin, me.kind, me.wear, me.xp >= stageNeed(1) * 0.6);
   }
   // картинка питомца по его виду: стадия, расцветка, порода, вещи. Так же рисуются чужие питомцы в таблице лидеров
   function petLook(st, skinI, kindI, wear, crack) {
@@ -1763,7 +1765,7 @@
     box.textContent = '';
     var h = document.createElement('h2'); h.textContent = 'Перерождение'; box.appendChild(h);
     var n = document.createElement('p'); n.className = 'note';
-    n.textContent = full ? 'Лягушка выросла полностью. Её можно оставить, а можно превратить в новое яйцо — из него вылупится лягушка другой породы, и если повезёт, очень редкой. Перерождение обнуляет всё: кваки, корм, лягушек в пруду, рост питомца, рекорд в прыжках и уровни обороны. Остаются достижения, сундуки и вещи из них, имя и открытые породы. Каждое перерождение навсегда прибавляет 10% к получаемым квакам.'
+    n.textContent = full ? 'Лягушка выросла полностью. Её можно оставить, а можно превратить в новое яйцо — из него вылупится лягушка другой породы, и если повезёт, очень редкой. Перерождение обнуляет всё: кваки, корм, лягушек в пруду, рост питомца, рекорд в прыжках и уровни обороны. Остаются достижения, сундуки и вещи из них, имя и открытые породы. Каждое перерождение навсегда прибавляет 10% к получаемым квакам, но и вырастить следующую лягушку становится на 5% дороже.'
       : 'Когда питомец вырастет до толстой лягушки, его можно будет превратить в новое яйцо и получить лягушку другой породы. Чем реже порода, тем причудливее форма и эффекты.';
     box.appendChild(n);
     if (full) {
@@ -1774,7 +1776,7 @@
       box.appendChild(b);
     }
     var m = document.createElement('div'); m.className = 'meta';
-    m.textContent = 'Пород открыто: ' + kindsGot() + ' из ' + KINDS.length + ' · перерождений: ' + state.ach.rebirths + ' · бонус к квакам: +' + (state.ach.rebirths * 10) + '%';
+    m.textContent = 'Пород открыто: ' + kindsGot() + ' из ' + KINDS.length + ' · перерождений: ' + state.ach.rebirths + ' · бонус к квакам: +' + (state.ach.rebirths * 10) + '% · рост питомца дороже на ' + Math.round((Math.pow(1.05, state.ach.rebirths) - 1) * 100) + '%';
     box.appendChild(m);
     var det = document.createElement('details'), sum = document.createElement('summary'), tbl = document.createElement('table');
     sum.textContent = 'Породы и шансы'; det.appendChild(sum);
@@ -1830,7 +1832,7 @@
   }
   function refreshPet() {
     var me = state.me, st = stageOf(me.xp);
-    var crack = st === 0 && me.xp >= STAGES[1][1] * 0.6;
+    var crack = st === 0 && me.xp >= stageNeed(1) * 0.6;
     var sig = [st, me.skin, me.kind, me.wear.neck, me.wear.hat, me.wear.eyes, me.wear.suit, me.wear.back, crack].join('|');
     if (sig !== petSig) {
       petSig = sig;
@@ -1843,8 +1845,8 @@
     $('pet-kind').textContent = st < 2 ? 'Редкость: ' + KIND_RARE[kind[1]][0].toLowerCase() + ' · порода станет ясна, когда вырастет лягушонок' : 'Порода: ' + kind[0] + ' · ' + KIND_RARE[kind[1]][0].toLowerCase();
     $('pet-kind').style.color = kind[1] ? KIND_RARE[kind[1]][1] : '';
     var next = STAGES[st + 1];
-    $('pet-stage').textContent = STAGES[st][0] + (next ? ' · до стадии «' + next[0] + '» ' + fmt(next[1] - me.xp) + ' очков роста' : ' · выросла полностью');
-    $('pet-bar').style.width = (next ? Math.min(100, (me.xp - STAGES[st][1]) / (next[1] - STAGES[st][1]) * 100) : 100) + '%';
+    $('pet-stage').textContent = STAGES[st][0] + (next ? ' · до стадии «' + next[0] + '» ' + fmt(stageNeed(st + 1) - me.xp) + ' очков роста' : ' · выросла полностью');
+    $('pet-bar').style.width = (next ? Math.min(100, (me.xp - stageNeed(st)) / (stageNeed(st + 1) - stageNeed(st)) * 100) : 100) + '%';
     $('pet-feed').disabled = state.flies < 1;
     $('pet-feed').textContent = 'Покормить (' + fmt(state.flies) + ')';
     $('pet-hint').textContent = (st === 0 ? 'Кормите яйцо, чтобы оно вылупилось. ' : st === 1 ? 'Головастик растёт. Одежду можно будет надеть, когда он станет лягушонком. ' : '') +
