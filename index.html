@@ -2717,7 +2717,9 @@
     swarm: { ru: 'мошкара', hp: 0.35, sp: 1.25 },
     healer: { ru: 'лекари', hp: 1.5, sp: 0.9, heal: 1, cap: 0.12 },
     ghost: { ru: 'призраки', hp: 1.1, sp: 1.15, ghost: 1, cap: 0.5 },
-    boss: { ru: 'матка', hp: 1, sp: 0.5, boss: 1 }
+    boss: { ru: 'матка', hp: 1, sp: 0.5, boss: 1 },
+    // на уровнях с 21-го погибшая матка распадается на трёх мини-маток: они мельче, быстрее и отнимают у озера по две жизни
+    mini: { ru: 'мини-матки', hp: 1, sp: 0.85, mini: 1 }
   };
   // уровни: название и повороты тропы по клеткам поля 16×10; первая точка — у края, последняя — озеро
   var TD_LEVELS = [
@@ -2902,12 +2904,21 @@
     var kd = TD_KIND[q.k];
     var m = {
       k: q.k, el: q.el || '', hp: q.hp, max: q.hp, gold: q.gold, tier: q.tier, d: 0, x: 0, y: 0, ux: 1, uy: 0, sp: kd.sp * 1.15 * TD_CELL,
-      armor: !!kd.armor, ghost: !!kd.ghost, heal: !!kd.heal, boss: !!kd.boss, lives: kd.boss ? 5 : 1,
+      armor: !!kd.armor, ghost: !!kd.ghost, heal: !!kd.heal, boss: !!kd.boss, lives: kd.boss ? 5 : kd.mini ? 2 : 1,
       // замедление, яд, ожог, оглушение и защита от него, защита от отбрасывания, метка
       st: 0, sf: 1, pt: 0, pd: 0, bt: 0, bd: 0, zt: 0, zi: 0, ki: 0, mt: 0, mm: 0, ht: 2, ph: (td.born++) * 1.7, dead: false
     };
     tdAt(m);
     td.mobs.push(m);
+  }
+  // мини-матки появляются там, где погибла матка, чуть растянувшись по тропе; у каждой четверть её здоровья и её стихия
+  function tdSplit(m) {
+    for (var j = 0; j < 3; j++) {
+      tdSpawn({ k: 'mini', el: m.el, hp: Math.max(1, Math.round(m.max * 0.25)), gold: m.gold * 0.15, tier: m.tier });
+      var o = td.mobs[td.mobs.length - 1];
+      o.d = Math.max(0, m.d - j * 36);
+      tdAt(o);
+    }
   }
   // стихии: своя стихия наносит стрекозе половину урона, противоположная — полтора; «все стихии» всегда бьют в слабое место
   function tdMul(m, el) {
@@ -2929,6 +2940,7 @@
     td.gold += m.gold * td.bonus;
     td.fx.push({ type: 'pop', x: m.x, y: m.y, t: 0, dur: m.boss ? 0.7 : 0.32, big: m.boss });
     if (m.boss) tdEvent('boss');
+    if (m.boss && td.L >= 21) tdSplit(m);
   }
   // попадание приёма лягушки t по стрекозе m: урон и всё, что приём делает сверх урона. part — доля урона (цепь слабеет)
   function tdApply(t, m, part) {
@@ -3114,7 +3126,7 @@
   // вид стрекоз: кожа, пузо, узор, полуширина и полувысота тела — те же краски и формы, по которым различаются лягушки
   var TD_LOOK = {
     basic: ['#3aa7c9', '#d6f1f7', '#1f7391', 15, 13], fast: ['#f6c744', '#fff3c4', '#c98f00', 12, 13], fat: ['#d9534f', '#ffd9d6', '#8f2622', 20, 16], armor: ['#8d99ae', '#dfe6ee', '#4a5568', 17, 14],
-    swarm: ['#a06cd5', '#eadcf8', '#6b3fa0', 10, 9], healer: ['#f08ab5', '#ffe3ee', '#c2557a', 15, 13], ghost: ['#dfe9f2', '#ffffff', '#9fb3c8', 15, 14], boss: ['#2b2d42', '#8d99ae', '#f5c518', 30, 25]
+    swarm: ['#a06cd5', '#eadcf8', '#6b3fa0', 10, 9], healer: ['#f08ab5', '#ffe3ee', '#c2557a', 15, 13], ghost: ['#dfe9f2', '#ffffff', '#9fb3c8', 15, 14], boss: ['#2b2d42', '#8d99ae', '#f5c518', 30, 25], mini: ['#2b2d42', '#8d99ae', '#f5c518', 19, 16]
   };
   var TD_W = TD_COLS * TD_CELL, TD_H = TD_ROWS * TD_CELL;
   var tdCv = $('td-cv'), tg = tdCv.getContext('2d'), tdBg = document.createElement('canvas'), tdDpr = Math.min(2, window.devicePixelRatio || 1);
@@ -3146,11 +3158,11 @@
     cvs.width = cvs.height = size * 2;
     b.scale(2, 2); b.translate(size / 2, size / 2 + 2);
     b.lineCap = 'round'; b.lineJoin = 'round';
-    if (tier >= 7 || kind === 'boss') { b.strokeStyle = 'rgba(255,80,80,0.45)'; b.lineWidth = 3; tdOval(b, 0, 0, rx + 7, ry + 7); b.stroke(); }
+    if (tier >= 7 || kind === 'boss' || kind === 'mini') { b.strokeStyle = 'rgba(255,80,80,0.45)'; b.lineWidth = 3; tdOval(b, 0, 0, rx + 7, ry + 7); b.stroke(); }
     if (tier >= 2) { b.fillStyle = L[2]; for (k = -1; k <= 1; k++) { b.beginPath(); b.moveTo(k * rx * 0.3 - 3.5, -ry + 3); b.lineTo(k * rx * 0.3, -ry - 6 - (k ? 0 : 2)); b.lineTo(k * rx * 0.3 + 3.5, -ry + 3); b.fill(); } }
     b.fillStyle = L[0]; tdOval(b, 0, 0, rx, ry); b.fill();
     b.save(); b.clip(); b.fillStyle = L[2];
-    if (kind === 'basic' || kind === 'boss') for (k = -2; k <= 2; k++) b.fillRect(k * rx * 0.42 - rx * 0.07, -ry, rx * 0.14, ry * 2);
+    if (kind === 'basic' || kind === 'boss' || kind === 'mini') for (k = -2; k <= 2; k++) b.fillRect(k * rx * 0.42 - rx * 0.07, -ry, rx * 0.14, ry * 2);
     else if (kind === 'fast') for (k = -2; k <= 2; k++) { b.beginPath(); b.moveTo(k * rx * 0.45 - 3, -ry); b.lineTo(k * rx * 0.45 + 3, -ry); b.lineTo(k * rx * 0.45, 0); b.fill(); }
     else if (kind === 'fat') [[-0.7, -0.2, 4], [0.72, 0.1, 3.5], [0.5, -0.6, 3], [-0.5, 0.55, 3]].forEach(function (p) { tdDot(b, rx * p[0], ry * p[1], p[2]); });
     else if (kind === 'swarm') [[-0.6, 0], [0.6, -0.1]].forEach(function (p) { tdDot(b, rx * p[0], ry * p[1], 2); });
@@ -3175,7 +3187,7 @@
     }
     b.strokeStyle = '#1c2b22'; b.lineWidth = 1.8;
     b.beginPath(); b.arc(0, ry * 0.2, rx * 0.26, Math.PI * 1.2, Math.PI * 1.8); b.stroke();
-    if (kind === 'boss' || tier >= 5) {
+    if (kind === 'boss' || kind === 'mini' || tier >= 5) {
       var cw = rx * 0.42, cy0 = -ry - (kind === 'boss' ? 1 : -2);
       b.fillStyle = '#ffd60a'; b.strokeStyle = '#b58900'; b.lineWidth = 1.5;
       b.beginPath(); b.moveTo(-cw, cy0); b.lineTo(-cw, cy0 - cw * 0.9); b.lineTo(-cw / 2, cy0 - cw * 0.4); b.lineTo(0, cy0 - cw * 1.2); b.lineTo(cw / 2, cy0 - cw * 0.4); b.lineTo(cw, cy0 - cw * 0.9); b.lineTo(cw, cy0); b.closePath(); b.fill(); b.stroke();
@@ -3579,7 +3591,7 @@
     tdShop.forEach(function (x) { x.b.classList.toggle('poor', gold < x.cost); x.b.setAttribute('aria-pressed', tdPick === x.i ? 'true' : 'false'); });
     if (td.wave < TD_WAVES) {
       if (!tdNext || tdNext.w !== td.wave + 1) { tdNext = tdWave(td.L, td.wave + 1); tdNext.w = td.wave + 1; }
-      $('td-foe').textContent = 'Дальше: ' + tdNext.list.length + ' шт., ур. ' + tdNext.ml + ' — ' + tdNext.kinds.map(function (k) { return TD_KIND[k].ru; }).join(', ') + (tdNext.boss ? ' и матка' : '') + (tdNext.els.length ? ' · стихия: ' + tdNext.els.map(function (e) { return TD_EL[e][0] + ' (боится: ' + TD_EL[TD_WEAK[e]][0] + ')'; }).join(', ') : '');
+      $('td-foe').textContent = 'Дальше: ' + tdNext.list.length + ' шт., ур. ' + tdNext.ml + ' — ' + tdNext.kinds.map(function (k) { return TD_KIND[k].ru; }).join(', ') + (tdNext.boss ? (td.L >= 21 ? ' и матка, которая после гибели распадается на трёх мини-маток' : ' и матка') : '') + (tdNext.els.length ? ' · стихия: ' + tdNext.els.map(function (e) { return TD_EL[e][0] + ' (боится: ' + TD_EL[TD_WEAK[e]][0] + ')'; }).join(', ') : '');
     } else $('td-foe').textContent = '';
     tdInfo(gold);
   }
