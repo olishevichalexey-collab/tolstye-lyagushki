@@ -284,6 +284,7 @@
       <div>Кваков<b id="st-total">0</b></div>
       <div>Корма<b id="st-flies">0</b></div>
       <div>Открыто<b id="st-open">3 из 25</b></div>
+      <div>Перерождений<b id="st-reb">0</b></div>
       <div id="st-online-box" hidden>Онлайн<b id="st-online">1</b></div>
     </div>
   </header>
@@ -365,7 +366,7 @@
         <li><b>Пруд.</b> Нажимайте на лягушек — получаете кваки. За кваки просыпаются новые лягушки, а от нажатий растёт их уровень, до 5-го. С 3-го уровня лягушка умеет петь сама.</li>
         <li><b>Корм.</b> Каждые 10 нажатий дают 1 корм. Ещё корм дают за достижения.</li>
         <li><b>Моя лягушка.</b> Кормите яйцо, и оно вырастет: головастик, лягушонок, лягушка, толстая лягушка. С лягушонка можно надевать вещи.</li>
-        <li><b>Перерождение.</b> Выросшую лягушку можно превратить в новое яйцо. Весь прогресс обнулится, кроме достижений, сундуков и вещей из них, зато вылупится другая порода — от обычной до секретной.</li>
+        <li><b>Перерождение.</b> Выросшую лягушку можно превратить в новое яйцо. Весь прогресс обнулится, кроме достижений, сундуков и вещей из них, зато вылупится другая порода — от обычной до секретной, а каждое перерождение навсегда прибавляет 10% к получаемым квакам.</li>
         <li><b>Прыжки.</b> ← и → ведут лягушку вверх по кувшинкам. Пробел или быстрое касание — язык по мухе.</li>
         <li><b>Оборона болота.</b> Сажайте лягушек у тропы и не пускайте стрекоз к озеру. Чем круче лягушка в пруду, тем сильнее она бьёт. У каждой лягушки свой приём и стихия; стрекоза с цветным ободком боится одной стихии и почти не замечает свою. За победу дают сундук.</li>
         <li><b>Сундуки.</b> Открываются в инвентаре на вкладке «Моя лягушка». Внутри вещи пяти редкостей.</li>
@@ -1389,6 +1390,7 @@
   function refreshHeader() {
     $('st-total').textContent = fmt(state.total);
     $('st-flies').textContent = fmt(state.flies);
+    $('st-reb').textContent = state.ach.rebirths;
     var open = state.frogs.filter(function (x) { return x.open; }).length;
     $('st-open').textContent = open + ' из ' + FROGS.length;
     var nl = nextLocked();
@@ -1398,8 +1400,11 @@
     $('goal-text').textContent = state.total >= need ? 'Новая лягушка готова проснуться — нажмите на неё' : 'До следующей лягушки: ' + fmt(need - state.total) + ' кваков';
   }
   var lastReady = -2;
+  // каждое перерождение прибавляет 10% ко всем получаемым квакам
+  function kvMul() { return 1 + 0.1 * state.ach.rebirths; }
   function gain(f, amount) {
     var st = state.frogs[f.i];
+    amount *= kvMul();
     st.n += amount;
     state.total += amount;
     dirty = true;
@@ -1434,7 +1439,7 @@
     // над лягушкой вылетает, сколько кваков дало нажатие; на каждом десятом — ещё и корм
     var plus = document.createElement('span');
     plus.className = 'plus';
-    plus.textContent = '+' + got + (fed ? ' и корм' : '');
+    plus.textContent = '+' + String(Math.round(got * kvMul() * 10) / 10).replace('.', ',') + (fed ? ' и корм' : '');
     plus.style.left = (30 + Math.random() * 40) + '%';
     cards[f.i].btn.appendChild(plus);
     setTimeout(function () { if (plus.parentNode) plus.parentNode.removeChild(plus); }, 900);
@@ -1522,7 +1527,7 @@
     box.textContent = '';
     var h = document.createElement('h2'); h.textContent = 'Перерождение'; box.appendChild(h);
     var n = document.createElement('p'); n.className = 'note';
-    n.textContent = full ? 'Лягушка выросла полностью. Её можно оставить, а можно превратить в новое яйцо — из него вылупится лягушка другой породы, и если повезёт, очень редкой. Перерождение обнуляет всё: кваки, корм, лягушек в пруду, рост питомца, рекорд в прыжках и уровни обороны. Остаются достижения, сундуки и вещи из них, имя и открытые породы.'
+    n.textContent = full ? 'Лягушка выросла полностью. Её можно оставить, а можно превратить в новое яйцо — из него вылупится лягушка другой породы, и если повезёт, очень редкой. Перерождение обнуляет всё: кваки, корм, лягушек в пруду, рост питомца, рекорд в прыжках и уровни обороны. Остаются достижения, сундуки и вещи из них, имя и открытые породы. Каждое перерождение навсегда прибавляет 10% к получаемым квакам.'
       : 'Когда питомец вырастет до толстой лягушки, его можно будет превратить в новое яйцо и получить лягушку другой породы. Чем реже порода, тем причудливее форма и эффекты.';
     box.appendChild(n);
     if (full) {
@@ -1533,7 +1538,7 @@
       box.appendChild(b);
     }
     var m = document.createElement('div'); m.className = 'meta';
-    m.textContent = 'Пород открыто: ' + kindsGot() + ' из ' + KINDS.length + ' · перерождений: ' + state.ach.rebirths;
+    m.textContent = 'Пород открыто: ' + kindsGot() + ' из ' + KINDS.length + ' · перерождений: ' + state.ach.rebirths + ' · бонус к квакам: +' + (state.ach.rebirths * 10) + '%';
     box.appendChild(m);
     var det = document.createElement('details'), sum = document.createElement('summary'), tbl = document.createElement('table');
     sum.textContent = 'Породы и шансы'; det.appendChild(sum);
@@ -1889,7 +1894,7 @@
   function startJump() {
     audio();
     makeSprite();
-    run = { x: GW / 2, y: GH - 70, vx: 0, vy: -640, score: 0, plats: [{ x: GW / 2 - 34, y: GH - 60, w: 68, type: 'pad', vx: 0 }], foes: [], pools: [], items: [], flies: [], lick: null, lickCd: 0, topY: GH - 60, fly: 0, face: 1, zone: 0, msg: 2.2, dying: false, hops: 0, t: 0 };
+    run = { x: GW / 2, y: GH - 70, vx: 0, vy: -640, score: 0, plats: [{ x: GW / 2 - 34, y: GH - 60, w: 68, type: 'pad', vx: 0 }], foes: [], pools: [], items: [], flies: [], pops: [], lick: null, lickCd: 0, topY: GH - 60, fly: 0, face: 1, zone: 0, msg: 2.2, dying: false, hops: 0, t: 0 };
     while (run.topY > -60) addRow();
     playing = true;
     $('veil').hidden = true;
@@ -1957,7 +1962,7 @@
           if (p.type === 'rot') { p.gone = true; p.fall = true; play('kick', freq(0, 0), 0); continue; }
           r.y = p.y;
           r.vy = p.spring ? -1060 : -640;
-          if (p.type === 'bubble') p.gone = true;
+          if (p.type === 'bubble') { p.gone = true; r.pops.push({ x: p.x + p.w / 2, y: p.y + 7, w: p.w / 2, t: 0 }); }
           play(p.spring ? 'chirp' : 'pluck', freq(r.hops % 5 + (p.spring ? 5 : 0), 2), 0);
           r.hops++;
           break;
@@ -1986,7 +1991,7 @@
       r.y = line;
       r.topY += up;
       r.score += up;
-      [r.plats, r.foes, r.pools, r.items, r.flies].forEach(function (list) { list.forEach(function (o) { o.y += up; }); });
+      [r.plats, r.foes, r.pools, r.items, r.flies, r.pops].forEach(function (list) { list.forEach(function (o) { o.y += up; }); });
       if (r.lick) r.lick.y += up;
       while (r.topY > -60) addRow();
       var alive = function (o) { return o.y < GH + 80; };
@@ -1996,6 +2001,7 @@
     }
     r.plats.forEach(function (p) { if (p.fall) p.y += 420 * dt; });
     r.flies.forEach(function (f) { f.x += Math.cos(r.t * 2.2 + f.ph) * 46 * dt; f.y += Math.sin(r.t * 3.1 + f.ph) * 14 * dt; });
+    r.pops = r.pops.filter(function (o) { o.t += dt; return o.t < 0.35; });
     if (r.lickCd > 0) r.lickCd -= dt;
     if (r.lick) { r.lick.t -= dt; if (r.lick.t <= 0) r.lick = null; }
     if (r.msg > 0) r.msg -= dt;
@@ -2097,6 +2103,16 @@
     else { g2.fillStyle = '#6fbf4b'; g2.beginPath(); g2.ellipse(0, -22, 24, 22, 0, 0, Math.PI * 2); g2.fill(); }
     g2.restore();
     if (r.fly > 0) drawFly(r.x, r.y - 84, t);
+    // пузырь лопается: плёнка расходится кольцом, в стороны летят брызги
+    r.pops.forEach(function (o) {
+      var k = o.t / 0.35, n;
+      g2.globalAlpha = 1 - k;
+      g2.strokeStyle = 'rgba(255,255,255,0.95)'; g2.lineWidth = 2.5 * (1 - k) + 0.5;
+      g2.beginPath(); g2.ellipse(o.x, o.y, o.w * (1 + k * 0.7), 9 * (1 + k * 1.4), 0, 0, Math.PI * 2); g2.stroke();
+      g2.fillStyle = 'rgba(220,245,255,0.95)';
+      for (n = 0; n < 8; n++) { g2.beginPath(); g2.arc(o.x + Math.cos(n * 0.785) * o.w * (0.6 + k * 1.1), o.y + Math.sin(n * 0.785) * (10 + k * 26) + k * k * 22, 3 * (1 - k) + 0.6, 0, Math.PI * 2); g2.fill(); }
+      g2.globalAlpha = 1;
+    });
     r.flies.forEach(function (f) {
       g2.fillStyle = 'rgba(235,248,255,0.85)';
       [-1, 1].forEach(function (s) { g2.beginPath(); g2.ellipse(f.x + s * 5, f.y - 4 + Math.sin(t * 50 + f.ph) * 1.5, 6, 3, s * 0.5, 0, Math.PI * 2); g2.fill(); });
