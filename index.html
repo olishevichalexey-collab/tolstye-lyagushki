@@ -57,6 +57,8 @@
     line-height: 1.45;
     padding-inline: 16px;
     padding-block: 24px 48px;
+    min-height: 100vh;
+    box-sizing: border-box;
   }
   .page { max-width: 1120px; margin-inline: auto; display: flex; flex-direction: column; gap: 20px; }
   button { font-family: inherit; color: inherit; }
@@ -174,6 +176,13 @@
   @keyframes toastIn { 0% { opacity: 0; transform: translate(-50%, 20px); } 100% { opacity: 1; transform: translate(-50%, 0); } }
   @media (prefers-reduced-motion: reduce) { .toast.pop { animation: none; } }
 
+  /* таблица лидеров */
+  .top { border-collapse: collapse; width: 100%; max-width: 620px; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .top td { padding: 7px 10px; border-bottom: 2px solid var(--line); overflow-wrap: anywhere; }
+  .top td:first-child { width: 2.6em; color: var(--ink-soft); font-family: var(--font-display); }
+  .top td:last-child { text-align: right; white-space: nowrap; font-family: var(--font-display); font-weight: 800; }
+  .top tr.me td { color: var(--lily); }
+
   /* инвентарь: сундуки и добыча из них */
   .inv { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; margin-top: 14px; padding-top: 18px; border-top: 2px dashed var(--line); }
   .chest { display: flex; align-items: center; gap: 10px; font-size: 0.86rem; font-weight: 700; border: 2px solid var(--line); border-radius: 14px; background: var(--surface); padding: 6px 14px 6px 8px; cursor: pointer; text-align: left; line-height: 1.25; }
@@ -223,6 +232,7 @@
       <div>Кваков<b id="st-total">0</b></div>
       <div>Корма<b id="st-flies">0</b></div>
       <div>Открыто<b id="st-open">3 из 25</b></div>
+      <div id="st-online-box" hidden>Онлайн<b id="st-online">1</b></div>
     </div>
   </header>
 
@@ -231,6 +241,7 @@
     <button class="tab" id="tab-mine" role="tab" type="button" aria-selected="false">Моя лягушка</button>
     <button class="tab" id="tab-games" role="tab" type="button" aria-selected="false">Мини-игры</button>
     <button class="tab" id="tab-ach" role="tab" type="button" aria-selected="false">Достижения</button>
+    <button class="tab" id="tab-top" role="tab" type="button" aria-selected="false" hidden>Лидеры</button>
     <span class="spacer"></span>
     <button class="act" id="btn-chord" type="button">Все разом</button>
     <button class="act" id="btn-stop" type="button">Остановить хор</button>
@@ -280,6 +291,14 @@
       </div>
       <div id="ach-list" class="td"></div>
       <p class="note">За каждое достижение дают корм для вашей лягушки. Достижения проверяются сами, пока вы играете.</p>
+    </div>
+  </section>
+  <section id="view-top" hidden>
+    <div class="td">
+      <div class="tabs" id="top-tabs" role="tablist"></div>
+      <p class="note" id="top-note"></p>
+      <table class="top" id="top-table"></table>
+      <p class="note">В таблице вы под именем своей лягушки — его можно поменять на вкладке «Моя лягушка». Результаты отправляются сами, пока вы играете.</p>
     </div>
   </section>
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
@@ -1518,7 +1537,7 @@
 
   // ---------- вкладки и кнопки ----------
 
-  var VIEWS = { pond: '#prud', mine: '#moya', games: '#igry', ach: '#achivki' }, GAMES = { jump: '#pryzhki', td: '#oborona' }, curView = 'pond', curGame = 'jump';
+  var VIEWS = { pond: '#prud', mine: '#moya', games: '#igry', ach: '#achivki', top: '#lidery' }, GAMES = { jump: '#pryzhki', td: '#oborona' }, curView = 'pond', curGame = 'jump';
   function show(view) {
     curView = view;
     Object.keys(VIEWS).forEach(function (v) {
@@ -1527,6 +1546,7 @@
     });
     if (view === 'mine') { mineBuilt = true; $('pet-name').value = state.me.name; buildWardrobe(); buildInv(); refreshPet(); }
     if (view === 'ach') { checkAch(); buildAch(); }
+    if (view === 'top') netBoard(net.board);
     showGame(curGame);
   }
   // на вкладке «Мини-игры» открыта одна игра; вторая и обе при уходе с вкладки встают на паузу
@@ -1967,6 +1987,101 @@
       el.appendChild(drawMedal()); el.appendChild(col);
       grid.appendChild(el);
     });
+  }
+
+  // ---------- онлайн и таблица лидеров ----------
+
+  // Общая база — Firebase Realtime Database. FIREBASE — конфиг веб-приложения из консоли Firebase (он публичный);
+  // пока его нет или база недоступна, игра работает как обычно, просто без онлайна и лидеров.
+  var FIREBASE = {
+    apiKey: 'AIzaSyAjWJsflBCR2DFdDzFuq-FpseaFPHEVKQ8',
+    authDomain: 'tolstye-lyagushki.firebaseapp.com',
+    databaseURL: 'https://tolstye-lyagushki-default-rtdb.europe-west1.firebasedatabase.app',
+    projectId: 'tolstye-lyagushki',
+    storageBucket: 'tolstye-lyagushki.firebasestorage.app',
+    messagingSenderId: '919508268301',
+    appId: '1:919508268301:web:fa03533b09147c89efec44'
+  };
+  var TOPS = [['kvak', 'Кваки'], ['jump', 'Прыжки'], ['td', 'Оборона болота'], ['ach', 'Достижения']];
+  var net = { db: null, uid: '', ok: false, sent: '', board: 'kvak', err: '' };
+  function loadScript(src, done) {
+    var s = document.createElement('script');
+    s.src = src; s.async = true;
+    s.onload = done;
+    s.onerror = function () { netFail(); };
+    document.head.appendChild(s);
+  }
+  function netFail() {
+    net.ok = false; net.err = 'Не получилось связаться с общей базой. Игра работает как обычно, а таблица появится, когда связь вернётся.';
+    if (curView === 'top') netBoard(net.board);
+  }
+  function netStart() {
+    if (!FIREBASE) return;
+    $('tab-top').hidden = false;
+    var base = 'https://www.gstatic.com/firebasejs/10.12.2/firebase-';
+    loadScript(base + 'app-compat.js', function () { loadScript(base + 'auth-compat.js', function () { loadScript(base + 'database-compat.js', netReady); }); });
+  }
+  function netReady() {
+    try {
+      window.firebase.initializeApp(FIREBASE);
+      // анонимный вход нужен, чтобы каждый мог менять только свою строку в таблице
+      window.firebase.auth().signInAnonymously().then(function (cred) {
+        net.uid = cred.user.uid; net.db = window.firebase.database(); net.ok = true; net.err = '';
+        var here = net.db.ref('presence/' + net.uid);
+        net.db.ref('.info/connected').on('value', function (snap) { if (snap.val() === true) { here.onDisconnect().remove(); here.set(true); } });
+        net.db.ref('presence').on('value', function (snap) { $('st-online').textContent = Math.max(1, snap.numChildren()); $('st-online-box').hidden = false; });
+        netPush();
+        setInterval(netPush, 20000);
+        if (curView === 'top') netBoard(net.board);
+      }).catch(netFail);
+    } catch (e) { netFail(); }
+  }
+  function netMine() {
+    var stars = 0;
+    state.td.done.forEach(function (x) { stars += x; });
+    return {
+      name: state.me.name.trim().slice(0, 18) || 'Лягушка ' + net.uid.slice(0, 4).toUpperCase(),
+      kvak: Math.min(1e8, Math.floor(state.total)), jump: Math.min(1e6, Math.floor(state.me.best)),
+      td: tdWon(1) * 100 + stars, ach: ACH.filter(function (a) { return state.ach.got[a[1]]; }).length
+    };
+  }
+  // своя строка отправляется, только когда в ней что-то изменилось
+  function netPush() {
+    if (!net.ok) return;
+    var rec = netMine(), sig = JSON.stringify(rec);
+    if (sig === net.sent) return;
+    net.sent = sig;
+    rec.t = window.firebase.database.ServerValue.TIMESTAMP;
+    net.db.ref('players/' + net.uid).set(rec).catch(function () { net.sent = ''; });
+  }
+  function netValue(key, v) { return key === 'td' ? Math.floor(v / 100) + ' ур. · ' + (v % 100) + ' ★' : fmt(v); }
+  function netBoard(key) {
+    var tabs = $('top-tabs'), note = $('top-note'), table = $('top-table');
+    net.board = key;
+    tabs.textContent = ''; table.textContent = '';
+    TOPS.forEach(function (t) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'tab'; b.id = 'top-' + t[0]; b.textContent = t[1];
+      b.setAttribute('role', 'tab'); b.setAttribute('aria-selected', t[0] === key ? 'true' : 'false');
+      b.addEventListener('click', function () { netBoard(t[0]); });
+      tabs.appendChild(b);
+    });
+    if (!net.ok) { note.textContent = net.err || 'Подключаемся к общей базе…'; return; }
+    note.textContent = 'Загружаем таблицу…';
+    netPush();
+    net.db.ref('players').orderByChild(key).limitToLast(20).once('value').then(function (snap) {
+      if (net.board !== key || curView !== 'top') return;
+      var rows = [], mine = netMine(), found = false;
+      snap.forEach(function (c) { var v = c.val(); if (v && v[key] > 0) rows.unshift({ id: c.key, name: String(v.name || 'Лягушка'), v: v[key] }); });
+      table.textContent = '';
+      rows.forEach(function (r, k) {
+        var tr = document.createElement('tr');
+        [String(k + 1), r.name, netValue(key, r.v)].forEach(function (x) { var td1 = document.createElement('td'); td1.textContent = x; tr.appendChild(td1); });
+        if (r.id === net.uid) { tr.className = 'me'; found = true; }
+        table.appendChild(tr);
+      });
+      note.textContent = !rows.length ? 'Пока здесь пусто — станьте первой лягушкой в таблице.' : found ? 'Лучшие 20. Ваша строка выделена.' : 'Лучшие 20. Ваш результат: ' + netValue(key, mine[key]) + '.';
+    }).catch(netFail);
   }
 
   // ---------- оборона болота: правила ----------
@@ -2834,7 +2949,8 @@
   FROGS.forEach(function (f) { paintFrog(f); refreshCard(f); });
   refreshHeader();
   if (location.hash === '#oborona') curGame = 'td';
-  show(location.hash === '#moya' ? 'mine' : location.hash === '#achivki' ? 'ach' : location.hash === '#pryzhki' || location.hash === '#oborona' || location.hash === '#igry' ? 'games' : 'pond');
+  netStart();
+  show(location.hash === '#moya' ? 'mine' : location.hash === '#achivki' ? 'ach' : location.hash === '#lidery' && FIREBASE ? 'top' : location.hash === '#pryzhki' || location.hash === '#oborona' || location.hash === '#igry' ? 'games' : 'pond');
   checkAch();
   setInterval(function () { checkAch(); save(); }, 2000);
   document.addEventListener('visibilitychange', save);
