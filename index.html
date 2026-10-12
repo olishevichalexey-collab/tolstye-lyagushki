@@ -176,6 +176,16 @@
   @keyframes toastIn { 0% { opacity: 0; transform: translate(-50%, 20px); } 100% { opacity: 1; transform: translate(-50%, 0); } }
   @media (prefers-reduced-motion: reduce) { .toast.pop { animation: none; } }
 
+  /* эффекты редких пород вокруг питомца: частицы всплывают, падают или мерцают */
+  .pet .frog .fxl { position: absolute; inset: 0; pointer-events: none; }
+  .pet .frog .fxl svg { position: absolute; width: 20px; height: 20px; max-width: none; margin: 0; opacity: 0; animation: fxRise 3s linear infinite; }
+  .pet .frog .fxl svg.fall { animation-name: fxFall; }
+  .pet .frog .fxl svg.tw { animation-name: fxTwinkle; animation-timing-function: ease-in-out; }
+  @keyframes fxRise { 0% { opacity: 0; transform: translateY(24px) scale(0.6); } 20% { opacity: 1; } 100% { opacity: 0; transform: translateY(-90px) scale(1.15); } }
+  @keyframes fxFall { 0% { opacity: 0; transform: translateY(-70px) rotate(0); } 20% { opacity: 1; } 100% { opacity: 0; transform: translateY(60px) rotate(90deg); } }
+  @keyframes fxTwinkle { 0%, 100% { opacity: 0; transform: scale(0.3) rotate(0); } 50% { opacity: 1; transform: scale(1.15) rotate(45deg); } }
+  @media (prefers-reduced-motion: reduce) { .pet .frog .fxl svg { animation: none; opacity: 0.8; } }
+
   /* таблица лидеров */
   .top { border-collapse: collapse; width: 100%; max-width: 620px; font-weight: 700; font-variant-numeric: tabular-nums; }
   .top td { padding: 7px 10px; border-bottom: 2px solid var(--line); overflow-wrap: anywhere; }
@@ -265,6 +275,7 @@
         <div class="say" id="pet-say" aria-live="polite"></div>
         <div class="frog" id="pet-btn" role="img" aria-label="Ваша лягушка"></div>
         <div class="meta" id="pet-stage">Яйцо</div>
+        <div class="meta" id="pet-kind"></div>
         <div class="meter"><i id="pet-bar"></i></div>
         <div class="row">
           <button class="big" id="pet-feed" type="button">Покормить</button>
@@ -276,6 +287,7 @@
           <button class="act" id="pet-duet" type="button">Спеть вместе</button>
         </div>
         <p class="note" id="pet-hint">Питомец растёт только от корма. Каждые 10 нажатий на лягушек в пруду дают одну единицу корма, одна единица — 5 очков роста.</p>
+        <div class="inv" id="reb"></div>
         <div class="inv" id="inv"></div>
       </div>
       <div class="wardrobe" id="wardrobe"></div>
@@ -442,6 +454,20 @@
     flame: ['hat', 'Огненная корона', 4], rainbow: ['eyes', 'Радужный визор', 4], royal: ['suit', 'Королевская мантия', 4], dragon: ['back', 'Крылья дракона', 4]
   };
   var LOOT_IDS = Object.keys(LOOT);
+  // породы питомца, которые выпадают при перерождении: название, редкость (5 — секретная), форма тела, множители ширины и высоты, эффект вокруг
+  var KIND_RARE = RARITY.concat([['Секретная', '#ff2e88']]);
+  var KINDS = [
+    ['Болотная', 0, '', 1, 1, ''], ['Пухляш', 0, '', 1.14, 0.88, ''], ['Столбик', 0, '', 0.86, 1.1, ''],
+    ['Грушевидная', 1, 'pear', 0.95, 1.05, 'bubbles'], ['Капелька', 1, 'drop', 0.95, 1, 'drops'], ['Квадратик', 1, 'box', 0.95, 0.95, 'leaves'],
+    ['Облачко', 2, 'cloud', 0.98, 0.95, 'glow'], ['Кристальная', 2, 'gem', 1, 1, 'sparkles'], ['Колючка', 2, 'spiky', 0.95, 0.95, 'glow'],
+    ['Звёздная', 3, 'star', 0.86, 1.2, 'stars'], ['Огненная', 3, 'flame', 0.95, 1, 'embers'], ['Ледяная', 3, 'ice', 1, 1, 'snow'],
+    ['Солнечная', 4, 'sun', 0.9, 0.9, 'sparkles'], ['Космическая', 4, 'planet', 0.9, 0.92, 'stars'], ['Радужная', 4, 'cloud', 0.98, 0.95, 'rainbow'],
+    ['Сердечная', 5, 'heart', 1.06, 1.06, 'hearts']
+  ];
+  // шансы редкости яйца при перерождении в процентах; остаток до 100 — секретное яйцо
+  var EGG_ODDS = [50, 27, 14, 6.5, 2];
+  // у этих форм низ узкий: лапы ставятся ближе к середине (доля от полуширины тела)
+  var LEG_X = { strawberry: 0.6, heart: 0.34, gem: 0.52, ice: 0.52, star: 0.62, drop: 0.72, flame: 0.72 };
   // сундуки: название и шансы редкостей в процентах; за повтор, когда вся редкость собрана, дают корм
   var CHESTS = [['Деревянный сундук', [55, 28, 12, 4, 1]], ['Серебряный сундук', [35, 33, 20, 9.5, 2.5]], ['Золотой сундук', [15, 30, 30, 18, 7]]];
   var CHEST_FLIES = [5, 12, 30, 80, 250];
@@ -475,9 +501,10 @@
     return {
       total: 0, taps: 0, flies: 0,
       frogs: FROGS.map(function (f) { return { n: 0, open: f.i < 3, auto: false, m: 0 }; }),
-      me: { xp: 0, name: '', skin: 0, best: 0, wear: { neck: '', hat: '', eyes: '', suit: '', back: '' } },
+      me: { xp: 0, name: '', skin: 0, kind: 0, best: 0, wear: { neck: '', hat: '', eyes: '', suit: '', back: '' } },
       td: { done: TD_LEVELS.map(function () { return 0; }), chests: [0, 0, 0], loot: {} },
-      ach: { got: {}, kills: 0, bosses: 0, opened: 0, gold: 0, rides: 0, stomps: 0, close: 0, solo: 0, squad: 0, choir: 0 }
+      ach: { got: {}, kills: 0, bosses: 0, opened: 0, gold: 0, rides: 0, stomps: 0, close: 0, solo: 0, squad: 0, choir: 0, rebirths: 0, kinds: { 0: 1 } },
+      rec: { kvak: 0, jump: 0, td: 0 }
     };
   }
   function load() {
@@ -491,6 +518,8 @@
     if (typeof s.me.wear.suit !== 'string') s.me.wear.suit = '';
     if (!s.td || !s.td.done || s.td.done.length !== TD_LEVELS.length || !s.td.chests || !s.td.loot) s.td = f.td;
     if (!s.ach || !s.ach.got) s.ach = f.ach;
+    if (!s.rec) s.rec = f.rec;
+    if (!KINDS[s.me.kind]) s.me.kind = 0;
     Object.keys(f.ach).forEach(function (k) { if (s.ach[k] === undefined) s.ach[k] = f.ach[k]; });
     return s;
   }
@@ -597,7 +626,36 @@
 
   // силуэт тела: у ягодных и фруктовых лягушек он не круглый
   function bodyPath(shape, c) {
-    var x = c.cx, y = c.cy, a = c.rx, b = c.ry;
+    var x = c.cx, y = c.cy, a = c.rx, b = c.ry, k, d, r, t;
+    if (shape === 'heart') {
+      return 'M' + x + ' ' + (y + b) + ' C' + (x - a * 1.55) + ' ' + (y + b * 0.1) + ' ' + (x - a * 1.1) + ' ' + (y - b * 1.25) + ' ' + x + ' ' + (y - b * 0.5) +
+        ' C' + (x + a * 1.1) + ' ' + (y - b * 1.25) + ' ' + (x + a * 1.55) + ' ' + (y + b * 0.1) + ' ' + x + ' ' + (y + b) + ' Z';
+    }
+    if (shape === 'drop' || shape === 'flame') {
+      d = 'M' + (shape === 'flame' ? x - a * 0.1 : x) + ' ' + (y - b * 1.28) + ' C' + (x + a * 0.55) + ' ' + (y - b * 0.7) + ' ' + (x + a) + ' ' + (y - b * 0.15) + ' ' + (x + a) + ' ' + (y + b * 0.3) +
+        ' C' + (x + a) + ' ' + (y + b * 0.75) + ' ' + (x + a * 0.55) + ' ' + (y + b) + ' ' + x + ' ' + (y + b) + ' C' + (x - a * 0.55) + ' ' + (y + b) + ' ' + (x - a) + ' ' + (y + b * 0.75) + ' ' + (x - a) + ' ' + (y + b * 0.3);
+      if (shape === 'drop') return d + ' C' + (x - a) + ' ' + (y - b * 0.15) + ' ' + (x - a * 0.55) + ' ' + (y - b * 0.7) + ' ' + x + ' ' + (y - b * 1.28) + ' Z';
+      return d + ' C' + (x - a) + ' ' + (y - b * 0.1) + ' ' + (x - a * 0.8) + ' ' + (y - b * 0.5) + ' ' + (x - a * 0.6) + ' ' + (y - b * 0.95) +
+        ' C' + (x - a * 0.45) + ' ' + (y - b * 0.6) + ' ' + (x - a * 0.25) + ' ' + (y - b * 0.9) + ' ' + (x - a * 0.1) + ' ' + (y - b * 1.28) + ' Z';
+    }
+    if (shape === 'box') {
+      r = Math.min(a, b) * 0.42;
+      return 'M' + (x - a) + ' ' + (y - b + r) + ' Q' + (x - a) + ' ' + (y - b) + ' ' + (x - a + r) + ' ' + (y - b) + ' L' + (x + a - r) + ' ' + (y - b) + ' Q' + (x + a) + ' ' + (y - b) + ' ' + (x + a) + ' ' + (y - b + r) +
+        ' L' + (x + a) + ' ' + (y + b - r) + ' Q' + (x + a) + ' ' + (y + b) + ' ' + (x + a - r) + ' ' + (y + b) + ' L' + (x - a + r) + ' ' + (y + b) + ' Q' + (x - a) + ' ' + (y + b) + ' ' + (x - a) + ' ' + (y + b - r) + ' Z';
+    }
+    if (shape === 'gem' || shape === 'ice') {
+      return (shape === 'gem' ? [[-0.55, -1], [0.55, -1], [1, -0.15], [0.6, 1], [-0.6, 1], [-1, -0.15]] : [[0, -1.18], [0.78, -0.6], [1, 0.2], [0.6, 1], [-0.6, 1], [-1, 0.2], [-0.78, -0.6]])
+        .map(function (p, n) { return (n ? 'L' : 'M') + (x + a * p[0]) + ' ' + (y + b * p[1]); }).join(' ') + ' Z';
+    }
+    if (shape === 'star' || shape === 'spiky') {
+      // пухлая звезда с пятью лучами или колючий шар с восемнадцатью шипами
+      d = '';
+      for (k = 0, r = shape === 'star' ? 10 : 36; k < r; k++) {
+        t = Math.PI * 2 * k / r - Math.PI / 2;
+        d += (k ? ' L' : 'M') + (x + Math.cos(t) * a * (k % 2 ? (shape === 'star' ? 0.74 : 0.86) : 1.06)).toFixed(1) + ' ' + (y + Math.sin(t) * b * (k % 2 ? (shape === 'star' ? 0.74 : 0.86) : 1.06)).toFixed(1);
+      }
+      return d + ' Z';
+    }
     if (shape === 'strawberry') {
       return 'M' + (x - a) + ' ' + (y - b * 0.25) + ' C' + (x - a) + ' ' + (y - b * 1.25) + ' ' + (x + a) + ' ' + (y - b * 1.25) + ' ' + (x + a) + ' ' + (y - b * 0.25) +
         ' C' + (x + a) + ' ' + (y + b * 0.55) + ' ' + (x + a * 0.42) + ' ' + (y + b) + ' ' + x + ' ' + (y + b) + ' C' + (x - a * 0.42) + ' ' + (y + b) + ' ' + (x - a) + ' ' + (y + b * 0.55) + ' ' + (x - a) + ' ' + (y - b * 0.25) + ' Z';
@@ -1008,22 +1066,41 @@
     var wear = o.wear || {};
     S('path', { class: 'pad', d: 'M150 284 L283 278 A138 24 0 1 0 275 294 Z' }, s);
     var g = S('g', { class: 'body' }, s);
+    var shape = o.shape || 'round', narrow = LEG_X[shape], bq, ba;
+    // то, что у редких пород торчит из-за спины: лучи, кольцо, радуга
+    if (shape === 'sun') {
+      for (bq = 0; bq < 12; bq++) {
+        ba = Math.PI * 2 * bq / 12;
+        S('path', { d: 'M' + (c.cx + Math.cos(ba - 0.2) * c.rx * 0.95) + ' ' + (c.cy + Math.sin(ba - 0.2) * c.ry * 0.95) + ' L' + (c.cx + Math.cos(ba) * c.rx * 1.42) + ' ' + (c.cy + Math.sin(ba) * c.ry * 1.42) + ' L' + (c.cx + Math.cos(ba + 0.2) * c.rx * 0.95) + ' ' + (c.cy + Math.sin(ba + 0.2) * c.ry * 0.95) + ' Z', fill: '#ffd60a', stroke: '#f59f00', 'stroke-width': 3, 'stroke-linejoin': 'round' }, g);
+      }
+    } else if (shape === 'planet') {
+      S('ellipse', { cx: c.cx, cy: c.cy + c.ry * 0.1, rx: c.rx * 1.5, ry: c.ry * 0.34, fill: 'none', stroke: '#c77dff', 'stroke-width': 12, transform: 'rotate(-14 ' + c.cx + ' ' + c.cy + ')' }, g);
+      S('ellipse', { cx: c.cx, cy: c.cy + c.ry * 0.1, rx: c.rx * 1.5, ry: c.ry * 0.34, fill: 'none', stroke: '#ffd6ff', 'stroke-width': 3, transform: 'rotate(-14 ' + c.cx + ' ' + c.cy + ')' }, g);
+    }
+    if (o.fx === 'rainbow') {
+      ['#ff595e', '#ff924c', '#ffca3a', '#8ac926', '#1982c4', '#6a4c93'].forEach(function (col, n) {
+        var rr = c.rx + 58 - n * 9;
+        S('path', { d: 'M' + (c.cx - rr) + ' ' + c.base + ' A' + rr + ' ' + rr + ' 0 0 1 ' + (c.cx + rr) + ' ' + c.base, fill: 'none', stroke: col, 'stroke-width': 9.5 }, g);
+      });
+    }
     drawBack(g, wear.back, c);
     if (o.tail) S('path', { d: 'M' + (c.cx + c.rx * 0.7) + ' ' + (c.base - 14) + ' q46 -4 58 -34 q-4 34 -50 46 Z', fill: o.mark }, g);
-    var shape = o.shape || 'round', narrow = shape === 'strawberry';
     var legColor = o.pattern === 'seeds' || o.pattern === 'galaxy' ? o.skin : o.mark;
-    [-1, 1].forEach(function (k) { S('ellipse', { cx: c.cx + k * (narrow ? c.rx * 0.6 : c.rx - 14), cy: c.base - 12, rx: c.rx * 0.3, ry: 20, fill: legColor }, g); });
+    [-1, 1].forEach(function (k) { S('ellipse', { cx: c.cx + k * (narrow ? c.rx * narrow : c.rx - 14), cy: c.base - 12, rx: c.rx * 0.3, ry: 20, fill: legColor }, g); });
+    if (shape === 'cloud') {
+      for (bq = 0; bq < 10; bq++) { ba = Math.PI * 2 * bq / 10 + 0.3; S('circle', { cx: c.cx + Math.cos(ba) * c.rx * 0.82, cy: c.cy + Math.sin(ba) * c.ry * 0.8, r: c.rx * 0.3, fill: o.skin }, g); }
+    }
     S('ellipse', { class: 'sac', cx: c.cx, cy: c.cy + c.ry * 0.42, rx: c.rx * 0.5, ry: c.ry * 0.5, fill: o.belly, stroke: legColor, 'stroke-width': 3 }, g);
     if (shape === 'raspberry') {
       // бугристый край, как у ягоды из отдельных костянок
-      for (var bq = 0; bq < 20; bq++) { var ba = Math.PI * 2 * bq / 20; S('circle', { cx: c.cx + Math.cos(ba) * (c.rx - 4), cy: c.cy + Math.sin(ba) * (c.ry - 4), r: 13, fill: o.skin, stroke: o.mark, 'stroke-width': 2.5 }, g); }
+      for (bq = 0; bq < 20; bq++) { ba = Math.PI * 2 * bq / 20; S('circle', { cx: c.cx + Math.cos(ba) * (c.rx - 4), cy: c.cy + Math.sin(ba) * (c.ry - 4), r: 13, fill: o.skin, stroke: o.mark, 'stroke-width': 2.5 }, g); }
     }
     var bd = bodyPath(shape, c);
     S('path', { d: bd, fill: o.skin }, g);
     var clip = S('clipPath', { id: id }, g);
     S('path', { d: bd }, clip);
     drawPattern(S('g', { 'clip-path': 'url(#' + id + ')' }, g), o, c);
-    S('ellipse', { cx: c.cx, cy: c.cy + c.ry * 0.3, rx: c.rx * (narrow ? 0.56 : 0.68), ry: c.ry * 0.62, fill: o.belly }, g);
+    S('ellipse', { cx: c.cx, cy: c.cy + c.ry * 0.3, rx: c.rx * (narrow ? 0.56 : 0.68), ry: c.ry * 0.62, fill: o.belly, 'clip-path': 'url(#' + id + ')' }, g);
     if (shape === 'watermelon') {
       [[-0.3, 0.2], [0.28, 0.14], [0, 0.44], [-0.18, 0.62], [0.24, 0.6]].forEach(function (p) { S('ellipse', { cx: c.cx + c.rx * p[0], cy: c.cy + c.ry * p[1], rx: 3, ry: 5, fill: '#3b1f1f' }, g); });
     }
@@ -1039,18 +1116,23 @@
     S('path', { d: 'M' + (c.cx - mw) + ' ' + my + ' Q' + c.cx + ' ' + (my + 24) + ' ' + (c.cx + mw) + ' ' + my, fill: 'none', stroke: '#1c2b22', 'stroke-width': 5, 'stroke-linecap': 'round' }, g);
     [-1, 1].forEach(function (k) { S('ellipse', { cx: c.cx + k * (mw + 6), cy: my + 6, rx: 11, ry: 6, fill: '#f29bb5', opacity: 0.75 }, g); });
     drawNeck(g, wear.neck, c);
-    [-1, 1].forEach(function (k) { S('ellipse', { cx: c.cx + k * c.rx * 0.36, cy: c.base - 4, rx: 20, ry: 10, fill: o.skin }, g); });
+    [-1, 1].forEach(function (k) { S('ellipse', { cx: c.cx + k * c.rx * (shape === 'heart' ? 0.2 : 0.36), cy: c.base - 4, rx: 20, ry: 10, fill: o.skin }, g); });
     drawHat(g, wear.hat, c);
     drawEyes(g, wear.eyes, c);
     if (wear.back === 'halo') S('ellipse', { cx: c.cx, cy: c.ey - 52, rx: 46, ry: 11, fill: 'none', stroke: '#ffd60a', 'stroke-width': 7 }, g);
     return s;
   }
-  function drawEgg(crack) {
+  // яйцо: по цвету скорлупы и крапинкам видно редкость того, кто внутри
+  function drawEgg(crack, rare) {
     var s = S('svg', { viewBox: '0 0 300 310', 'aria-hidden': 'true' });
     S('path', { class: 'pad', d: 'M150 284 L283 278 A138 24 0 1 0 275 294 Z' }, s);
-    var g = S('g', { class: 'body' }, s);
-    S('path', { d: 'M150 110 C200 110 222 186 222 226 C222 262 190 284 150 284 C110 284 78 262 78 226 C78 186 100 110 150 110 Z', fill: '#f7f3e3', stroke: '#c9c2a3', 'stroke-width': 4 }, g);
-    [[124, 170, 12], [178, 200, 9], [138, 232, 14], [176, 252, 8], [112, 214, 7]].forEach(function (p) { S('circle', { cx: p[0], cy: p[1], r: p[2], fill: '#9bc53d', opacity: 0.6 }, g); });
+    var g = S('g', { class: 'body' }, s), col = rare ? KIND_RARE[rare][1] : '#9bc53d';
+    S('path', { d: 'M150 110 C200 110 222 186 222 226 C222 262 190 284 150 284 C110 284 78 262 78 226 C78 186 100 110 150 110 Z', fill: ['#f7f3e3', '#eef7e6', '#e6effc', '#f1e6fb', '#fff3c9', '#ffe3ef'][rare || 0], stroke: rare ? col : '#c9c2a3', 'stroke-width': 4 }, g);
+    [[124, 170, 12], [178, 200, 9], [138, 232, 14], [176, 252, 8], [112, 214, 7]].forEach(function (p) {
+      if (rare === 5) S('path', { d: heart(p[0], p[1], p[2]), fill: col, opacity: 0.8 }, g);
+      else if (rare >= 3) S('polygon', { points: star(p[0], p[1], p[2] + 2), fill: col, opacity: 0.8 }, g);
+      else S('circle', { cx: p[0], cy: p[1], r: p[2], fill: col, opacity: 0.6 }, g);
+    });
     if (crack) S('path', { d: 'M110 160 l18 14 l-8 16 l22 10 l-6 18 l20 8', fill: 'none', stroke: '#8a8363', 'stroke-width': 4, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, g);
     return s;
   }
@@ -1304,21 +1386,127 @@
   function mySkin() { var f = FROGS[state.me.skin] || FROGS[0]; return { skin: f.skin, belly: f.belly, mark: f.mark, pattern: f.pattern, shape: f.shape }; }
   function petSvg() {
     var me = state.me, st = stageOf(me.xp), sk = mySkin();
-    if (st === 0) return drawEgg(me.xp >= STAGES[1][1] * 0.6);
+    var kind = KINDS[me.kind] || KINDS[0];
+    if (st === 0) return drawEgg(me.xp >= STAGES[1][1] * 0.6, kind[1]);
     if (st === 1) return drawTadpole(sk);
     var size = [null, null, [70, 56], [98, 76], [124, 88]][st];
-    return drawFrog({ skin: sk.skin, belly: sk.belly, mark: sk.mark, pattern: sk.pattern, shape: sk.shape, rx: size[0], ry: size[1], wear: me.wear, tail: st === 2 });
+    // у обычных пород форма тела — от выбранной расцветки, у остальных — своя
+    return drawFrog({ skin: sk.skin, belly: sk.belly, mark: sk.mark, pattern: sk.pattern, shape: kind[2] || sk.shape, fx: kind[5], rx: size[0] * kind[3], ry: size[1] * kind[4], wear: me.wear, tail: st === 2 });
+  }
+  // частицы вокруг питомца и свечение по редкости породы; яйцо и головастик тоже светятся
+  var FX = { bubbles: ['ring', '#8fd3e8', '', 5], drops: ['drop', '#4cc9f0', 'fall', 5], leaves: ['leaf', '#58a84a', 'fall', 5], sparkles: ['spark', '#ffffff', 'tw', 7], stars: ['star', '#ffd60a', 'tw', 8], embers: ['dot', '#ff7b00', '', 9], snow: ['dot', '#ffffff', 'fall', 9], rainbow: ['spark', '', 'tw', 10], hearts: ['heart', '#ff2e88', '', 10] };
+  function petFx(host) {
+    var kind = KINDS[state.me.kind] || KINDS[0], rare = kind[1], fx = FX[kind[5]], svg = host.querySelector('svg'), k;
+    if (svg && rare >= 2) svg.style.filter = 'drop-shadow(0 0 ' + (4 + rare * 4) + 'px ' + KIND_RARE[rare][1] + ')';
+    if (!fx) return;
+    var layer = document.createElement('div');
+    layer.className = 'fxl';
+    for (k = 0; k < fx[3]; k++) {
+      var s = S('svg', { viewBox: '-10 -10 20 20', 'aria-hidden': 'true' }), col = fx[1] || ['#ff595e', '#ffca3a', '#8ac926', '#1982c4', '#c77dff'][k % 5];
+      if (fx[2]) s.setAttribute('class', fx[2]);
+      if (fx[0] === 'ring') S('circle', { cx: 0, cy: 0, r: 6, fill: 'none', stroke: col, 'stroke-width': 2.5 }, s);
+      else if (fx[0] === 'drop') S('path', { d: 'M0 -8 C5 -1 6 2 6 4 A6 6 0 0 1 -6 4 C-6 2 -5 -1 0 -8 Z', fill: col }, s);
+      else if (fx[0] === 'leaf') S('ellipse', { cx: 0, cy: 0, rx: 8, ry: 4, fill: col, transform: 'rotate(-30)' }, s);
+      else if (fx[0] === 'spark') S('path', { d: 'M0 -9 L2 -2 L9 0 L2 2 L0 9 L-2 2 L-9 0 L-2 -2 Z', fill: col, stroke: '#f59f00', 'stroke-width': 0.6 }, s);
+      else if (fx[0] === 'star') S('polygon', { points: star(0, 0, 9), fill: col, stroke: '#b58900', 'stroke-width': 0.8 }, s);
+      else if (fx[0] === 'heart') S('path', { d: heart(0, 0, 6.5), fill: col }, s);
+      else S('circle', { cx: 0, cy: 0, r: 3.5, fill: col }, s);
+      s.style.left = (4 + (k * 37) % 88) + '%';
+      s.style.top = (12 + (k * 53) % 66) + '%';
+      s.style.animationDelay = (k * 0.41) + 's';
+      s.style.animationDuration = (2.4 + (k % 3) * 0.8) + 's';
+      layer.appendChild(s);
+    }
+    host.appendChild(layer);
+  }
+
+  // ---------- перерождение ----------
+
+  var rebArmed = false;
+  function kindsGot() { return KINDS.filter(function (x, i) { return state.ach.kinds[i]; }).length; }
+  function bestKind() { var b = 0; KINDS.forEach(function (x, i) { if (state.ach.kinds[i] && x[1] > b) b = x[1]; }); return b; }
+  function buildReb() {
+    var box = $('reb'), full = stageOf(state.me.xp) >= STAGES.length - 1;
+    box.textContent = '';
+    var h = document.createElement('h2'); h.textContent = 'Перерождение'; box.appendChild(h);
+    var n = document.createElement('p'); n.className = 'note';
+    n.textContent = full ? 'Лягушка выросла полностью. Её можно оставить, а можно превратить в новое яйцо — из него вылупится лягушка другой породы, и если повезёт, очень редкой. Перерождение обнуляет всё: кваки, корм, лягушек в пруду, рост питомца, рекорд в прыжках и уровни обороны. Остаются достижения, сундуки и вещи из них, имя и открытые породы.'
+      : 'Когда питомец вырастет до толстой лягушки, его можно будет превратить в новое яйцо и получить лягушку другой породы. Чем реже порода, тем причудливее форма и эффекты.';
+    box.appendChild(n);
+    if (full) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'big'; b.id = 'reb-btn';
+      b.textContent = rebArmed ? 'Точно? Весь прогресс обнулится — нажмите ещё раз' : 'Превратить в яйцо';
+      b.addEventListener('click', function () { if (!rebArmed) { rebArmed = true; buildReb(); return; } rebirth(); });
+      box.appendChild(b);
+    }
+    var m = document.createElement('div'); m.className = 'meta';
+    m.textContent = 'Пород открыто: ' + kindsGot() + ' из ' + KINDS.length + ' · перерождений: ' + state.ach.rebirths;
+    box.appendChild(m);
+    var det = document.createElement('details'), sum = document.createElement('summary'), tbl = document.createElement('table');
+    sum.textContent = 'Породы и шансы'; det.appendChild(sum);
+    tbl.className = 'odds';
+    KIND_RARE.forEach(function (r, k) {
+      var row = document.createElement('tr'), c0 = document.createElement('td'), c1 = document.createElement('td'), c2 = document.createElement('td');
+      c0.textContent = r[0]; c0.style.color = r[1];
+      c1.textContent = String(k < 5 ? EGG_ODDS[k] : 0.5).replace('.', ',') + '%';
+      // неоткрытые породы остаются загадкой
+      c2.textContent = KINDS.map(function (x, i) { return x[1] !== k ? null : state.ach.kinds[i] ? x[0] : '???'; }).filter(function (x) { return x; }).join(', ');
+      c2.style.textAlign = 'left';
+      row.appendChild(c0); row.appendChild(c1); row.appendChild(c2);
+      tbl.appendChild(row);
+    });
+    det.appendChild(tbl); box.appendChild(det);
+  }
+  // всё, что зависит от сохранения, перерисовывается заново — после перерождения и после «Начать игру заново»
+  function afterWipe() {
+    dirty = true; save();
+    petSig = ''; petStage = -1; lastReady = -2; dropText = ''; rebArmed = false;
+    pauseJump(); run = null;
+    tdShowMap();
+    syncTransport();
+    FROGS.forEach(function (f) { paintFrog(f); refreshCard(f); });
+    refreshHeader(); show('mine');
+  }
+  function keepRecords() {
+    var r = state.rec, stars = 0;
+    state.td.done.forEach(function (x) { stars += x; });
+    r.kvak = Math.max(r.kvak, Math.floor(state.total));
+    r.jump = Math.max(r.jump, Math.floor(state.me.best));
+    r.td = Math.max(r.td, tdWon(1) * 100 + stars);
+  }
+  function rebirth() {
+    if (stageOf(state.me.xp) < STAGES.length - 1) return;
+    checkAch(); keepRecords();
+    var roll = Math.random() * 100, acc = 0, rare, old = state;
+    for (rare = 0; rare < 5; rare++) { acc += EGG_ODDS[rare]; if (roll < acc) break; }
+    var pool = [];
+    KINDS.forEach(function (x, i) { if (x[1] === rare) pool.push(i); });
+    var kind = pool[Math.floor(Math.random() * pool.length)];
+    state = fresh();
+    state.ach = old.ach; state.rec = old.rec;
+    state.td.loot = old.td.loot; state.td.chests = old.td.chests;
+    state.me.name = old.me.name; state.me.kind = kind;
+    state.ach.rebirths += 1; state.ach.kinds[kind] = 1;
+    afterWipe();
+    toast('Вы переродились. Яйцо — ' + ['обычное', 'необычное', 'редкое', 'эпическое', 'легендарное', 'секретное'][rare] + '!');
+    if (audio()) [0, 2, 4, 7, 9].forEach(function (d, k) { play(rare >= 3 ? 'choir' : 'pluck', freq(d + rare, 2), ac.currentTime + k * 0.12); });
+    checkAch();
   }
   function refreshPet() {
     var me = state.me, st = stageOf(me.xp);
     var crack = st === 0 && me.xp >= STAGES[1][1] * 0.6;
-    var sig = [st, me.skin, me.wear.neck, me.wear.hat, me.wear.eyes, me.wear.suit, me.wear.back, crack].join('|');
+    var sig = [st, me.skin, me.kind, me.wear.neck, me.wear.hat, me.wear.eyes, me.wear.suit, me.wear.back, crack].join('|');
     if (sig !== petSig) {
       petSig = sig;
       var btn = $('pet-btn'); btn.textContent = '';
       btn.appendChild(petSvg());
+      petFx(btn);
     }
-    if (st !== petStage) { petStage = st; buildWardrobe(); }
+    if (st !== petStage) { petStage = st; buildWardrobe(); buildReb(); }
+    var kind = KINDS[me.kind] || KINDS[0];
+    $('pet-kind').textContent = st < 2 ? 'Редкость: ' + KIND_RARE[kind[1]][0].toLowerCase() + ' · порода станет ясна, когда вырастет лягушонок' : 'Порода: ' + kind[0] + ' · ' + KIND_RARE[kind[1]][0].toLowerCase();
+    $('pet-kind').style.color = kind[1] ? KIND_RARE[kind[1]][1] : '';
     var next = STAGES[st + 1];
     $('pet-stage').textContent = STAGES[st][0] + (next ? ' · до стадии «' + next[0] + '» ' + fmt(next[1] - me.xp) + ' очков роста' : ' · выросла полностью');
     $('pet-bar').style.width = (next ? Math.min(100, (me.xp - STAGES[st][1]) / (next[1] - STAGES[st][1]) * 100) : 100) + '%';
@@ -1880,11 +2068,8 @@
   $('btn-reset').addEventListener('click', function () {
     if (!resetArmed) { resetArmed = true; this.textContent = 'Точно стереть весь прогресс? Нажмите ещё раз'; return; }
     resetArmed = false; this.textContent = 'Начать игру заново';
-    state = fresh(); dirty = true; save();
-    petSig = ''; petStage = -1; lastReady = -2; dropText = ''; tdShowMap();
-    syncTransport();
-    FROGS.forEach(function (f) { paintFrog(f); refreshCard(f); });
-    refreshHeader(); show('mine');
+    state = fresh();
+    afterWipe();
   });
 
   // ---------- достижения ----------
@@ -1929,7 +2114,16 @@
     ['Сундуки', 'gold', 'Золотая лихорадка', 'Откройте золотой сундук.', 1, 10, function () { return state.ach.gold; }],
     ['Сундуки', 'legend', 'Легенда болота', 'Получите легендарную вещь.', 1, 30, function () { return lootGot(4); }],
     ['Сундуки', 'loot13', 'Коллекционер', 'Соберите 13 вещей из сундуков.', 13, 30, function () { return lootGot(); }],
-    ['Сундуки', 'lootall', 'Полная коллекция', 'Соберите все 26 вещей из сундуков.', 26, 150, function () { return lootGot(); }]
+    ['Сундуки', 'lootall', 'Полная коллекция', 'Соберите все 26 вещей из сундуков.', 26, 150, function () { return lootGot(); }],
+    ['Перерождение', 'reb1', 'Новая жизнь', 'Превратите выросшую лягушку в яйцо.', 1, 10, function () { return state.ach.rebirths; }],
+    ['Перерождение', 'reb5', 'Колесо жизни', 'Переродитесь 5 раз.', 5, 40, function () { return state.ach.rebirths; }],
+    ['Перерождение', 'reb15', 'Вечная жаба', 'Переродитесь 15 раз.', 15, 100, function () { return state.ach.rebirths; }],
+    ['Перерождение', 'kind2', 'Редкая порода', 'Получите яйцо редкой породы или лучше.', 2, 20, function () { return Math.min(2, bestKind()); }],
+    ['Перерождение', 'kind3', 'Эпическая порода', 'Получите яйцо эпической породы или лучше.', 3, 40, function () { return Math.min(3, bestKind()); }],
+    ['Перерождение', 'kind4', 'Легендарная порода', 'Получите яйцо легендарной породы или лучше.', 4, 80, function () { return Math.min(4, bestKind()); }],
+    ['Перерождение', 'kind5', 'Тайна болота', 'Получите секретное яйцо. Говорят, внутри бьётся сердце.', 1, 200, function () { return bestKind() === 5 ? 1 : 0; }],
+    ['Перерождение', 'kinds8', 'Заводчик', 'Откройте 8 разных пород.', 8, 60, function () { return kindsGot(); }],
+    ['Перерождение', 'kindsall', 'Все породы', 'Откройте все 16 пород.', 16, 300, function () { return kindsGot(); }]
   ];
   var toastQ = [], toastBusy = false;
   function nextToast() {
@@ -2002,6 +2196,8 @@
     messagingSenderId: '919508268301',
     appId: '1:919508268301:web:fa03533b09147c89efec44'
   };
+  // больше этого числа достижений правила базы пока не принимают
+  var NET_ACH_MAX = 36;
   var TOPS = [['kvak', 'Кваки'], ['jump', 'Прыжки'], ['td', 'Оборона болота'], ['ach', 'Достижения']];
   var net = { db: null, uid: '', ok: false, sent: '', board: 'kvak', err: '' };
   function loadScript(src, done) {
@@ -2037,12 +2233,12 @@
     } catch (e) { netFail(); }
   }
   function netMine() {
-    var stars = 0;
-    state.td.done.forEach(function (x) { stars += x; });
+    keepRecords();
     return {
       name: state.me.name.trim().slice(0, 18) || 'Лягушка ' + net.uid.slice(0, 4).toUpperCase(),
-      kvak: Math.min(1e8, Math.floor(state.total)), jump: Math.min(1e6, Math.floor(state.me.best)),
-      td: tdWon(1) * 100 + stars, ach: ACH.filter(function (a) { return state.ach.got[a[1]]; }).length
+      // в таблицу идут лучшие результаты за все жизни: перерождение их не обнуляет
+      kvak: Math.min(1e8, state.rec.kvak), jump: Math.min(1e6, state.rec.jump),
+      td: state.rec.td, ach: Math.min(NET_ACH_MAX, ACH.filter(function (a) { return state.ach.got[a[1]]; }).length)
     };
   }
   // своя строка отправляется, только когда в ней что-то изменилось
