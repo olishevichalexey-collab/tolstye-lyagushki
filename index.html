@@ -132,6 +132,44 @@
   .legend { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; color: var(--ink-soft); font-size: 0.92rem; }
   .legend b { color: var(--ink); }
   @media (max-width: 760px) { .jump { grid-template-columns: minmax(0, 1fr); } }
+
+  /* мини-игры: переключатель игр, карта уровней и поле «Обороны болота» */
+  .sub { margin-bottom: 18px; }
+  .levels { display: grid; grid-template-columns: repeat(auto-fill, minmax(158px, 1fr)); gap: 10px; }
+  .lvl { display: flex; flex-direction: column; gap: 2px; text-align: left; border: 2px solid var(--line); border-radius: 14px; background: var(--surface); padding: 10px 12px; cursor: pointer; font-weight: 700; font-size: 0.86rem; line-height: 1.25; }
+  .lvl b { font-family: var(--font-display); font-weight: 800; font-size: 1.05rem; }
+  .lvl small { font-weight: 500; color: var(--ink-soft); font-size: 0.74rem; }
+  .lvl .won { color: var(--lily); letter-spacing: 2px; }
+  .lvl:hover:not(:disabled) { border-color: var(--lily); }
+  .lvl:disabled { cursor: default; opacity: 0.5; background: transparent; }
+  .td { display: flex; flex-direction: column; gap: 12px; }
+  .td-top, .td-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
+  .td-bar { gap: 8px; }
+  .td-stage { position: relative; width: 100%; max-width: 980px; }
+  .td-stage canvas { display: block; width: 100%; height: auto; border-radius: 18px; border: 3px solid var(--pad-edge); touch-action: none; cursor: pointer; }
+  .shop { display: flex; flex-wrap: wrap; gap: 8px; }
+  .buy { display: flex; align-items: center; gap: 8px; font-size: 0.8rem; font-weight: 700; border: 2px solid var(--line); border-radius: 14px; background: var(--surface); padding: 4px 12px 4px 6px; cursor: pointer; text-align: left; line-height: 1.2; }
+  .buy svg { width: 40px; height: auto; flex: none; overflow: visible; }
+  .buy small { display: block; font-weight: 500; color: var(--ink-soft); font-size: 0.72rem; }
+  .buy[aria-pressed="true"] { border-color: var(--lily); box-shadow: inset 0 0 0 2px var(--lily); }
+  .buy.poor { opacity: 0.5; }
+  .td-info { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; min-height: 2.9em; font-size: 0.92rem; color: var(--ink-soft); font-weight: 700; }
+  .td-info b { color: var(--ink); }
+  .act[aria-pressed="true"] { background: var(--ink); border-color: var(--ink); color: var(--surface); }
+  .act:disabled { opacity: 0.45; cursor: default; }
+
+  /* инвентарь: сундуки и добыча из них */
+  .inv { display: flex; flex-direction: column; align-items: center; gap: 10px; width: 100%; margin-top: 14px; padding-top: 18px; border-top: 2px dashed var(--line); }
+  .chest { display: flex; align-items: center; gap: 10px; font-size: 0.86rem; font-weight: 700; border: 2px solid var(--line); border-radius: 14px; background: var(--surface); padding: 6px 14px 6px 8px; cursor: pointer; text-align: left; line-height: 1.25; }
+  .chest svg { width: 46px; height: auto; flex: none; }
+  .chest small { display: block; font-weight: 500; color: var(--ink-soft); font-size: 0.74rem; }
+  .chest:hover { border-color: var(--lily); }
+  .chest.shake svg { animation: wiggle 0.5s ease-in-out; }
+  .drop { min-height: 1.5em; font-weight: 700; max-width: 36ch; text-wrap: balance; }
+  .odds { font-size: 0.82rem; color: var(--ink-soft); border-collapse: collapse; font-variant-numeric: tabular-nums; }
+  .odds th, .odds td { padding: 2px 8px; text-align: right; font-weight: 700; }
+  .odds th:first-child, .odds td:first-child { text-align: left; }
+  .inv summary { cursor: pointer; font-size: 0.86rem; font-weight: 700; color: var(--ink-soft); }
   .pet input { font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; text-align: center; color: var(--ink); background: transparent; border: 0; border-bottom: 2px dashed var(--line); padding: 4px 8px; width: min(100%, 300px); }
   .pet .meter { width: min(100%, 320px); }
   .row { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
@@ -148,7 +186,7 @@
   .swatch[aria-pressed="true"] { border-color: var(--lily); }
   .note { margin: 0; color: var(--ink-soft); font-size: 0.9rem; }
 
-  .tab:focus-visible, .act:focus-visible, .frog:focus-visible, .sing:focus-visible, .chip:focus-visible, .big:focus-visible, .swatch:focus-visible, .pet input:focus-visible { outline: 3px solid var(--lily); outline-offset: 3px; border-radius: 14px; }
+  .tab:focus-visible, .act:focus-visible, .frog:focus-visible, .sing:focus-visible, .chip:focus-visible, .big:focus-visible, .swatch:focus-visible, .pet input:focus-visible, .lvl:focus-visible, .buy:focus-visible, .chest:focus-visible { outline: 3px solid var(--lily); outline-offset: 3px; border-radius: 14px; }
 
   @keyframes squish { 0% { transform: scale(1, 1); } 30% { transform: scale(1.1, 0.88); } 65% { transform: scale(0.96, 1.06); } 100% { transform: scale(1, 1); } }
   @keyframes puff { 0% { transform: scale(0.2); opacity: 0; } 35% { transform: scale(1.1); opacity: 1; } 100% { transform: scale(0.2); opacity: 0; } }
@@ -175,7 +213,7 @@
   <div class="tabs" role="tablist">
     <button class="tab" id="tab-pond" role="tab" type="button" aria-selected="true">Пруд</button>
     <button class="tab" id="tab-mine" role="tab" type="button" aria-selected="false">Моя лягушка</button>
-    <button class="tab" id="tab-jump" role="tab" type="button" aria-selected="false">Прыжки</button>
+    <button class="tab" id="tab-games" role="tab" type="button" aria-selected="false">Мини-игры</button>
     <span class="spacer"></span>
     <button class="act" id="btn-chord" type="button">Все разом</button>
     <button class="act" id="btn-stop" type="button">Остановить хор</button>
@@ -210,14 +248,19 @@
           <button class="act" id="pet-duet" type="button">Спеть вместе</button>
         </div>
         <p class="note" id="pet-hint">Питомец растёт только от корма. Каждые 10 нажатий на лягушек в пруду дают одну единицу корма, одна единица — 5 очков роста.</p>
+        <div class="inv" id="inv"></div>
       </div>
       <div class="wardrobe" id="wardrobe"></div>
     </div>
     <p class="note" style="margin-top:28px"><button class="act" id="btn-reset" type="button">Начать игру заново</button></p>
   </section>
 
-  <section id="view-jump" hidden>
-    <div class="jump">
+  <section id="view-games" hidden>
+    <div class="tabs sub" role="tablist">
+      <button class="tab" id="game-jump" role="tab" type="button" aria-selected="true">Прыжки</button>
+      <button class="tab" id="game-td" role="tab" type="button" aria-selected="false">Оборона болота</button>
+    </div>
+    <div class="jump" id="pane-jump">
       <div class="stage">
         <canvas id="game" width="360" height="560" aria-label="Мини-игра: ваша лягушка прыгает вверх по кувшинкам"></canvas>
         <div class="veil" id="veil">
@@ -241,6 +284,47 @@
         </ul>
         <p class="note">Чем выше, тем реже листья и больше опасностей. Болото вокруг меняется: мелководье, камыши, туманная топь, ночное болото и лунная высь.</p>
         <p class="meta" id="jump-best">Рекорд: 0</p>
+      </div>
+    </div>
+
+    <div class="td" id="pane-td" hidden>
+      <div class="td" id="td-map">
+        <h2>Оборона болота</h2>
+        <p class="note">Стрекозы летят по тропе к озеру ваших лягушек. Рассаживайте вдоль тропы лягушек, которых разбудили в пруду: чем круче лягушка и чем выше её уровень, тем сильнее она бьёт. В каждом уровне 25 волн, у озера 20 жизней. За победу дают сундук с вещами для вашей лягушки — он ждёт в инвентаре на вкладке «Моя лягушка».</p>
+        <div class="levels" id="td-levels"></div>
+      </div>
+      <div class="td" id="td-play" hidden>
+        <div class="td-top">
+          <button class="act" id="td-back" type="button">К уровням</button>
+          <h2 id="td-title"></h2>
+          <span class="spacer"></span>
+          <div class="stats">
+            <div>Жизни<b id="td-lives">20</b></div>
+            <div>Мошки<b id="td-gold">0</b></div>
+            <div>Волна<b id="td-wave">0 из 25</b></div>
+          </div>
+        </div>
+        <div class="td-stage">
+          <canvas id="td-cv" width="800" height="500" aria-label="Поле обороны: тропа от гнезда стрекоз до озера лягушек"></canvas>
+          <div class="veil" id="td-veil" hidden>
+            <h2 id="td-veil-title"></h2>
+            <p class="note" id="td-veil-text"></p>
+            <div class="row">
+              <button class="big" id="td-veil-btn" type="button">Продолжить</button>
+              <button class="act" id="td-veil-alt" type="button">К уровням</button>
+            </div>
+          </div>
+        </div>
+        <div class="td-bar">
+          <button class="big" id="td-next" type="button">Начать волну</button>
+          <button class="act" id="td-speed" type="button">Скорость ×1</button>
+          <button class="act" id="td-auto" type="button" aria-pressed="false">Волны подряд</button>
+          <button class="act" id="td-pause" type="button">Пауза</button>
+          <span class="meta" id="td-foe"></span>
+        </div>
+        <div class="td-info" id="td-info"></div>
+        <div class="shop" id="td-shop"></div>
+        <p class="note">Выберите лягушку внизу и нажмите на свободное место у тропы. Нажмите на посаженную лягушку, чтобы улучшить её или убрать. У каждого голоса свой приём: язык, скорострел, грязевая бомба, снайпер, магия, мороз и яд.</p>
       </div>
     </div>
   </section>
@@ -298,7 +382,21 @@
     back: ['wings', 'balloon', 'halo', 'cape']
   };
   var SLOT_ORDER = ['neck', 'hat', 'eyes', 'back']; // вещь за 2, 3, 4 и 5 уровень
-  var SLOT_RU = { neck: 'На шею', hat: 'На голову', eyes: 'На глаза', back: 'Особое' };
+  var SLOT_RU = { neck: 'На шею', hat: 'На голову', eyes: 'На глаза', suit: 'Костюм', back: 'Особое' };
+  var WARDROBE = ['neck', 'hat', 'eyes', 'suit', 'back'];
+  // вещи из сундуков за «Оборону болота»: слот, название, редкость (0 — обычная … 4 — легендарная)
+  var RARITY = [['Обычная', '#7d8f88'], ['Необычная', '#3fa34d'], ['Редкая', '#3a86ff'], ['Эпическая', '#9d4edd'], ['Легендарная', '#f59f00']];
+  var LOOT = {
+    leafhat: ['hat', 'Лист лопуха', 0], acorn: ['hat', 'Шляпка жёлудя', 0], shades3d: ['eyes', '3D-очки', 0], tee: ['suit', 'Тельняшка', 0], overalls: ['suit', 'Комбинезон', 0], whistle: ['neck', 'Свисток', 0], clover: ['neck', 'Клеверный кулон', 0],
+    mushroom: ['hat', 'Шляпка мухомора', 1], pirate: ['hat', 'Пиратская треуголка', 1], nightcap: ['hat', 'Ночной колпак', 1], ski: ['eyes', 'Лыжная маска', 1], hawaii: ['suit', 'Гавайская рубашка', 1], shell: ['back', 'Домик улитки', 1],
+    horns: ['hat', 'Рожки чертёнка', 2], pixel: ['eyes', 'Пиксельные очки', 2], tux: ['suit', 'Смокинг', 2], butterfly: ['back', 'Крылья бабочки', 2], amulet: ['neck', 'Амулет болотной ведьмы', 2],
+    astro: ['hat', 'Шлем космонавта', 3], cyber: ['eyes', 'Кибервизор', 3], knight: ['suit', 'Рыцарские латы', 3], jetpack: ['back', 'Реактивный ранец', 3],
+    flame: ['hat', 'Огненная корона', 4], rainbow: ['eyes', 'Радужный визор', 4], royal: ['suit', 'Королевская мантия', 4], dragon: ['back', 'Крылья дракона', 4]
+  };
+  var LOOT_IDS = Object.keys(LOOT);
+  // сундуки: название и шансы редкостей в процентах; за повтор, когда вся редкость собрана, дают корм
+  var CHESTS = [['Деревянный сундук', [55, 28, 12, 4, 1]], ['Серебряный сундук', [35, 33, 20, 9.5, 2.5]], ['Золотой сундук', [15, 30, 30, 18, 7]]];
+  var CHEST_FLIES = [5, 12, 30, 80, 250];
   var STAGES = [['Яйцо', 0], ['Головастик', 40], ['Лягушонок', 160], ['Лягушка', 450], ['Толстая лягушка', 1100]];
 
   function pick(pool, i) { return pool[Math.min(pool.length - 1, Math.floor(i * pool.length / 25))]; }
@@ -329,7 +427,8 @@
     return {
       total: 0, taps: 0, flies: 0,
       frogs: FROGS.map(function (f) { return { n: 0, open: f.i < 3, auto: false, m: 0 }; }),
-      me: { xp: 0, name: '', skin: 0, best: 0, wear: { neck: '', hat: '', eyes: '', back: '' } }
+      me: { xp: 0, name: '', skin: 0, best: 0, wear: { neck: '', hat: '', eyes: '', suit: '', back: '' } },
+      td: { done: TD_LEVELS.map(function () { return 0; }), chests: [0, 0, 0], loot: {} }
     };
   }
   function load() {
@@ -340,6 +439,8 @@
     s.frogs.forEach(function (x) { x.auto = false; }); // звук нельзя начать без нажатия, поэтому хор после перезагрузки молчит
     if (typeof s.taps !== 'number') s.taps = 0;
     if (typeof s.me.best !== 'number') s.me.best = 0;
+    if (typeof s.me.wear.suit !== 'string') s.me.wear.suit = '';
+    if (!s.td || !s.td.done || s.td.done.length !== TD_LEVELS.length || !s.td.chests || !s.td.loot) s.td = f.td;
     return s;
   }
   function save() {
@@ -350,7 +451,7 @@
   function levelOf(n) { var l = 1; for (var k = 1; k < LEVELS.length; k++) if (n >= LEVELS[k]) l = k + 1; return l; }
   function stageOf(xp) { var s = 0; for (var k = 1; k < STAGES.length; k++) if (xp >= STAGES[k][1]) s = k; return s; }
   function fmt(n) { return Math.floor(n).toLocaleString('ru-RU'); }
-  function itemOpen(id) { var r = ITEM_FROM[id]; return !!r && state.frogs[r.frog].open && levelOf(state.frogs[r.frog].n) >= r.lvl; }
+  function itemOpen(id) { if (LOOT[id]) return !!state.td.loot[id]; var r = ITEM_FROM[id]; return !!r && state.frogs[r.frog].open && levelOf(state.frogs[r.frog].n) >= r.lvl; }
 
   // ---------- рисование ----------
 
@@ -486,7 +587,172 @@
     }
   }
 
+  // вещи из сундуков; костюмы рисуются внутри силуэта тела, поэтому g для них уже обрезан по нему
+  function drawLoot(g, id, c) {
+    var cx = c.cx, hy = c.cy - c.ry + 8, hw = c.rx * 0.36, ey = c.ey, ex = c.ex, ny = c.cy + c.ry * 0.02, nw = c.rx * 0.62;
+    var sy = c.cy + c.ry * 0.08, sx = cx - c.rx - 24, sw = (c.rx + 24) * 2, sh = c.base - sy + 4, k, x, y;
+    if (id === 'leafhat') {
+      S('path', { d: 'M' + (cx - hw - 34) + ' ' + (hy - 2) + ' Q' + cx + ' ' + (hy - 48) + ' ' + (cx + hw + 42) + ' ' + (hy - 12) + ' Q' + cx + ' ' + (hy + 16) + ' ' + (cx - hw - 34) + ' ' + (hy - 2) + ' Z', fill: '#58a84a', stroke: '#2f6b2c', 'stroke-width': 3, 'stroke-linejoin': 'round' }, g);
+      S('path', { d: 'M' + (cx - hw - 30) + ' ' + (hy - 3) + ' Q' + cx + ' ' + (hy - 20) + ' ' + (cx + hw + 38) + ' ' + (hy - 12), fill: 'none', stroke: '#2f6b2c', 'stroke-width': 2.5 }, g);
+    } else if (id === 'acorn') {
+      S('path', { d: 'M' + (cx - hw - 8) + ' ' + hy + ' A' + (hw + 8) + ' ' + (hw + 2) + ' 0 0 1 ' + (cx + hw + 8) + ' ' + hy + ' Q' + cx + ' ' + (hy + 10) + ' ' + (cx - hw - 8) + ' ' + hy + ' Z', fill: '#8a5a2b', stroke: '#5c3a18', 'stroke-width': 3 }, g);
+      [0.35, 0.68].forEach(function (p) { S('path', { d: 'M' + (cx - (hw + 8) * (1 - p * 0.5)) + ' ' + (hy - (hw + 2) * p) + ' Q' + cx + ' ' + (hy - (hw + 2) * p + 9) + ' ' + (cx + (hw + 8) * (1 - p * 0.5)) + ' ' + (hy - (hw + 2) * p), fill: 'none', stroke: '#5c3a18', 'stroke-width': 2.5 }, g); });
+      S('rect', { x: cx - 3, y: hy - hw - 14, width: 6, height: 14, rx: 3, fill: '#5c3a18' }, g);
+    } else if (id === 'mushroom') {
+      S('path', { d: 'M' + (cx - hw - 28) + ' ' + hy + ' A' + (hw + 28) + ' ' + (hw + 12) + ' 0 0 1 ' + (cx + hw + 28) + ' ' + hy + ' Q' + cx + ' ' + (hy + 14) + ' ' + (cx - hw - 28) + ' ' + hy + ' Z', fill: '#e63946', stroke: '#a4161a', 'stroke-width': 3 }, g);
+      [[-0.62, -0.3, 8], [-0.1, -0.68, 9], [0.5, -0.4, 8], [0.12, -0.22, 5], [-0.3, -0.1, 4]].forEach(function (p) { S('circle', { cx: cx + (hw + 28) * p[0], cy: hy + (hw + 12) * p[1], r: p[2], fill: '#ffffff' }, g); });
+    } else if (id === 'pirate') {
+      S('path', { d: 'M' + (cx - hw - 32) + ' ' + (hy - 4) + ' Q' + (cx - hw - 8) + ' ' + (hy - 22) + ' ' + (cx - hw * 0.6) + ' ' + (hy - 36) + ' Q' + cx + ' ' + (hy - 62) + ' ' + (cx + hw * 0.6) + ' ' + (hy - 36) + ' Q' + (cx + hw + 8) + ' ' + (hy - 22) + ' ' + (cx + hw + 32) + ' ' + (hy - 4) + ' Q' + cx + ' ' + (hy + 14) + ' ' + (cx - hw - 32) + ' ' + (hy - 4) + ' Z', fill: '#1b1b24', stroke: '#e9c46a', 'stroke-width': 3, 'stroke-linejoin': 'round' }, g);
+      S('path', { d: 'M' + (cx - 12) + ' ' + (hy - 14) + ' l24 -18 M' + (cx + 12) + ' ' + (hy - 14) + ' l-24 -18', stroke: '#ffffff', 'stroke-width': 4, 'stroke-linecap': 'round' }, g);
+      S('circle', { cx: cx, cy: hy - 25, r: 9, fill: '#ffffff' }, g);
+      [-1, 1].forEach(function (s) { S('circle', { cx: cx + s * 3.5, cy: hy - 26, r: 2.2, fill: '#1b1b24' }, g); });
+    } else if (id === 'nightcap') {
+      S('path', { d: 'M' + (cx - hw - 2) + ' ' + hy + ' Q' + (cx - hw * 0.5) + ' ' + (hy - 56) + ' ' + (cx + hw * 0.5) + ' ' + (hy - 52) + ' Q' + (cx + hw + 32) + ' ' + (hy - 46) + ' ' + (cx + hw + 36) + ' ' + (hy - 6) + ' Q' + (cx + hw + 14) + ' ' + (hy - 28) + ' ' + (cx + hw + 2) + ' ' + hy + ' Z', fill: '#4361ee', stroke: '#27336b', 'stroke-width': 3, 'stroke-linejoin': 'round' }, g);
+      [[-0.3, -24], [0.35, -34], [0.1, -14]].forEach(function (p) { S('polygon', { points: star(cx + hw * p[0], hy + p[1], 5), fill: '#ffd60a' }, g); });
+      S('path', { d: 'M' + (cx - hw - 4) + ' ' + hy + ' Q' + cx + ' ' + (hy + 8) + ' ' + (cx + hw + 4) + ' ' + hy, fill: 'none', stroke: '#ffffff', 'stroke-width': 10, 'stroke-linecap': 'round' }, g);
+      S('circle', { cx: cx + hw + 36, cy: hy - 2, r: 9, fill: '#ffffff', stroke: '#b8c4cc', 'stroke-width': 2 }, g);
+    } else if (id === 'horns') {
+      [-1, 1].forEach(function (s) {
+        S('path', { d: 'M' + (cx + s * hw * 0.45) + ' ' + (hy + 4) + ' Q' + (cx + s * (hw - 2)) + ' ' + (hy - 20) + ' ' + (cx + s * (hw + 8)) + ' ' + (hy - 46) + ' Q' + (cx + s * (hw + 24)) + ' ' + (hy - 18) + ' ' + (cx + s * (hw * 1.2 + 6)) + ' ' + (hy + 8) + ' Z', fill: '#d00000', stroke: '#6a040f', 'stroke-width': 3, 'stroke-linejoin': 'round' }, g);
+      });
+    } else if (id === 'astro') {
+      var ar = ex + 44, ay = ey + 8;
+      S('ellipse', { cx: cx, cy: ay + ar - 6, rx: ar * 0.74, ry: 10, fill: '#e9eef2', stroke: '#9aa7b0', 'stroke-width': 3 }, g);
+      S('circle', { cx: cx, cy: ay, r: ar, fill: '#cfe8ff', 'fill-opacity': 0.24, stroke: '#e9eef2', 'stroke-width': 6 }, g);
+      S('path', { d: 'M' + (cx - ar * 0.7) + ' ' + (ay - ar * 0.3) + ' Q' + (cx - ar * 0.5) + ' ' + (ay - ar * 0.72) + ' ' + (cx - ar * 0.1) + ' ' + (ay - ar * 0.8), fill: 'none', stroke: '#ffffff', 'stroke-width': 6, 'stroke-linecap': 'round', opacity: 0.8 }, g);
+      S('path', { d: 'M' + (cx + ar * 0.5) + ' ' + (ay - ar * 0.86) + ' l12 -22', stroke: '#9aa7b0', 'stroke-width': 4, 'stroke-linecap': 'round' }, g);
+      S('circle', { cx: cx + ar * 0.5 + 13, cy: ay - ar * 0.86 - 25, r: 6, fill: '#ef233c' }, g);
+    } else if (id === 'flame') {
+      var fw = hw + 8;
+      for (k = -2; k <= 2; k++) {
+        x = cx + k * fw / 2.3; y = 50 - Math.abs(k) * 9;
+        S('path', { d: 'M' + (x - 11) + ' ' + (hy - 8) + ' Q' + (x - 15) + ' ' + (hy - 8 - y * 0.5) + ' ' + (x + (k % 2 ? 4 : -4)) + ' ' + (hy - 8 - y) + ' Q' + (x + 15) + ' ' + (hy - 8 - y * 0.5) + ' ' + (x + 11) + ' ' + (hy - 8) + ' Z', fill: '#ff7b00', stroke: '#d00000', 'stroke-width': 2.5, 'stroke-linejoin': 'round' }, g);
+        S('path', { d: 'M' + (x - 5) + ' ' + (hy - 8) + ' Q' + (x - 7) + ' ' + (hy - 8 - y * 0.3) + ' ' + x + ' ' + (hy - 8 - y * 0.58) + ' Q' + (x + 7) + ' ' + (hy - 8 - y * 0.3) + ' ' + (x + 5) + ' ' + (hy - 8) + ' Z', fill: '#ffd60a' }, g);
+      }
+      S('rect', { x: cx - fw - 2, y: hy - 12, width: fw * 2 + 4, height: 13, rx: 5, fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 3 }, g);
+      [-0.6, 0, 0.6].forEach(function (p) { S('circle', { cx: cx + fw * p, cy: hy - 5.5, r: 3.5, fill: '#d00000' }, g); });
+    } else if (id === 'shades3d') {
+      S('path', { d: 'M' + (cx - ex + 22) + ' ' + (ey - 2) + ' L' + (cx + ex - 22) + ' ' + (ey - 2), stroke: '#ffffff', 'stroke-width': 6 }, g);
+      [-1, 1].forEach(function (s) { S('rect', { x: cx + s * ex - 23, y: ey - 14, width: 46, height: 29, rx: 6, fill: s < 0 ? '#ef233c' : '#3a86ff', 'fill-opacity': 0.72, stroke: '#ffffff', 'stroke-width': 5 }, g); });
+    } else if (id === 'ski') {
+      S('path', { d: 'M' + (cx - ex - 30) + ' ' + ey + ' l-16 -5 M' + (cx + ex + 30) + ' ' + ey + ' l16 -5', stroke: '#22223b', 'stroke-width': 9, 'stroke-linecap': 'round' }, g);
+      S('rect', { x: cx - ex - 30, y: ey - 18, width: ex * 2 + 60, height: 38, rx: 18, fill: '#ff9f1c', 'fill-opacity': 0.86, stroke: '#22223b', 'stroke-width': 5 }, g);
+      S('path', { d: 'M' + (cx - ex - 14) + ' ' + (ey - 8) + ' l' + (ex * 0.9) + ' 0', stroke: '#ffffff', 'stroke-width': 5, 'stroke-linecap': 'round', opacity: 0.7 }, g);
+    } else if (id === 'pixel') {
+      S('rect', { x: cx - ex - 30, y: ey - 13, width: ex * 2 + 60, height: 9, fill: '#111111' }, g);
+      [-1, 1].forEach(function (s) {
+        S('rect', { x: cx + s * ex - 24, y: ey - 13, width: 48, height: 18, fill: '#111111' }, g);
+        S('rect', { x: cx + s * ex - 16, y: ey + 5, width: 32, height: 8, fill: '#111111' }, g);
+        S('rect', { x: cx + s * ex - 16, y: ey - 5, width: 8, height: 4, fill: '#ffffff' }, g);
+        S('rect', { x: cx + s * ex - 8, y: ey - 1, width: 8, height: 4, fill: '#ffffff' }, g);
+      });
+    } else if (id === 'cyber') {
+      S('rect', { x: cx - ex - 32, y: ey - 10, width: ex * 2 + 64, height: 22, rx: 11, fill: 'none', stroke: '#00f5d4', 'stroke-width': 10, opacity: 0.3 }, g);
+      S('rect', { x: cx - ex - 32, y: ey - 10, width: ex * 2 + 64, height: 22, rx: 11, fill: '#0b132b', stroke: '#00f5d4', 'stroke-width': 3 }, g);
+      S('path', { d: 'M' + (cx - ex - 18) + ' ' + (ey + 1) + ' L' + (cx + ex + 18) + ' ' + (ey + 1), stroke: '#00f5d4', 'stroke-width': 5, 'stroke-linecap': 'round' }, g);
+    } else if (id === 'rainbow') {
+      var rw = ex * 2 + 64, rx0 = cx - ex - 32;
+      ['#ff595e', '#ff924c', '#ffca3a', '#8ac926', '#1982c4', '#6a4c93'].forEach(function (col, n) { S('rect', { x: rx0 + rw * n / 6, y: ey - 12, width: rw / 6 + 0.6, height: 26, rx: n === 0 || n === 5 ? 6 : 0, fill: col }, g); });
+      S('rect', { x: rx0, y: ey - 12, width: rw, height: 26, rx: 12, fill: 'none', stroke: '#ffffff', 'stroke-width': 4 }, g);
+      S('path', { d: 'M' + (rx0 + 12) + ' ' + (ey - 5) + ' l' + (rw * 0.4) + ' 0', stroke: '#ffffff', 'stroke-width': 4, 'stroke-linecap': 'round', opacity: 0.75 }, g);
+      [-1, 1].forEach(function (s) { S('polygon', { points: star(cx + s * (ex + 36), ey - 14, 9), fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 1.5 }, g); });
+    } else if (id === 'tee') {
+      for (k = 0; k * 13 < sh; k++) S('rect', { x: sx, y: sy + k * 13, width: sw, height: 13.5, fill: k % 2 ? '#ffffff' : '#27336b' }, g);
+    } else if (id === 'overalls') {
+      var oy = c.cy + c.ry * 0.36, bw = c.rx * 0.4;
+      [-1, 1].forEach(function (s) { S('path', { d: 'M' + (cx + s * bw * 0.8) + ' ' + (sy + 6) + ' L' + (cx + s * c.rx * 0.74) + ' ' + (c.cy - c.ry * 0.3), stroke: '#3a6ea5', 'stroke-width': 12, 'stroke-linecap': 'round' }, g); });
+      S('rect', { x: sx, y: oy, width: sw, height: c.base - oy + 4, fill: '#3a6ea5' }, g);
+      S('rect', { x: cx - bw, y: sy, width: bw * 2, height: oy - sy + 6, rx: 6, fill: '#3a6ea5', stroke: '#27496d', 'stroke-width': 3 }, g);
+      S('rect', { x: cx - bw * 0.5, y: sy + 12, width: bw, height: 16, rx: 4, fill: 'none', stroke: '#27496d', 'stroke-width': 3 }, g);
+      S('path', { d: 'M' + sx + ' ' + oy + ' l' + sw + ' 0', stroke: '#27496d', 'stroke-width': 3 }, g);
+      [-1, 1].forEach(function (s) { S('circle', { cx: cx + s * bw * 0.78, cy: sy + 8, r: 5, fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 2 }, g); });
+    } else if (id === 'hawaii') {
+      S('rect', { x: sx, y: sy, width: sw, height: sh, fill: '#ff7b54' }, g);
+      [[0.16, 0.2], [0.42, 0.52], [0.7, 0.22], [0.86, 0.6], [0.28, 0.8], [0.58, 0.86], [0.06, 0.6]].forEach(function (p, n) {
+        x = sx + sw * p[0]; y = sy + sh * p[1];
+        S('ellipse', { cx: x + 12, cy: y + 8, rx: 10, ry: 4.5, fill: '#2a9d8f', transform: 'rotate(30 ' + (x + 12) + ' ' + (y + 8) + ')' }, g);
+        for (var q = 0; q < 5; q++) S('circle', { cx: x + Math.cos(q * 1.257) * 7, cy: y + Math.sin(q * 1.257) * 7, r: 5.5, fill: n % 2 ? '#ffe66d' : '#ffffff' }, g);
+        S('circle', { cx: x, cy: y, r: 4, fill: '#ff006e' }, g);
+      });
+      S('path', { d: 'M' + (cx - 26) + ' ' + (sy - 2) + ' L' + cx + ' ' + (sy + 22) + ' L' + (cx + 26) + ' ' + (sy - 2) + ' L' + (cx + 34) + ' ' + (sy + 16) + ' L' + cx + ' ' + (sy + 30) + ' L' + (cx - 34) + ' ' + (sy + 16) + ' Z', fill: '#ffd6c2', stroke: '#c2512f', 'stroke-width': 2, 'stroke-linejoin': 'round' }, g);
+    } else if (id === 'tux') {
+      S('rect', { x: sx, y: sy, width: sw, height: sh, fill: '#1b1b24' }, g);
+      S('path', { d: 'M' + (cx - c.rx * 0.34) + ' ' + sy + ' L' + (cx + c.rx * 0.34) + ' ' + sy + ' L' + cx + ' ' + (c.base + 4) + ' Z', fill: '#ffffff' }, g);
+      S('path', { d: 'M' + (cx - c.rx * 0.34) + ' ' + sy + ' L' + cx + ' ' + (c.base + 4) + ' L' + (cx + c.rx * 0.34) + ' ' + sy, fill: 'none', stroke: '#4a4e69', 'stroke-width': 4, 'stroke-linejoin': 'round' }, g);
+      [0.42, 0.62, 0.8].forEach(function (p) { S('circle', { cx: cx, cy: sy + sh * p, r: 3.2, fill: '#1b1b24' }, g); });
+      S('path', { d: 'M' + cx + ' ' + (sy + 12) + ' l-20 -10 l0 20 Z M' + cx + ' ' + (sy + 12) + ' l20 -10 l0 20 Z', fill: '#d00000', stroke: '#6a040f', 'stroke-width': 2, 'stroke-linejoin': 'round' }, g);
+      S('circle', { cx: cx, cy: sy + 12, r: 4.5, fill: '#6a040f' }, g);
+    } else if (id === 'knight') {
+      S('rect', { x: sx, y: sy, width: sw, height: sh, fill: '#b8c4cc' }, g);
+      [0.3, 0.56, 0.82].forEach(function (p) { S('path', { d: 'M' + sx + ' ' + (sy + sh * p - 8) + ' Q' + cx + ' ' + (sy + sh * p + 14) + ' ' + (sx + sw) + ' ' + (sy + sh * p - 8), fill: 'none', stroke: '#6c7a86', 'stroke-width': 3 }, g); });
+      S('path', { d: 'M' + sx + ' ' + sy + ' l' + sw + ' 0', stroke: '#6c7a86', 'stroke-width': 9 }, g);
+      for (k = 0; k < 7; k++) S('circle', { cx: sx + sw * (k + 0.5) / 7, cy: sy + 1, r: 2.6, fill: '#eef3f6' }, g);
+      S('path', { d: 'M' + (cx - 17) + ' ' + (sy + 12) + ' l34 0 l0 16 q0 18 -17 26 q-17 -8 -17 -26 Z', fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 3, 'stroke-linejoin': 'round' }, g);
+      S('path', { d: 'M' + cx + ' ' + (sy + 18) + ' l0 28 M' + (cx - 10) + ' ' + (sy + 28) + ' l20 0', stroke: '#b3122d', 'stroke-width': 5 }, g);
+    } else if (id === 'royal') {
+      S('rect', { x: sx, y: sy, width: sw, height: sh, fill: '#b3122d' }, g);
+      S('rect', { x: cx - 16, y: sy, width: 32, height: sh, fill: '#ffffff' }, g);
+      S('rect', { x: sx, y: sy - 2, width: sw, height: 22, fill: '#ffffff' }, g);
+      for (k = 0; k < 9; k++) S('ellipse', { cx: sx + sw * (k + 0.5) / 9, cy: sy + 9 + (k % 2) * 4, rx: 2.4, ry: 4.5, fill: '#1b1b24' }, g);
+      for (k = 1; k < 5; k++) S('ellipse', { cx: cx + (k % 2 ? -6 : 6), cy: sy + 20 + k * (sh - 24) / 5, rx: 2.4, ry: 4.5, fill: '#1b1b24' }, g);
+      S('circle', { cx: cx, cy: sy + 10, r: 9, fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 3 }, g);
+      S('circle', { cx: cx, cy: sy + 10, r: 3.5, fill: '#4cc9f0' }, g);
+    } else if (id === 'whistle') {
+      S('path', { d: 'M' + (cx - nw) + ' ' + (ny - 6) + ' Q' + cx + ' ' + (ny + 34) + ' ' + (cx + nw) + ' ' + (ny - 6), fill: 'none', stroke: '#e63946', 'stroke-width': 4, 'stroke-linecap': 'round' }, g);
+      S('rect', { x: cx - 20, y: ny + 16, width: 28, height: 13, rx: 4, fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 3 }, g);
+      S('circle', { cx: cx + 8, cy: ny + 26, r: 11, fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 3 }, g);
+      S('circle', { cx: cx + 8, cy: ny + 26, r: 3.5, fill: '#b58900' }, g);
+    } else if (id === 'clover') {
+      S('path', { d: 'M' + (cx - nw) + ' ' + (ny - 6) + ' Q' + cx + ' ' + (ny + 30) + ' ' + (cx + nw) + ' ' + (ny - 6), fill: 'none', stroke: '#8a5a2b', 'stroke-width': 4, 'stroke-linecap': 'round' }, g);
+      [[-7, -7], [7, -7], [-7, 7], [7, 7]].forEach(function (p) { S('circle', { cx: cx + p[0], cy: ny + 26 + p[1], r: 8.5, fill: '#3fa34d', stroke: '#1b5e20', 'stroke-width': 2 }, g); });
+      S('circle', { cx: cx, cy: ny + 26, r: 3, fill: '#1b5e20' }, g);
+    } else if (id === 'amulet') {
+      S('path', { d: 'M' + (cx - nw) + ' ' + (ny - 6) + ' Q' + cx + ' ' + (ny + 32) + ' ' + (cx + nw) + ' ' + (ny - 6), fill: 'none', stroke: '#5a189a', 'stroke-width': 4, 'stroke-linecap': 'round' }, g);
+      S('path', { d: 'M' + cx + ' ' + (ny + 10) + ' l17 20 l-17 22 l-17 -22 Z', fill: '#7b2cbf', stroke: '#ffd60a', 'stroke-width': 3.5, 'stroke-linejoin': 'round' }, g);
+      S('ellipse', { cx: cx, cy: ny + 30, rx: 9, ry: 5.5, fill: '#ffffff' }, g);
+      S('circle', { cx: cx, cy: ny + 30, r: 3.4, fill: '#2a9d8f' }, g);
+    } else if (id === 'shell') {
+      x = cx + c.rx * 0.78; y = c.cy - c.ry * 0.3;
+      S('circle', { cx: x, cy: y, r: 48, fill: '#d9a05b', stroke: '#8a5a2b', 'stroke-width': 4 }, g);
+      S('path', { d: 'M' + (x + 34) + ' ' + y + ' a34 34 0 1 0 -34 34 a22 22 0 1 0 -22 -22 a11 11 0 1 0 11 -11', fill: 'none', stroke: '#8a5a2b', 'stroke-width': 4, 'stroke-linecap': 'round' }, g);
+    } else if (id === 'butterfly') {
+      [-1, 1].forEach(function (s) {
+        var ux = cx + s * (c.rx + 22), uy = c.cy - c.ry * 0.4, lx = cx + s * (c.rx + 12), ly = c.cy + c.ry * 0.2;
+        S('ellipse', { cx: ux, cy: uy, rx: 50, ry: 36, fill: '#ff70a6', stroke: '#7b1170', 'stroke-width': 4, transform: 'rotate(' + (s * -24) + ' ' + ux + ' ' + uy + ')' }, g);
+        S('ellipse', { cx: lx, cy: ly, rx: 34, ry: 26, fill: '#ffd670', stroke: '#7b1170', 'stroke-width': 4, transform: 'rotate(' + (s * 18) + ' ' + lx + ' ' + ly + ')' }, g);
+        S('circle', { cx: ux + s * 16, cy: uy - 6, r: 9, fill: '#ffffff' }, g);
+        S('circle', { cx: ux + s * 30, cy: uy + 8, r: 5, fill: '#4cc9f0' }, g);
+        S('circle', { cx: lx + s * 12, cy: ly + 4, r: 6, fill: '#ff70a6' }, g);
+      });
+    } else if (id === 'jetpack') {
+      [-1, 1].forEach(function (s) {
+        x = cx + s * (c.rx + 6); y = c.cy - c.ry * 0.55;
+        S('path', { d: 'M' + (x - 12) + ' ' + (y + c.ry * 0.95) + ' L' + x + ' ' + (y + c.ry * 0.95 + 46) + ' L' + (x + 12) + ' ' + (y + c.ry * 0.95) + ' Z', fill: '#ff7b00', stroke: '#d00000', 'stroke-width': 2 }, g);
+        S('path', { d: 'M' + (x - 6) + ' ' + (y + c.ry * 0.95) + ' L' + x + ' ' + (y + c.ry * 0.95 + 24) + ' L' + (x + 6) + ' ' + (y + c.ry * 0.95) + ' Z', fill: '#ffd60a' }, g);
+        S('rect', { x: x - 18, y: y, width: 36, height: c.ry * 0.95, rx: 16, fill: '#adb5bd', stroke: '#495057', 'stroke-width': 4 }, g);
+        S('rect', { x: x - 18, y: y + c.ry * 0.3, width: 36, height: 9, fill: '#ef233c' }, g);
+      });
+    } else if (id === 'dragon') {
+      [-1, 1].forEach(function (s) {
+        var r0 = cx + s * c.rx * 0.6, t0 = c.cy - c.ry * 0.2;
+        S('path', { d: 'M' + r0 + ' ' + t0 + ' L' + (cx + s * (c.rx + 74)) + ' ' + (c.cy - c.ry * 1.05) + ' Q' + (cx + s * (c.rx + 58)) + ' ' + (c.cy - c.ry * 0.5) + ' ' + (cx + s * (c.rx + 84)) + ' ' + (c.cy - c.ry * 0.2) + ' Q' + (cx + s * (c.rx + 46)) + ' ' + (c.cy - c.ry * 0.12) + ' ' + (cx + s * (c.rx + 56)) + ' ' + (c.cy + c.ry * 0.3) + ' Q' + (cx + s * (c.rx + 20)) + ' ' + (c.cy + c.ry * 0.12) + ' ' + (cx + s * c.rx * 0.7) + ' ' + (c.cy + c.ry * 0.34) + ' Z', fill: '#7b2cbf', stroke: '#3c096c', 'stroke-width': 4, 'stroke-linejoin': 'round' }, g);
+        [[74, -1.05], [84, -0.2], [56, 0.3]].forEach(function (p) { S('path', { d: 'M' + r0 + ' ' + t0 + ' L' + (cx + s * (c.rx + p[0])) + ' ' + (c.cy + c.ry * p[1]), stroke: '#3c096c', 'stroke-width': 3.5, 'stroke-linecap': 'round' }, g); });
+        S('circle', { cx: cx + s * (c.rx + 74), cy: c.cy - c.ry * 1.05, r: 5, fill: '#ffd60a' }, g);
+      });
+    }
+  }
+  function drawChest(tier) {
+    var col = [['#b5651d', '#7a4212', '#ffd60a'], ['#ced4da', '#7d8a96', '#4cc9f0'], ['#ffd60a', '#b58900', '#e63946']][tier];
+    var s = S('svg', { viewBox: '0 0 64 54', 'aria-hidden': 'true' });
+    S('path', { d: 'M6 24 Q6 6 32 6 Q58 6 58 24 Z', fill: col[0], stroke: col[1], 'stroke-width': 3, 'stroke-linejoin': 'round' }, s);
+    S('rect', { x: 6, y: 24, width: 52, height: 24, rx: 3, fill: col[0], stroke: col[1], 'stroke-width': 3 }, s);
+    [16, 48].forEach(function (x) { S('path', { d: 'M' + x + ' 9 L' + x + ' 48', stroke: col[1], 'stroke-width': 4 }, s); });
+    S('rect', { x: 26, y: 19, width: 12, height: 13, rx: 3, fill: col[2], stroke: col[1], 'stroke-width': 2.5 }, s);
+    return s;
+  }
+
   function drawBack(g, id, c) {
+    if (LOOT[id]) { drawLoot(g, id, c); return; }
     if (id === 'cape') {
       // плащ с волнистым подолом: расходится от плеч плавной дугой
       var cl = c.cx - c.rx - 24, cw = (c.rx + 24) * 2 / 4, top = c.cy - c.ry * 0.25, hem = c.base + 2;
@@ -507,6 +773,7 @@
     }
   }
   function drawNeck(g, id, c) {
+    if (LOOT[id]) { drawLoot(g, id, c); return; }
     var y = c.cy + c.ry * 0.02, hw = c.rx * 0.62, cx = c.cx, k;
     if (id === 'bandana') {
       S('path', { d: 'M' + (cx - hw) + ' ' + (y - 6) + ' Q' + cx + ' ' + (y + 8) + ' ' + (cx + hw) + ' ' + (y - 6) + ' L' + cx + ' ' + (y + 46) + ' Z', fill: '#e63946', stroke: '#a4161a', 'stroke-width': 3, 'stroke-linejoin': 'round' }, g);
@@ -548,6 +815,7 @@
     }
   }
   function drawHat(g, id, c) {
+    if (LOOT[id]) { drawLoot(g, id, c); return; }
     var cx = c.cx, y = c.cy - c.ry + 8, hw = c.rx * 0.36, k;
     if (id === 'bow') {
       var bx = cx + c.ex, by = c.ey - 30;
@@ -652,6 +920,7 @@
     }
   }
   function drawEyes(g, id, c) {
+    if (LOOT[id]) { drawLoot(g, id, c); return; }
     var cx = c.cx, y = c.ey, ex = c.ex;
     if (id === 'glasses') {
       [-1, 1].forEach(function (s) { S('circle', { cx: cx + s * ex, cy: y, r: 21, fill: 'none', stroke: '#22223b', 'stroke-width': 5 }, g); });
@@ -707,6 +976,7 @@
     if (shape === 'watermelon') {
       [[-0.3, 0.2], [0.28, 0.14], [0, 0.44], [-0.18, 0.62], [0.24, 0.6]].forEach(function (p) { S('ellipse', { cx: c.cx + c.rx * p[0], cy: c.cy + c.ry * p[1], rx: 3, ry: 5, fill: '#3b1f1f' }, g); });
     }
+    if (wear.suit) drawLoot(S('g', { 'clip-path': 'url(#' + id + ')' }, g), wear.suit, c);
     drawTop(g, o, c);
     [-1, 1].forEach(function (k) {
       S('circle', { cx: c.cx + k * c.ex, cy: c.ey, r: 26, fill: o.skin }, g);
@@ -800,11 +1070,11 @@
     kick: { a: 0.004, d: 0.17, rate: 0, depth: 0, f0: 520, f1: 190, ft: 0.1, q: 2, b0: 1.7, bt: 0.09, peak: 1 }
   };
   // Один квак: пилообразный тон на заданной ноте проходит через фильтр-«рот» и прерывается горловым дребезгом
-  function play(voice, f, t) {
+  function play(voice, f, t, vol) {
     if (!audio()) return;
     t = Math.max(t || 0, ac.currentTime);
     var p = CROAKS[voice] || CROAKS.croak, end = t + p.a + p.d + 0.06;
-    var g = env(t, p.a, p.d, p.peak);
+    var g = env(t, p.a, p.d, p.peak * (vol || 1));
     var rattle = ac.createGain();
     rattle.gain.value = 1 - p.depth;
     rattle.connect(g);
@@ -990,7 +1260,7 @@
   function refreshPet() {
     var me = state.me, st = stageOf(me.xp);
     var crack = st === 0 && me.xp >= STAGES[1][1] * 0.6;
-    var sig = [st, me.skin, me.wear.neck, me.wear.hat, me.wear.eyes, me.wear.back, crack].join('|');
+    var sig = [st, me.skin, me.wear.neck, me.wear.hat, me.wear.eyes, me.wear.suit, me.wear.back, crack].join('|');
     if (sig !== petSig) {
       petSig = sig;
       var btn = $('pet-btn'); btn.textContent = '';
@@ -1036,12 +1306,19 @@
     var n = document.createElement('p'); n.className = 'note'; n.textContent = 'Новые расцветки появляются, когда в пруду просыпаются новые лягушки.'; sec.appendChild(n);
     box.appendChild(sec);
 
-    SLOT_ORDER.forEach(function (slot) {
+    WARDROBE.forEach(function (slot) {
       var s = document.createElement('div'); s.className = 'slot';
       var hh = document.createElement('h2'); hh.textContent = SLOT_RU[slot]; s.appendChild(hh);
       var r = document.createElement('div'); r.className = 'chips';
       r.appendChild(chip('Ничего', '', !me.wear[slot], !canWear, function () { me.wear[slot] = ''; dirty = true; buildWardrobe(); refreshPet(); }));
-      POOLS[slot].forEach(function (id) {
+      LOOT_IDS.forEach(function (id) {
+        if (LOOT[id][0] !== slot) return;
+        var open = itemOpen(id), rare = RARITY[LOOT[id][2]];
+        var b = chip(LOOT[id][1], open ? rare[0] : 'из сундука · ' + rare[0].toLowerCase(), me.wear[slot] === id, !open || !canWear, function () { me.wear[slot] = id; dirty = true; buildWardrobe(); refreshPet(); });
+        b.style.borderColor = rare[1];
+        r.appendChild(b);
+      });
+      (POOLS[slot] || []).forEach(function (id) {
         var open = itemOpen(id), from = ITEM_FROM[id];
         var sub = open ? '' : (from ? FROGS[from.frog].name + ', ур. ' + from.lvl : '');
         if (!open && from && !state.frogs[from.frog].open) sub = 'лягушка №' + (from.frog + 1) + ', ур. ' + from.lvl;
@@ -1052,9 +1329,79 @@
     });
     if (!canWear) {
       var w = document.createElement('p'); w.className = 'note';
-      w.textContent = 'Гардероб откроется, когда питомец вырастет до лягушонка. Вещи открываются по уровням лягушек из пруда.';
+      w.textContent = 'Гардероб откроется, когда питомец вырастет до лягушонка. Вещи открываются по уровням лягушек из пруда и выпадают из сундуков.';
       box.insertBefore(w, box.firstChild);
     }
+  }
+
+  // ---------- инвентарь: сундуки за «Оборону болота» ----------
+
+  var dropText = '', dropColor = '';
+  function buildInv() {
+    var box = $('inv'), t = state.td, any = false;
+    box.textContent = '';
+    var h = document.createElement('h2'); h.textContent = 'Инвентарь'; box.appendChild(h);
+    CHESTS.forEach(function (ch, tier) {
+      if (t.chests[tier] < 1) return;
+      any = true;
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'chest'; b.id = 'chest-' + tier;
+      b.appendChild(drawChest(tier));
+      var s = document.createElement('span');
+      s.appendChild(document.createTextNode(ch[0] + ' × ' + t.chests[tier]));
+      var sm = document.createElement('small'); sm.textContent = 'Нажмите, чтобы открыть'; s.appendChild(sm);
+      b.appendChild(s);
+      b.addEventListener('click', function () { openChest(tier); });
+      box.appendChild(b);
+    });
+    if (!any) {
+      var n = document.createElement('p'); n.className = 'note';
+      n.textContent = 'Сундуков пока нет. Их дают за пройденные уровни в мини-игре «Оборона болота».';
+      box.appendChild(n);
+    }
+    var d = document.createElement('div'); d.className = 'drop'; d.id = 'inv-drop'; d.setAttribute('aria-live', 'polite');
+    d.textContent = dropText; d.style.color = dropColor;
+    box.appendChild(d);
+    var got = LOOT_IDS.filter(function (id) { return t.loot[id]; }).length;
+    var m = document.createElement('div'); m.className = 'meta'; m.textContent = 'Вещей из сундуков: ' + got + ' из ' + LOOT_IDS.length; box.appendChild(m);
+    var det = document.createElement('details'), sum = document.createElement('summary');
+    sum.textContent = 'Шансы выпадения'; det.appendChild(sum);
+    var tbl = document.createElement('table'); tbl.className = 'odds';
+    var tr = document.createElement('tr');
+    ['Редкость', 'Деревянный', 'Серебряный', 'Золотой'].forEach(function (x) { var th = document.createElement('th'); th.textContent = x; tr.appendChild(th); });
+    tbl.appendChild(tr);
+    RARITY.forEach(function (r, k) {
+      var row = document.createElement('tr'), c0 = document.createElement('td');
+      c0.textContent = r[0]; c0.style.color = r[1]; row.appendChild(c0);
+      CHESTS.forEach(function (ch) { var c = document.createElement('td'); c.textContent = String(ch[1][k]).replace('.', ',') + '%'; row.appendChild(c); });
+      tbl.appendChild(row);
+    });
+    det.appendChild(tbl);
+    var dn = document.createElement('p'); dn.className = 'note';
+    dn.textContent = 'Первая победа на уровнях 1–7 даёт деревянный сундук, 8–14 — серебряный, 15–20 — золотой; повторная победа — деревянный. Повторов не бывает: пока в выпавшей редкости есть несобранные вещи, выпадает новая, а потом вместо вещи дают корм.';
+    det.appendChild(dn);
+    box.appendChild(det);
+  }
+  function openChest(tier) {
+    var t = state.td;
+    if (t.chests[tier] < 1) return;
+    t.chests[tier] -= 1;
+    var roll = Math.random() * 100, acc = 0, r;
+    for (r = 0; r < 4; r++) { acc += CHESTS[tier][1][r]; if (roll < acc) break; }
+    var free = LOOT_IDS.filter(function (id) { return LOOT[id][2] === r && !t.loot[id]; });
+    dropColor = RARITY[r][1];
+    if (free.length) {
+      var id = free[Math.floor(Math.random() * free.length)];
+      t.loot[id] = 1;
+      dropText = 'Выпало: «' + LOOT[id][1] + '» — ' + RARITY[r][0].toLowerCase() + ' вещь! Она уже в гардеробе, раздел «' + SLOT_RU[LOOT[id][0]] + '».';
+    } else {
+      state.flies += CHEST_FLIES[r];
+      dropText = 'Все вещи редкости «' + RARITY[r][0].toLowerCase() + '» уже собраны, поэтому в сундуке ' + CHEST_FLIES[r] + ' корма.';
+    }
+    dirty = true; save();
+    if (audio()) [0, 2, 4, 7 + r].forEach(function (d, k) { play(r >= 3 ? 'choir' : 'pluck', freq(d + r, 2), ac.currentTime + k * 0.1); });
+    buildInv(); buildWardrobe(); refreshPet(); refreshHeader();
+    sparkle(r >= 2 ? 'star' : 'heart', RARITY[r][1]);
   }
   $('pet-feed').addEventListener('click', function () {
     if (state.flies < 1) return;
@@ -1135,17 +1482,30 @@
 
   // ---------- вкладки и кнопки ----------
 
-  var VIEWS = { pond: '#prud', mine: '#moya', jump: '#pryzhki' };
+  var VIEWS = { pond: '#prud', mine: '#moya', games: '#igry' }, GAMES = { jump: '#pryzhki', td: '#oborona' }, curView = 'pond', curGame = 'jump';
   function show(view) {
+    curView = view;
     Object.keys(VIEWS).forEach(function (v) {
       $('view-' + v).hidden = v !== view;
       $('tab-' + v).setAttribute('aria-selected', v === view ? 'true' : 'false');
     });
-    if (view === 'mine') { mineBuilt = true; $('pet-name').value = state.me.name; buildWardrobe(); refreshPet(); }
-    if (view === 'jump') openJump(); else pauseJump();
-    try { history.replaceState(null, '', VIEWS[view]); } catch (e) { /* адрес не меняется, вкладки работают */ }
+    if (view === 'mine') { mineBuilt = true; $('pet-name').value = state.me.name; buildWardrobe(); buildInv(); refreshPet(); }
+    showGame(curGame);
+  }
+  // на вкладке «Мини-игры» открыта одна игра; вторая и обе при уходе с вкладки встают на паузу
+  function showGame(game) {
+    curGame = game;
+    var on = curView === 'games';
+    Object.keys(GAMES).forEach(function (v) {
+      $('pane-' + v).hidden = v !== game;
+      $('game-' + v).setAttribute('aria-selected', v === game ? 'true' : 'false');
+    });
+    if (on && game === 'jump') openJump(); else pauseJump();
+    if (on && game === 'td') tdOpen(); else tdPause();
+    try { history.replaceState(null, '', on ? GAMES[game] : VIEWS[curView]); } catch (e) { /* адрес не меняется, вкладки работают */ }
   }
   Object.keys(VIEWS).forEach(function (v) { $('tab-' + v).addEventListener('click', function () { show(v); }); });
+  Object.keys(GAMES).forEach(function (v) { $('game-' + v).addEventListener('click', function () { showGame(v); }); });
 
   // ---------- мини-игра «Прыжки» ----------
 
@@ -1438,7 +1798,7 @@
   }
   window.addEventListener('keydown', function (ev) { key(ev, true); });
   window.addEventListener('keyup', function (ev) { key(ev, false); });
-  document.addEventListener('visibilitychange', function () { if (document.hidden) pauseJump(); });
+  document.addEventListener('visibilitychange', function () { if (document.hidden) { pauseJump(); tdPause(); } });
   $('btn-stop').addEventListener('click', function () {
     state.frogs.forEach(function (x) { x.auto = false; });
     FROGS.forEach(refreshCard);
@@ -1463,16 +1823,870 @@
     if (!resetArmed) { resetArmed = true; this.textContent = 'Точно стереть весь прогресс? Нажмите ещё раз'; return; }
     resetArmed = false; this.textContent = 'Начать игру заново';
     state = fresh(); dirty = true; save();
-    petSig = ''; petStage = -1; lastReady = -2;
+    petSig = ''; petStage = -1; lastReady = -2; dropText = ''; tdShowMap();
     syncTransport();
     FROGS.forEach(function (f) { paintFrog(f); refreshCard(f); });
     refreshHeader(); show('mine');
   });
 
+  // ---------- оборона болота: правила ----------
+
+  var TD_COLS = 16, TD_ROWS = 10, TD_CELL = 50, TD_WAVES = 25, TD_LIVES = 20;
+  // здоровье стрекоз растёт в TD_HP_W раз за волну и в TD_HP_L раз за уровень, добыча — в TD_GOLD_W и TD_GOLD_L; уровень стрекоз в подписи: волна + TD_LVL_STEP за каждый пройденный уровень
+  var TD_HP_W = 1.16, TD_HP_L = 1.29, TD_GOLD_W = 1.095, TD_GOLD_L = 1.2, TD_LVL_STEP = 2, TD_WAVE_GOLD = 27, TD_START_GOLD = 100;
+  // множители силы: уровень лягушки в пруду, звёзды улучшения в бою; цена звезды — доля цены самой лягушки
+  var TD_POND = [1, 1.25, 1.55, 1.9, 2.4], TD_STAR = [1, 1.9, 3.4], TD_STAR_RANGE = [1, 1.08, 1.16], TD_STAR_COST = [0, 0.9, 1.6];
+  // приём зависит от голоса лягушки. pen — доля урона, которая проходит сквозь панцирь
+  var TD_CLASS = {
+    croak: { ru: 'Язык', cost: 1, dmg: 1, rate: 1, range: 2.4, pen: 0.7, info: 'Бьёт языком ту стрекозу, что ближе всех к озеру.' },
+    pluck: { ru: 'Скорострел', cost: 1, dmg: 0.42, rate: 3.2, range: 2.2, pen: 0.4, info: 'Плюётся каплями очень часто, но панцирь пробивает плохо.' },
+    bass: { ru: 'Грязевая бомба', cost: 1.25, dmg: 1.3, rate: 0.55, range: 2.7, pen: 0.7, splash: 1.05, info: 'Кидает ком грязи: достаётся всем стрекозам рядом со взрывом.' },
+    tok: { ru: 'Снайпер', cost: 1.3, dmg: 5.5, rate: 0.3, range: 4.8, pen: 1, info: 'Редко, далеко и очень больно. Целится в самую живучую стрекозу, панцирь не помеха.' },
+    chirp: { ru: 'Магия', cost: 1.3, dmg: 0.75, rate: 0.85, range: 2.5, pen: 1, chain: 3, info: 'Молния перескакивает со стрекозы на стрекозу и не замечает панцирь.' },
+    choir: { ru: 'Мороз', cost: 1.2, dmg: 0.3, rate: 0.9, range: 2, pen: 0.6, slow: [0.7, 0.62, 0.55], info: 'Поёт так, что все стрекозы вокруг мёрзнут и летят медленнее.' },
+    kick: { ru: 'Яд', cost: 1.15, dmg: 0.2, rate: 1, range: 2.4, pen: 1, poison: 0.5, info: 'Отравляет: стрекоза теряет здоровье ещё четыре секунды. Выбирает неотравленных.' }
+  };
+  // виды стрекоз: доля здоровья, скорость и особенности; cap — наибольшая доля вида в волне
+  var TD_KIND = {
+    basic: { ru: 'стрекозы', hp: 1, sp: 1 },
+    fast: { ru: 'шустрики', hp: 0.6, sp: 1.7 },
+    fat: { ru: 'толстобрюхи', hp: 3.2, sp: 0.62, cap: 0.3 },
+    armor: { ru: 'панцирники', hp: 1.6, sp: 0.85, armor: 1, cap: 0.5 },
+    swarm: { ru: 'мошкара', hp: 0.35, sp: 1.25 },
+    healer: { ru: 'лекари', hp: 1.5, sp: 0.9, heal: 1, cap: 0.12 },
+    ghost: { ru: 'призраки', hp: 1.1, sp: 1.15, ghost: 1, cap: 0.5 },
+    boss: { ru: 'матка', hp: 1, sp: 0.5, boss: 1 }
+  };
+  // уровни: название и повороты тропы по клеткам поля 16×10; первая точка — у края, последняя — озеро
+  var TD_LEVELS = [
+    ['Тихая заводь', [[0, 2], [12, 2], [12, 5], [3, 5], [3, 8], [14, 8]]],
+    ['Ромашковый берег', [[0, 7], [4, 7], [4, 2], [9, 2], [9, 7], [13, 7], [13, 3]]],
+    ['Камышовая протока', [[2, 0], [2, 7], [6, 7], [6, 2], [10, 2], [10, 7], [14, 7], [14, 4]]],
+    ['Кувшинковый омут', [[0, 1], [14, 1], [14, 8], [2, 8], [2, 4], [10, 4], [10, 6], [6, 6]]],
+    ['Ивовая роща', [[0, 5], [3, 5], [3, 1], [6, 1], [6, 8], [9, 8], [9, 1], [12, 1], [12, 8], [14, 8]]],
+    ['Клюквенная топь', [[15, 1], [11, 1], [11, 4], [4, 4], [4, 1], [1, 1], [1, 8], [13, 8], [13, 6]]],
+    ['Грибная низина', [[7, 0], [7, 3], [2, 3], [2, 7], [12, 7], [12, 2], [14, 2]]],
+    ['Туманная трясина', [[0, 8], [5, 8], [5, 5], [1, 5], [1, 1], [9, 1], [9, 5], [13, 5], [13, 8], [10, 8]]],
+    ['Торфяники', [[0, 1], [5, 1], [5, 4], [2, 4], [2, 8], [8, 8], [8, 3], [11, 3], [11, 7], [14, 7], [14, 1]]],
+    ['Осенняя старица', [[15, 8], [10, 8], [10, 5], [13, 5], [13, 1], [6, 1], [6, 6], [3, 6], [3, 2], [1, 2]]],
+    ['Дождливая пойма', [[8, 9], [8, 6], [14, 6], [14, 1], [1, 1], [1, 6], [5, 6], [5, 3], [10, 3]]],
+    ['Змеиная гать', [[0, 1], [14, 1], [14, 3], [1, 3], [1, 5], [14, 5], [14, 7], [2, 7]]],
+    ['Мангровые корни', [[0, 4], [4, 4], [4, 1], [8, 1], [8, 8], [12, 8], [12, 3], [14, 3]]],
+    ['Сиреневые сумерки', [[3, 9], [3, 5], [7, 5], [7, 8], [12, 8], [12, 5], [10, 5], [10, 2], [2, 2]]],
+    ['Светлячковая ночь', [[0, 1], [3, 1], [3, 3], [6, 3], [6, 5], [9, 5], [9, 7], [13, 7], [13, 2], [10, 2]]],
+    ['Лунный омут', [[15, 1], [1, 1], [1, 8], [13, 8], [13, 3], [4, 3], [4, 6], [10, 6], [10, 5]]],
+    ['Ледяная полынья', [[0, 5], [2, 5], [2, 2], [5, 2], [5, 7], [8, 7], [8, 2], [11, 2], [11, 7], [14, 7], [14, 4]]],
+    ['Ядовитая топь', [[15, 5], [12, 5], [12, 8], [7, 8], [7, 1], [3, 1], [3, 5], [1, 5], [1, 8], [4, 8]]],
+    ['Сердце чащи', [[6, 0], [6, 2], [1, 2], [1, 7], [4, 7], [4, 4], [9, 4], [9, 8], [14, 8], [14, 2], [11, 2], [11, 6]]],
+    ['Чёрное болото', [[0, 1], [2, 1], [2, 8], [5, 8], [5, 1], [8, 1], [8, 8], [11, 8], [11, 1], [14, 1], [14, 6]]]
+  ];
+  var td = null;
+
+  function tdRng(seed) {
+    var a = seed >>> 0;
+    return function () {
+      a = (a + 0x6D2B79F5) >>> 0;
+      var t = Math.imul(a ^ (a >>> 15), 1 | a);
+      t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t;
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function tdFrogLvl(i) { var st = state.frogs[i]; return st.open ? levelOf(st.n) : 0; }
+  function tdCost(i) { return Math.round(40 * Math.pow(1.17, i) * TD_CLASS[FROGS[i].voice].cost / 5) * 5; }
+  function tdStat(i, stars) {
+    var c = TD_CLASS[FROGS[i].voice], p = Math.pow(1.2, i) * TD_POND[Math.max(1, tdFrogLvl(i)) - 1] * TD_STAR[stars - 1];
+    return {
+      dmg: c.dmg * p, rate: c.rate, range: c.range * TD_STAR_RANGE[stars - 1] * TD_CELL, pen: c.pen, poison: (c.poison || 0) * p,
+      slow: c.slow ? c.slow[stars - 1] : 1, chain: c.chain ? c.chain + stars - 1 : 0, splash: c.splash ? (c.splash + (stars - 1) * 0.1) * TD_CELL : 0
+    };
+  }
+  // состав волны: всегда один и тот же для своего уровня и номера. Здоровье делится между видами так,
+  // чтобы вся волна весила как столько же обычных стрекоз своего уровня; у стрекозы 1-го уровня ровно 1 здоровья
+  function tdWave(L, w) {
+    var rnd = tdRng(L * 7919 + w * 104729), ml = w + TD_LVL_STEP * (L - 1), u = (L - 1) * TD_WAVES + w;
+    var full = 30 + Math.round((L - 1) * 20 / 19) + Math.round((rnd() - 0.5) * 6), boss = w % 5 === 0, n = boss ? Math.round(full * 0.6) : full;
+    var pool = [], share = {}, rest = 1, k1, k2, s;
+    if (u >= 4) pool.push('fast');
+    if (u >= 8) pool.push('fat');
+    if (u >= 13) pool.push('armor');
+    if (u >= 17) pool.push('swarm');
+    if (L >= 3) pool.push('healer');
+    if (L >= 5) pool.push('ghost');
+    if (pool.length && rnd() > 0.12) {
+      k1 = pool[Math.floor(rnd() * pool.length)];
+      s = Math.min(TD_KIND[k1].cap || 1, 0.3 + rnd() * 0.4); share[k1] = s; rest -= s;
+      k2 = pool[Math.floor(rnd() * pool.length)];
+      if (k2 !== k1 && rnd() < 0.6) { s = Math.min(TD_KIND[k2].cap || 1, rest * (0.3 + rnd() * 0.4)); share[k2] = s; rest -= s; }
+    }
+    share.basic = rest;
+    var kinds = Object.keys(share), left = {}, sum = 0;
+    kinds.forEach(function (k) { left[k] = k === 'basic' ? 0 : Math.round(n * share[k]); sum += left[k]; });
+    left.basic = Math.max(0, n - sum);
+    kinds = kinds.filter(function (k) { return left[k] > 0; });
+    // стрекозы летят пачками по видам
+    var order = [], more = true;
+    while (more) {
+      more = false;
+      kinds.forEach(function (k) {
+        var clump = Math.min(left[k], 4 + Math.floor(rnd() * 4));
+        for (var j = 0; j < clump; j++) order.push(k);
+        left[k] -= clump;
+        if (left[k] > 0) more = true;
+      });
+    }
+    var base = Math.pow(TD_HP_W, w - 1) * Math.pow(TD_HP_L, L - 1), mul = 0, list = [], at = 1, gap = (20 + order.length * 0.2) / order.length, total = 0;
+    order.forEach(function (k) { mul += TD_KIND[k].hp; });
+    order.forEach(function (k, idx) {
+      list.push({ k: k, hp: Math.max(1, Math.round(base * TD_KIND[k].hp * order.length / mul)), at: at });
+      at += gap * (k === 'swarm' ? 0.6 : k === 'fat' ? 1.3 : 1);
+      if (boss && idx === Math.floor(order.length / 2)) { list.push({ k: 'boss', hp: Math.max(10, Math.round(base * full * (0.45 + w / 70))), at: at }); at += gap * 3; }
+    });
+    list.forEach(function (q) { total += q.hp; });
+    var gold = TD_WAVE_GOLD * Math.pow(TD_GOLD_W, w - 1) * Math.pow(TD_GOLD_L, L - 1);
+    list.forEach(function (q) { q.gold = gold * q.hp / total; });
+    return { ml: ml, list: list, boss: boss, kinds: kinds };
+  }
+  function tdNew(L) {
+    var def = TD_LEVELS[L - 1][1], grid = [], pts = [], seg = [], total = 0, c, r, k;
+    for (r = 0; r < TD_ROWS; r++) { grid.push([]); for (c = 0; c < TD_COLS; c++) grid[r].push(0); }
+    // стрекозы влетают из-за края поля
+    var a = def[0], out = [a[0], a[1]];
+    if (a[0] === 0) out[0] = -1; else if (a[0] === TD_COLS - 1) out[0] = TD_COLS; else if (a[1] === 0) out[1] = -1; else out[1] = TD_ROWS;
+    [out].concat(def).forEach(function (p) { pts.push({ x: (p[0] + 0.5) * TD_CELL, y: (p[1] + 0.5) * TD_CELL }); });
+    for (k = 1; k < pts.length; k++) {
+      var dx = pts[k].x - pts[k - 1].x, dy = pts[k].y - pts[k - 1].y, len = Math.abs(dx) + Math.abs(dy);
+      seg.push({ x: pts[k - 1].x, y: pts[k - 1].y, ux: dx / len, uy: dy / len, len: len, start: total, end: total + len });
+      total += len;
+    }
+    for (k = 1; k < def.length; k++) {
+      c = def[k - 1][0]; r = def[k - 1][1];
+      while (c !== def[k][0] || r !== def[k][1]) { grid[r][c] = 1; c += Math.sign(def[k][0] - c); r += Math.sign(def[k][1] - r); }
+    }
+    // озеро занимает клетки вокруг конца тропы, там сажать нельзя
+    var e = def[def.length - 1];
+    for (r = e[1] - 1; r <= e[1] + 1; r++) for (c = e[0] - 1; c <= e[0] + 1; c++) if (r >= 0 && r < TD_ROWS && c >= 0 && c < TD_COLS && !grid[r][c]) grid[r][c] = 2;
+    grid[e[1]][e[0]] = 2;
+    td = {
+      L: L, pts: pts, seg: seg, len: total, grid: grid, end: pts[pts.length - 1], towers: [], mobs: [], shots: [], fx: [],
+      gold: Math.round(TD_START_GOLD * Math.pow(TD_GOLD_L, L - 1)), lives: TD_LIVES, wave: 0, queue: [], qi: 0, wt: 0, active: false, t: 0, over: '', born: 0
+    };
+  }
+  function tdAt(m) {
+    var s = td.seg, k = 0;
+    while (k < s.length - 1 && m.d > s[k].end) k++;
+    var g = s[k], f = Math.max(0, Math.min(g.len, m.d - g.start));
+    m.x = g.x + g.ux * f; m.y = g.y + g.uy * f;
+    if (g.ux) m.dir = g.ux;
+  }
+  function tdTowerAt(cx, cy) { for (var k = 0; k < td.towers.length; k++) if (td.towers[k].cx === cx && td.towers[k].cy === cy) return td.towers[k]; return null; }
+  function tdCanBuild(cx, cy) { return cx >= 0 && cy >= 0 && cx < TD_COLS && cy < TD_ROWS && td.grid[cy][cx] === 0 && !tdTowerAt(cx, cy); }
+  function tdPlace(i, cx, cy) {
+    var cost = tdCost(i);
+    if (!tdFrogLvl(i) || !tdCanBuild(cx, cy) || td.gold < cost) return null;
+    td.gold -= cost;
+    var t = { i: i, cls: FROGS[i].voice, cx: cx, cy: cy, x: (cx + 0.5) * TD_CELL, y: (cy + 0.5) * TD_CELL, stars: 1, lvl: tdFrogLvl(i), s: tdStat(i, 1), cd: 0.2, hop: 0, spent: cost };
+    td.towers.push(t);
+    td.towers.sort(function (p, q) { return p.y - q.y; });
+    return t;
+  }
+  function tdUpCost(t) { return t.stars >= 3 ? 0 : Math.round(tdCost(t.i) * TD_STAR_COST[t.stars] / 5) * 5; }
+  function tdUpgrade(t) {
+    var c = tdUpCost(t);
+    if (!c || td.gold < c) return false;
+    td.gold -= c; t.spent += c; t.stars += 1; t.s = tdStat(t.i, t.stars);
+    return true;
+  }
+  function tdSell(t) {
+    var k = td.towers.indexOf(t);
+    if (k < 0) return;
+    td.towers.splice(k, 1);
+    td.gold += Math.floor(t.spent * 0.7);
+  }
+  function tdStartWave() {
+    if (!td || td.over || td.wave >= TD_WAVES || (td.active && td.qi < td.queue.length)) return false;
+    td.wave += 1;
+    // на длинной тропе лягушки успевают больше, поэтому здоровье слегка подстроено под длину тропы
+    var w = tdWave(td.L, td.wave), lf = Math.sqrt(td.len / (40 * TD_CELL)), tier = Math.min(7, Math.floor((w.ml - 1) / 8));
+    w.list.forEach(function (q) { q.hp = Math.max(1, Math.round(q.hp * lf)); q.tier = tier; });
+    td.queue = w.list; td.qi = 0; td.wt = 0; td.active = true;
+    tdEvent('wave');
+    return true;
+  }
+  function tdSpawn(q) {
+    var kd = TD_KIND[q.k];
+    var m = { k: q.k, hp: q.hp, max: q.hp, gold: q.gold, tier: q.tier, d: 0, x: 0, y: 0, dir: 1, sp: kd.sp * 1.15 * TD_CELL, armor: !!kd.armor, ghost: !!kd.ghost, heal: !!kd.heal, boss: !!kd.boss, lives: kd.boss ? 5 : 1, st: 0, sf: 1, pt: 0, pd: 0, ht: 2, ph: (td.born++) * 1.7, dead: false };
+    tdAt(m);
+    td.mobs.push(m);
+  }
+  function tdHurt(m, dmg, pen) {
+    if (m.dead) return;
+    if (m.armor && pen < 1) dmg *= pen;
+    m.hp -= dmg;
+    if (m.hp > 0) return;
+    m.dead = true;
+    td.gold += m.gold;
+    td.fx.push({ type: 'pop', x: m.x, y: m.y, t: 0, dur: m.boss ? 0.7 : 0.32, big: m.boss });
+    if (m.boss) tdEvent('boss');
+  }
+  // выстрел лягушки; возвращает false, если бить некого
+  function tdFire(t) {
+    var s = t.s, r2 = s.range * s.range, list = td.mobs, best = null, bv = -1, k, m, v, dx, dy, any = false;
+    if (t.cls === 'choir') {
+      for (k = 0; k < list.length; k++) {
+        m = list[k]; dx = m.x - t.x; dy = m.y - t.y;
+        if (m.dead || dx * dx + dy * dy > r2) continue;
+        any = true;
+        tdHurt(m, s.dmg, s.pen);
+        if (m.ghost) continue;
+        v = m.boss ? 1 - (1 - s.slow) * 0.5 : s.slow;
+        m.sf = m.st > 0 ? Math.min(m.sf, v) : v;
+        m.st = 1.6;
+      }
+      if (any) td.fx.push({ type: 'ring', x: t.x, y: t.y, r: s.range, t: 0, dur: 0.45 });
+      return any;
+    }
+    for (k = 0; k < list.length; k++) {
+      m = list[k]; dx = m.x - t.x; dy = m.y - t.y;
+      if (m.dead || dx * dx + dy * dy > r2) continue;
+      v = t.cls === 'tok' ? m.hp : t.cls === 'kick' ? (m.pt > 0.6 ? 0 : 1e6) + m.d : m.d;
+      if (v > bv) { bv = v; best = m; }
+    }
+    if (!best) return false;
+    if (t.cls === 'croak' || t.cls === 'tok') {
+      td.fx.push({ type: t.cls === 'tok' ? 'beam' : 'tongue', x: t.x, y: t.y - 12, x2: best.x, y2: best.y, t: 0, dur: t.cls === 'tok' ? 0.22 : 0.14 });
+      tdHurt(best, s.dmg, s.pen);
+    } else if (t.cls === 'pluck') {
+      td.shots.push({ type: 'drop', x: t.x, y: t.y - 12, tx: best.x, ty: best.y, m: best, dmg: s.dmg, pen: s.pen, v: 620 });
+    } else if (t.cls === 'kick') {
+      td.shots.push({ type: 'spit', x: t.x, y: t.y - 12, tx: best.x, ty: best.y, m: best, dmg: s.dmg, pen: s.pen, pd: s.poison, v: 460 });
+    } else if (t.cls === 'bass') {
+      dx = best.x - t.x; dy = best.y - t.y;
+      td.shots.push({ type: 'bomb', x: t.x, y: t.y - 12, tx: best.x, ty: best.y, m: null, dmg: s.dmg, pen: s.pen, r: s.splash, v: 330, far: Math.sqrt(dx * dx + dy * dy) || 1 });
+    } else {
+      // молния: с каждой следующей стрекозой слабеет на четверть
+      var hit = [best], cur = best, dmg = s.dmg, n, nx, nd, d2, line = [t.x, t.y - 12, best.x, best.y];
+      tdHurt(best, dmg, 1);
+      for (n = 1; n < s.chain; n++) {
+        nx = null; nd = 85 * 85;
+        for (k = 0; k < list.length; k++) {
+          m = list[k];
+          if (m.dead || hit.indexOf(m) >= 0) continue;
+          dx = m.x - cur.x; dy = m.y - cur.y; d2 = dx * dx + dy * dy;
+          if (d2 < nd) { nd = d2; nx = m; }
+        }
+        if (!nx) break;
+        dmg *= 0.75;
+        line.push(nx.x, nx.y);
+        tdHurt(nx, dmg, 1);
+        hit.push(nx); cur = nx;
+      }
+      td.fx.push({ type: 'bolt', line: line, t: 0, dur: 0.2 });
+    }
+    return true;
+  }
+  function tdStep(dt) {
+    var list = td.mobs, k, j, m, o, t, s, f, dx, dy, dist, mv;
+    td.t += dt;
+    if (td.active) { td.wt += dt; while (td.qi < td.queue.length && td.queue[td.qi].at <= td.wt) tdSpawn(td.queue[td.qi++]); }
+    for (k = 0; k < list.length; k++) {
+      m = list[k];
+      if (m.dead) continue;
+      if (m.pt > 0) { m.pt -= dt; tdHurt(m, m.pd * dt, 1); if (m.dead) continue; }
+      f = 1;
+      if (m.st > 0) { m.st -= dt; f = m.sf; }
+      if (m.heal) {
+        m.ht -= dt;
+        if (m.ht <= 0) {
+          m.ht = 2.5;
+          for (j = 0; j < list.length; j++) {
+            o = list[j]; dx = o.x - m.x; dy = o.y - m.y;
+            if (!o.dead && o !== m && o.hp < o.max && dx * dx + dy * dy < 6400) o.hp = Math.min(o.max, o.hp + o.max * 0.08);
+          }
+          td.fx.push({ type: 'heal', x: m.x, y: m.y, t: 0, dur: 0.5 });
+        }
+      }
+      m.d += m.sp * f * dt;
+      if (m.d >= td.len - 40) {
+        m.dead = true;
+        td.lives -= m.lives;
+        td.fx.push({ type: 'splash', x: m.x, y: m.y, t: 0, dur: 0.5 });
+        tdEvent('leak');
+        continue;
+      }
+      tdAt(m);
+    }
+    for (k = 0; k < td.towers.length; k++) {
+      t = td.towers[k];
+      t.cd -= dt;
+      if (t.hop > 0) t.hop -= dt;
+      if (t.cd > 0) continue;
+      if (list.length && tdFire(t)) { t.cd += 1 / t.s.rate; t.hop = 0.16; tdEvent('shot', t.i); } else t.cd = 0.06;
+    }
+    for (k = td.shots.length - 1; k >= 0; k--) {
+      s = td.shots[k];
+      if (s.m && !s.m.dead) { s.tx = s.m.x; s.ty = s.m.y; }
+      dx = s.tx - s.x; dy = s.ty - s.y; dist = Math.sqrt(dx * dx + dy * dy); mv = s.v * dt;
+      if (dist > mv) { s.x += dx / dist * mv; s.y += dy / dist * mv; continue; }
+      td.shots.splice(k, 1);
+      if (s.type === 'bomb') {
+        for (j = 0; j < list.length; j++) { o = list[j]; dx = o.x - s.tx; dy = o.y - s.ty; if (!o.dead && dx * dx + dy * dy <= s.r * s.r) tdHurt(o, s.dmg, s.pen); }
+        td.fx.push({ type: 'boom', x: s.tx, y: s.ty, r: s.r, t: 0, dur: 0.3 });
+      } else if (s.m && !s.m.dead) {
+        tdHurt(s.m, s.dmg, s.pen);
+        if (s.pd && !s.m.dead) { if (s.pd > s.m.pd || s.m.pt <= 0) s.m.pd = s.pd; s.m.pt = 4; }
+      }
+    }
+    for (k = td.fx.length - 1; k >= 0; k--) { td.fx[k].t += dt; if (td.fx[k].t >= td.fx[k].dur) td.fx.splice(k, 1); }
+    for (k = list.length - 1; k >= 0; k--) if (list[k].dead) list.splice(k, 1);
+    if (td.lives <= 0) { td.lives = 0; td.over = 'lose'; return; }
+    if (td.active && td.qi >= td.queue.length && !list.length) {
+      td.active = false;
+      tdEvent('clear');
+      if (td.wave >= TD_WAVES) td.over = 'win';
+    }
+  }
+
+  // ---------- оборона болота: оформление уровней ----------
+
+  // у каждого уровня свой вид: земля сверху и снизу, тропа, её край, вода, две краски кроны, цветы, порода деревьев, погода, тёмное ли поле,
+  // и сколько чего растёт: деревья, кувшинки, цветы, камыш, грибы, камни
+  var TD_THEMES = [
+    ['#93d27c', '#72b866', '#dcc590', '#a9925e', '#7cc7d6', '#4aa655', '#2f7d3c', ['#ffffff', '#ffd93b'], 'round', '', 0, [3, 3, 4, 2, 0, 1]],
+    ['#a8dc7a', '#86c560', '#e6d3a1', '#b39b63', '#8fd3e0', '#58b05a', '#3b8a44', ['#ffffff', '#fff3b0', '#ffd6e4'], 'round', '', 0, [2, 1, 9, 1, 0, 1]],
+    ['#84c796', '#60aa7a', '#d1b983', '#9b834f', '#6fc0cf', '#5aa66a', '#3d8751', ['#ffe066', '#ffffff'], 'willow', '', 0, [2, 2, 1, 9, 0, 1]],
+    ['#70c9b4', '#4fa995', '#dccda3', '#a3946a', '#5bb8d0', '#3f9a6a', '#2c7a54', ['#ffb3d1', '#ffffff'], 'round', '', 0, [1, 10, 2, 2, 0, 0]],
+    ['#a2d06a', '#7fb646', '#c4ad75', '#8f7845', '#7fcbd0', '#8fbf4a', '#6a9a2f', ['#ffffff', '#c8f08f'], 'willow', '', 0, [9, 2, 2, 1, 0, 1]],
+    ['#8fad68', '#70924f', '#ae9467', '#7a6238', '#7ab8b0', '#5f8a45', '#466e33', ['#d00000', '#e63946', '#ff8fa3'], 'round', 'fog', 0, [2, 2, 8, 1, 1, 2]],
+    ['#82a86e', '#628d58', '#b8a078', '#836c46', '#74b7b0', '#3f7a48', '#2d5f38', ['#ffd670', '#ffffff'], 'round', 'spores', 0, [3, 1, 1, 1, 9, 1]],
+    ['#93ab9e', '#738e82', '#a89f84', '#766e56', '#8fb5b3', '#6f8f80', '#557265', ['#e9eef2', '#cfe8ff'], 'dead', 'fog', 0, [4, 3, 1, 3, 1, 3]],
+    ['#a09564', '#82784b', '#6f5a3a', '#4b3b23', '#7fa7a0', '#7a7a3e', '#5c5c2c', ['#ffd60a', '#f4a261'], 'dead', '', 0, [3, 1, 2, 2, 2, 7]],
+    ['#cdb85b', '#b29841', '#a57d4c', '#73532c', '#7dbac4', '#e8842c', '#c4501b', ['#ffb703', '#fb5607', '#ffffff'], 'round', 'leaves', 0, [7, 1, 3, 1, 2, 1]],
+    ['#72a88f', '#578d76', '#91886b', '#655d45', '#6aa9c4', '#4f9477', '#39775d', ['#bde0fe', '#ffffff'], 'willow', 'rain', 0, [4, 5, 1, 4, 0, 1]],
+    ['#7cb46c', '#5d9853', '#b58e5e', '#70502c', '#72c2c9', '#4f9a4e', '#377a3b', ['#ffe066', '#ff8fa3'], 'round', '', 0, [2, 3, 2, 8, 0, 2]],
+    ['#62b292', '#419479', '#cdbd93', '#96865c', '#4fb0c6', '#2f8a68', '#1f6b50', ['#ff9f1c', '#ffffff'], 'round', '', 0, [6, 7, 1, 2, 0, 1]],
+    ['#9494cc', '#7676b4', '#cdbada', '#9079a5', '#8fb8e6', '#8a6cb8', '#64459a', ['#f08ab5', '#ffd6e4', '#ffffff'], 'round', 'fireflies', 0, [4, 3, 6, 1, 1, 1]],
+    ['#34655a', '#264f46', '#73856f', '#3f5247', '#3f8ea0', '#2a6350', '#1c4a3a', ['#d6ff78', '#ffffff'], 'pine', 'fireflies', 1, [6, 3, 2, 3, 1, 1]],
+    ['#2c4b68', '#1d3550', '#8394ac', '#475871', '#5d9fd6', '#2f5580', '#1d3a5f', ['#cfe8ff', '#ffffff'], 'willow', 'stars', 1, [3, 8, 2, 2, 0, 2]],
+    ['#dbeef4', '#bcdde8', '#a3bccb', '#7190a4', '#8fd3e8', '#4a8f7c', '#35705f', ['#ffffff', '#bde0fe'], 'pine', 'snow', 0, [7, 1, 0, 1, 0, 6]],
+    ['#7e9e3c', '#62822c', '#615743', '#3c3528', '#b6e34a', '#5a6f2a', '#43551d', ['#b5179e', '#c77dff'], 'dead', 'spores', 0, [3, 4, 2, 1, 8, 1]],
+    ['#44834a', '#30693a', '#8e7853', '#5a4a30', '#5aa9a8', '#2d6e3c', '#1e5229', ['#ffffff', '#ffd93b'], 'pine', 'fog', 0, [10, 1, 1, 1, 3, 1]],
+    ['#3e3856', '#2c2744', '#71637e', '#413553', '#6a4c9c', '#2a2440', '#1d1a2e', ['#ff595e', '#f72585'], 'dead', 'embers', 1, [5, 2, 3, 1, 3, 4]]
+  ];
+  var TD_DECOR = ['tree', 'lily', 'flower', 'reed', 'shroom', 'rock'];
+  // вид стрекоз: кожа, пузо, узор, полуширина и полувысота тела — те же краски и формы, по которым различаются лягушки
+  var TD_LOOK = {
+    basic: ['#3aa7c9', '#d6f1f7', '#1f7391', 15, 13], fast: ['#f6c744', '#fff3c4', '#c98f00', 12, 13], fat: ['#d9534f', '#ffd9d6', '#8f2622', 20, 16], armor: ['#8d99ae', '#dfe6ee', '#4a5568', 17, 14],
+    swarm: ['#a06cd5', '#eadcf8', '#6b3fa0', 10, 9], healer: ['#f08ab5', '#ffe3ee', '#c2557a', 15, 13], ghost: ['#dfe9f2', '#ffffff', '#9fb3c8', 15, 14], boss: ['#2b2d42', '#8d99ae', '#f5c518', 30, 25]
+  };
+  var TD_W = TD_COLS * TD_CELL, TD_H = TD_ROWS * TD_CELL;
+  var tdCv = $('td-cv'), tg = tdCv.getContext('2d'), tdBg = document.createElement('canvas'), tdDpr = Math.min(2, window.devicePixelRatio || 1);
+  var tdPlaying = false, tdRaf = 0, tdLast = 0, tdSpeed = 1, tdAuto = false, tdAutoT = 0, tdPick = -1, tdSel = null, tdHover = null;
+  var tdNote = '', tdNoteT = 0, tdVeil = '', tdSig = '', tdInfoSig = '', tdShop = [], tdDecor = [], tdFrogImg = {}, tdBugImg = {}, tdNext = null, tdShotAt = 0, tdBackArmed = false;
+  tdCv.width = tdBg.width = TD_W * tdDpr; tdCv.height = tdBg.height = TD_H * tdDpr;
+  tg.setTransform(tdDpr, 0, 0, tdDpr, 0, 0);
+
+  function tdOval(b, x, y, rx, ry, rot) { b.beginPath(); b.ellipse(x, y, rx, ry, rot || 0, 0, Math.PI * 2); }
+  function tdDot(b, x, y, r) { b.beginPath(); b.arc(x, y, r, 0, Math.PI * 2); b.fill(); }
+  // лягушка на поле — та же картинка, что в пруду, с вещами по её уровню
+  function tdFrogSprite(i) {
+    var lvl = tdFrogLvl(i), key = i + ':' + lvl;
+    if (tdFrogImg[key]) return tdFrogImg[key].ok ? tdFrogImg[key].img : null;
+    var f = FROGS[i], s = drawFrog({ skin: f.skin, belly: f.belly, mark: f.mark, pattern: f.pattern, shape: f.shape, rx: f.rx, ry: f.ry, wear: wearOf(f, lvl) });
+    ['.pad', '.sac'].forEach(function (q) { var e = s.querySelector(q); if (e) e.parentNode.removeChild(e); });
+    s.setAttribute('xmlns', NS); s.setAttribute('width', '300'); s.setAttribute('height', '310');
+    var rec = { img: new Image(), ok: false };
+    rec.img.onload = function () { rec.ok = true; };
+    rec.img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(new XMLSerializer().serializeToString(s));
+    tdFrogImg[key] = rec;
+    return null;
+  }
+  // стрекоза: толстое тельце с пузом, большими глазами и хвостом. С уровнем прибавляются полосы на хвосте, шипы, шлем, корона и красные глаза
+  function tdBugSprite(kind, tier) {
+    var key = kind + tier;
+    if (tdBugImg[key]) return tdBugImg[key];
+    var L = TD_LOOK[kind], rx = L[3], ry = L[4], size = kind === 'boss' ? 128 : 80, cvs = document.createElement('canvas'), b = cvs.getContext('2d'), k, s, er = Math.max(4.5, rx * 0.36), exx = rx * 0.48, eyy = -ry * 0.72;
+    cvs.width = cvs.height = size * 2;
+    b.scale(2, 2); b.translate(size / 2, size / 2 + 2);
+    b.lineCap = 'round'; b.lineJoin = 'round';
+    if (tier >= 7 || kind === 'boss') { b.strokeStyle = 'rgba(255,80,80,0.45)'; b.lineWidth = 3; tdOval(b, 0, 0, rx + 7, ry + 7); b.stroke(); }
+    for (k = 4; k >= 0; k--) { b.fillStyle = tier >= 1 && k % 2 ? L[2] : L[0]; tdDot(b, rx * 0.55 + k * rx * 0.36, ry * 0.5 + k * ry * 0.3, Math.max(2, rx * (0.4 - k * 0.055))); }
+    if (tier >= 2) { b.fillStyle = L[2]; for (k = -1; k <= 1; k++) { b.beginPath(); b.moveTo(k * rx * 0.3 - 3.5, -ry + 3); b.lineTo(k * rx * 0.3, -ry - 6 - (k ? 0 : 2)); b.lineTo(k * rx * 0.3 + 3.5, -ry + 3); b.fill(); } }
+    b.fillStyle = L[0]; tdOval(b, 0, 0, rx, ry); b.fill();
+    b.save(); b.clip(); b.fillStyle = L[2];
+    if (kind === 'basic' || kind === 'boss') for (k = -2; k <= 2; k++) b.fillRect(k * rx * 0.42 - rx * 0.07, -ry, rx * 0.14, ry * 2);
+    else if (kind === 'fast') for (k = -2; k <= 2; k++) { b.beginPath(); b.moveTo(k * rx * 0.45 - 3, -ry); b.lineTo(k * rx * 0.45 + 3, -ry); b.lineTo(k * rx * 0.45, 0); b.fill(); }
+    else if (kind === 'fat') [[-0.7, -0.2, 4], [0.72, 0.1, 3.5], [0.5, -0.6, 3], [-0.5, 0.55, 3]].forEach(function (p) { tdDot(b, rx * p[0], ry * p[1], p[2]); });
+    else if (kind === 'swarm') [[-0.6, 0], [0.6, -0.1]].forEach(function (p) { tdDot(b, rx * p[0], ry * p[1], 2); });
+    b.restore();
+    b.fillStyle = L[1]; tdOval(b, 0, ry * 0.32, rx * 0.62, ry * 0.56); b.fill();
+    if (kind === 'armor') {
+      b.strokeStyle = L[2]; b.lineWidth = 2.5;
+      b.beginPath(); b.arc(0, -ry * 0.5, rx * 0.95, 0.5, Math.PI - 0.5); b.stroke();
+      b.beginPath(); b.arc(0, -ry * 0.1, rx * 0.95, 0.75, Math.PI - 0.75); b.stroke();
+      b.fillStyle = '#eef3f6'; [-0.5, 0, 0.5].forEach(function (p) { tdDot(b, rx * p, ry * (0.42 - Math.abs(p) * 0.25), 1.4); });
+    } else if (kind === 'healer') {
+      b.fillStyle = '#e63946'; b.fillRect(-1.8, ry * 0.32 - 5.5, 3.6, 11); b.fillRect(-5.5, ry * 0.32 - 1.8, 11, 3.6);
+    }
+    for (s = -1; s <= 1; s += 2) {
+      b.fillStyle = L[0]; tdDot(b, s * exx, eyy, er + 2.2);
+      b.fillStyle = '#ffffff'; tdDot(b, s * exx, eyy, er);
+      b.fillStyle = tier >= 6 ? '#d00000' : '#1c2b22'; tdDot(b, s * exx + s * 0.8, eyy + 0.8, er * 0.5);
+      b.fillStyle = '#ffffff'; tdDot(b, s * exx + s * 0.8 - 1, eyy - 0.4, er * 0.17);
+      b.strokeStyle = '#1c2b22'; b.lineWidth = 2;
+      b.beginPath(); b.moveTo(s * (exx + er), eyy - er - 1.5); b.lineTo(s * (exx - er * 0.7), eyy - er * 0.3); b.stroke();
+      b.fillStyle = 'rgba(242,155,181,0.75)'; tdOval(b, s * rx * 0.62, -ry * 0.06, rx * 0.17, rx * 0.1); b.fill();
+    }
+    b.strokeStyle = '#1c2b22'; b.lineWidth = 1.8;
+    b.beginPath(); b.arc(0, ry * 0.2, rx * 0.26, Math.PI * 1.2, Math.PI * 1.8); b.stroke();
+    if (kind === 'boss' || tier >= 5) {
+      var cw = rx * 0.42, cy0 = -ry - (kind === 'boss' ? 1 : -2);
+      b.fillStyle = '#ffd60a'; b.strokeStyle = '#b58900'; b.lineWidth = 1.5;
+      b.beginPath(); b.moveTo(-cw, cy0); b.lineTo(-cw, cy0 - cw * 0.9); b.lineTo(-cw / 2, cy0 - cw * 0.4); b.lineTo(0, cy0 - cw * 1.2); b.lineTo(cw / 2, cy0 - cw * 0.4); b.lineTo(cw, cy0 - cw * 0.9); b.lineTo(cw, cy0); b.closePath(); b.fill(); b.stroke();
+    } else if (tier >= 3) {
+      b.fillStyle = tier >= 4 ? '#e9c46a' : '#adb5bd'; b.strokeStyle = tier >= 4 ? '#b08a2e' : '#495057'; b.lineWidth = 1.5;
+      b.beginPath(); b.arc(0, -ry * 0.82, rx * 0.44, Math.PI, 0); b.closePath(); b.fill(); b.stroke();
+      if (tier >= 4) { b.beginPath(); b.moveTo(-2.5, -ry * 0.82 - rx * 0.4); b.lineTo(0, -ry * 0.82 - rx * 0.4 - 7); b.lineTo(2.5, -ry * 0.82 - rx * 0.4); b.closePath(); b.fill(); b.stroke(); }
+    }
+    tdBugImg[key] = cvs;
+    return cvs;
+  }
+
+  function tdTree(b, x, y, kind, th, v) {
+    var s = 0.85 + v * 0.35, k;
+    b.fillStyle = 'rgba(0,0,0,0.14)'; tdOval(b, x, y + 15, 16 * s, 5); b.fill();
+    if (kind === 'dead') {
+      b.strokeStyle = th[10] ? '#7b6f9c' : '#5a4a3a'; b.lineWidth = 5; b.lineCap = 'round';
+      b.beginPath(); b.moveTo(x, y + 15); b.lineTo(x - 2, y - 18 * s); b.stroke();
+      b.lineWidth = 3;
+      b.beginPath(); b.moveTo(x - 1, y - 2); b.lineTo(x - 14 * s, y - 18 * s); b.moveTo(x - 1, y - 8); b.lineTo(x + 13 * s, y - 24 * s); b.moveTo(x - 2, y - 18 * s); b.lineTo(x - 7, y - 32 * s); b.stroke();
+      return;
+    }
+    b.fillStyle = '#6b4a2b'; b.fillRect(x - 3 * s, y - 2, 6 * s, 17);
+    if (kind === 'pine') {
+      for (k = 2; k >= 0; k--) {
+        b.fillStyle = k % 2 ? th[6] : th[5];
+        b.beginPath(); b.moveTo(x, y - 40 * s + k * 11 * s); b.lineTo(x - (9 + k * 5) * s, y - 18 * s + k * 11 * s); b.lineTo(x + (9 + k * 5) * s, y - 18 * s + k * 11 * s); b.closePath(); b.fill();
+      }
+      if (th[9] === 'snow') { b.fillStyle = '#ffffff'; b.beginPath(); b.moveTo(x, y - 40 * s); b.lineTo(x - 6 * s, y - 27 * s); b.lineTo(x + 6 * s, y - 27 * s); b.closePath(); b.fill(); }
+    } else if (kind === 'willow') {
+      b.fillStyle = th[5]; tdOval(b, x, y - 17 * s, 21 * s, 15 * s); b.fill();
+      b.strokeStyle = th[6]; b.lineWidth = 3; b.lineCap = 'round';
+      for (k = -2; k <= 2; k++) { b.beginPath(); b.moveTo(x + k * 8 * s, y - 14 * s); b.quadraticCurveTo(x + k * 10.5 * s, y - 2, x + k * 9.5 * s, y + 9); b.stroke(); }
+    } else {
+      b.fillStyle = th[6]; tdDot(b, x - 9 * s, y - 12 * s, 11 * s); tdDot(b, x + 9 * s, y - 13 * s, 11 * s);
+      b.fillStyle = th[5]; tdDot(b, x, y - 22 * s, 13 * s);
+      b.fillStyle = 'rgba(255,255,255,0.18)'; tdDot(b, x - 4 * s, y - 26 * s, 5 * s);
+    }
+  }
+  function tdPad(b, x, y, r, rot) {
+    b.fillStyle = '#4fa354'; b.strokeStyle = '#2f7a3a'; b.lineWidth = 1.5;
+    b.beginPath(); b.moveTo(x, y); b.arc(x, y, r, rot, rot + Math.PI * 2 - 0.7); b.closePath(); b.fill(); b.stroke();
+  }
+  function tdBloom(b, x, y, r, col) {
+    b.fillStyle = col;
+    for (var k = 0; k < 5; k++) tdDot(b, x + Math.cos(k * 1.257) * r, y + Math.sin(k * 1.257) * r, r * 0.8);
+    b.fillStyle = '#ff9f1c'; tdDot(b, x, y, r * 0.6);
+  }
+  function tdDecorDraw(b, d, th) {
+    var x = d.x, y = d.y, v = d.v, k;
+    if (d.type === 'tree') tdTree(b, x, y, th[8], th, v);
+    else if (d.type === 'lily') {
+      b.fillStyle = th[4]; tdOval(b, x, y + 2, 21, 14); b.fill();
+      b.strokeStyle = 'rgba(255,255,255,0.35)'; b.lineWidth = 2; b.stroke();
+      tdPad(b, x - 7, y + 4, 8, v * 6);
+      if (v > 0.3) tdPad(b, x + 9, y - 2, 6, v * 3);
+      if (v > 0.55) tdBloom(b, x + 9, y - 3, 3.2, '#ffb3d1');
+    } else if (d.type === 'flower') {
+      for (k = 0; k < 3; k++) {
+        var fx = x + [-11, 8, 0][k], fy = y + [4, 7, -9][k];
+        b.strokeStyle = '#3d8751'; b.lineWidth = 2; b.beginPath(); b.moveTo(fx, fy + 9); b.lineTo(fx, fy); b.stroke();
+        tdBloom(b, fx, fy, 3.4, th[7][(k + Math.floor(v * 7)) % th[7].length]);
+      }
+    } else if (d.type === 'reed') {
+      for (k = 0; k < 3; k++) {
+        var rx = x + (k - 1) * 9, top = y - 18 - k * 4;
+        b.strokeStyle = th[10] ? '#2f6b4a' : '#4f8f5a'; b.lineWidth = 3; b.lineCap = 'round';
+        b.beginPath(); b.moveTo(rx, y + 14); b.quadraticCurveTo(rx + (k - 1) * 4, y - 4, rx, top); b.stroke();
+        b.fillStyle = '#6b4226'; tdOval(b, rx, top + 4, 3.4, 9); b.fill();
+      }
+    } else if (d.type === 'shroom') {
+      for (k = 0; k < 2; k++) {
+        var mx = x + (k ? 11 : -5), my = y + (k ? 9 : 4), ms = k ? 0.7 : 1.1;
+        b.fillStyle = '#f4ead5'; b.fillRect(mx - 3 * ms, my - 4 * ms, 6 * ms, 12 * ms);
+        b.fillStyle = th[9] === 'spores' && th[7][0] === '#b5179e' ? '#9d4edd' : '#e63946';
+        b.beginPath(); b.ellipse(mx, my - 4 * ms, 11 * ms, 9 * ms, 0, Math.PI, 0); b.closePath(); b.fill();
+        b.fillStyle = '#ffffff'; tdDot(b, mx - 5 * ms, my - 8 * ms, 1.8 * ms); tdDot(b, mx + 3 * ms, my - 10 * ms, 2 * ms); tdDot(b, mx + 6 * ms, my - 6 * ms, 1.4 * ms);
+      }
+    } else {
+      b.fillStyle = 'rgba(0,0,0,0.14)'; tdOval(b, x + 1, y + 10, 15, 5); b.fill();
+      b.fillStyle = th[10] ? '#59607a' : '#9aa5ab'; tdOval(b, x, y + 3, 14 + v * 4, 10); b.fill();
+      b.fillStyle = 'rgba(255,255,255,0.3)'; tdOval(b, x - 4, y - 1, 6, 3.5); b.fill();
+      if (th[9] === 'snow') { b.fillStyle = '#ffffff'; b.beginPath(); b.ellipse(x, y - 2, 12 + v * 3, 6, 0, Math.PI, 0); b.fill(); }
+    }
+  }
+  function tdMakeDecor() {
+    var rnd = tdRng(td.L * 977 + 5), w = TD_THEMES[td.L - 1][11], sum = 0, r, c, k, roll;
+    w.forEach(function (x) { sum += x; });
+    tdDecor = [];
+    for (r = 0; r < TD_ROWS; r++) for (c = 0; c < TD_COLS; c++) {
+      if (td.grid[r][c] !== 0 || rnd() > 0.62) continue;
+      roll = rnd() * sum;
+      for (k = 0; k < w.length - 1; k++) { roll -= w[k]; if (roll < 0) break; }
+      tdDecor.push({ cx: c, cy: r, x: (c + 0.5) * TD_CELL + (rnd() - 0.5) * 12, y: (r + 0.5) * TD_CELL + (rnd() - 0.5) * 10, type: TD_DECOR[k], v: rnd() });
+    }
+  }
+  // неподвижная часть поля рисуется один раз и перерисовывается, когда лягушку посадили или убрали: под ней украшения прячутся
+  function tdBake() {
+    var th = TD_THEMES[td.L - 1], b = tdBg.getContext('2d'), rnd = tdRng(td.L * 613 + 1), k, e = td.end, p = td.pts;
+    b.setTransform(tdDpr, 0, 0, tdDpr, 0, 0);
+    var gr = b.createLinearGradient(0, 0, 0, TD_H);
+    gr.addColorStop(0, th[0]); gr.addColorStop(1, th[1]);
+    b.fillStyle = gr; b.fillRect(0, 0, TD_W, TD_H);
+    for (k = 0; k < 60; k++) { b.fillStyle = k % 2 ? 'rgba(255,255,255,0.07)' : 'rgba(0,0,0,0.06)'; tdOval(b, rnd() * TD_W, rnd() * TD_H, 18 + rnd() * 50, 8 + rnd() * 20, rnd() * 3); b.fill(); }
+    function trail() { b.beginPath(); b.moveTo(p[0].x, p[0].y); for (var q = 1; q < p.length; q++) b.lineTo(p[q].x, p[q].y); b.stroke(); }
+    b.lineJoin = 'round'; b.lineCap = 'round';
+    b.strokeStyle = th[3]; b.lineWidth = 43; trail();
+    b.strokeStyle = th[2]; b.lineWidth = 35; trail();
+    b.lineCap = 'butt'; b.strokeStyle = 'rgba(0,0,0,0.09)'; b.lineWidth = 27; b.setLineDash([2, 15]); trail(); b.setLineDash([]);
+    // гнездо стрекоз у края поля
+    var nx = (p[0].x + p[1].x) / 2, ny = (p[0].y + p[1].y) / 2;
+    b.fillStyle = th[10] ? '#0d0b16' : '#28402c';
+    [[-20, -14, 20], [18, -16, 18], [-16, 16, 18], [20, 14, 20], [0, 0, 22]].forEach(function (q) { tdDot(b, nx + q[0], ny + q[1], q[2]); });
+    b.fillStyle = '#ff595e'; tdDot(b, nx - 6, ny - 3, 2.2); tdDot(b, nx + 6, ny - 3, 2.2);
+    // озеро лягушек
+    b.fillStyle = 'rgba(0,0,0,0.14)'; tdOval(b, e.x, e.y + 5, 70, 56); b.fill();
+    b.fillStyle = th[4]; tdOval(b, e.x, e.y, 66, 52); b.fill();
+    b.strokeStyle = 'rgba(255,255,255,0.55)'; b.lineWidth = 3; b.stroke();
+    b.fillStyle = 'rgba(255,255,255,0.18)'; tdOval(b, e.x - 14, e.y - 14, 36, 18); b.fill();
+    [[-32, -6, 0.4], [28, -18, 2.2], [6, 24, 4.1]].forEach(function (q) {
+      var fx = e.x + q[0], fy = e.y + q[1];
+      tdPad(b, fx, fy, 15, q[2]);
+      b.fillStyle = '#6fbf4b'; tdOval(b, fx, fy - 5, 9.5, 7.5); b.fill();
+      b.fillStyle = '#e9f3b5'; tdOval(b, fx, fy - 3, 6, 4.5); b.fill();
+      [-1, 1].forEach(function (s) { b.fillStyle = '#6fbf4b'; tdDot(b, fx + s * 4.5, fy - 12, 4); b.fillStyle = '#ffffff'; tdDot(b, fx + s * 4.5, fy - 12, 2.8); b.fillStyle = '#1c2b22'; tdDot(b, fx + s * 4.5, fy - 11.6, 1.3); });
+    });
+    tdDecor.forEach(function (d) { if (!tdTowerAt(d.cx, d.cy)) tdDecorDraw(b, d, th); });
+  }
+
+  function tdWeather(kind, t) {
+    var k, x, y;
+    if (kind === 'fog') {
+      for (k = 0; k < 5; k++) { tg.fillStyle = 'rgba(240,248,245,0.13)'; tdOval(tg, (k * 190 + t * 12) % (TD_W + 400) - 200, 60 + k * 95 + Math.sin(t * 0.4 + k) * 14, 240, 30); tg.fill(); }
+    } else if (kind === 'fireflies' || kind === 'stars' || kind === 'embers') {
+      for (k = 0; k < 26; k++) {
+        x = (k * 173 + Math.sin(t * 0.6 + k) * 22 + 800) % TD_W; y = (k * 97 + Math.cos(t * 0.5 + k * 2) * 16 + (kind === 'embers' ? -t * 14 : 0)) % TD_H;
+        if (y < 0) y += TD_H;
+        tg.fillStyle = (kind === 'fireflies' ? 'rgba(214,255,120,' : kind === 'stars' ? 'rgba(255,255,255,' : 'rgba(255,120,80,') + (0.25 + 0.55 * Math.abs(Math.sin(t * 1.8 + k * 1.7))).toFixed(2) + ')';
+        tdDot(tg, x, y, kind === 'stars' ? 1.6 : 2.4);
+      }
+    } else if (kind === 'rain') {
+      tg.strokeStyle = 'rgba(220,240,255,0.35)'; tg.lineWidth = 1.5; tg.beginPath();
+      for (k = 0; k < 46; k++) { x = (k * 131 + t * 90) % (TD_W + 40) - 20; y = (k * 71 + t * 520) % (TD_H + 30) - 15; tg.moveTo(x, y); tg.lineTo(x - 5, y + 14); }
+      tg.stroke();
+    } else if (kind === 'snow' || kind === 'spores' || kind === 'leaves') {
+      for (k = 0; k < 34; k++) {
+        x = (k * 149 + Math.sin(t * 0.8 + k) * 20 + 800) % TD_W; y = (k * 83 + t * (kind === 'spores' ? -16 : 34)) % TD_H;
+        if (y < 0) y += TD_H;
+        if (kind === 'leaves') { tg.fillStyle = k % 2 ? 'rgba(232,132,44,0.8)' : 'rgba(196,80,27,0.8)'; tdOval(tg, x, y, 5, 2.6, t + k); tg.fill(); }
+        else { tg.fillStyle = kind === 'snow' ? 'rgba(255,255,255,0.85)' : 'rgba(214,255,120,0.55)'; tdDot(tg, x, y, kind === 'snow' ? 2.2 : 1.8); }
+      }
+    }
+  }
+  function tdDrawBug(m) {
+    var L = TD_LOOK[m.k], sc = 1 + m.tier * 0.03, rx = L[3] * sc, ry = L[4] * sc, x = m.x, y = m.y + Math.sin(td.t * 3 + m.ph) * 3, flap = Math.sin(td.t * 38 + m.ph) * 0.32, size = (m.boss ? 128 : 80) * sc, s;
+    tg.save();
+    tg.translate(x, y);
+    if (m.ghost) tg.globalAlpha = 0.6;
+    tg.fillStyle = 'rgba(225,246,255,0.62)'; tg.strokeStyle = m.tier >= 4 ? 'rgba(200,150,30,0.9)' : 'rgba(90,150,185,0.85)'; tg.lineWidth = 1;
+    for (s = -1; s <= 1; s += 2) {
+      tdOval(tg, s * rx * 1.55, -ry * 0.4, rx * 0.85, rx * 0.28, s * (-0.45 + flap)); tg.fill(); tg.stroke();
+      tdOval(tg, s * rx * 1.4, ry * 0.08, rx * 0.65, rx * 0.22, s * (0.25 + flap)); tg.fill(); tg.stroke();
+    }
+    if (m.dir < 0) tg.scale(-1, 1);
+    tg.drawImage(tdBugSprite(m.k, m.tier), -size / 2, -size / 2 - 2 * sc, size, size);
+    tg.restore();
+    if (m.st > 0) { tg.strokeStyle = 'rgba(150,220,255,0.9)'; tg.lineWidth = 2; tdOval(tg, x, y, rx + 4, ry + 4); tg.stroke(); }
+    if (m.pt > 0) { tg.fillStyle = 'rgba(140,220,60,0.9)'; tdDot(tg, x - rx * 0.6, y - ry - 3 - (td.t * 20 + m.ph) % 6, 2.2); tdDot(tg, x + rx * 0.5, y - ry - 1 - (td.t * 20 + m.ph + 3) % 6, 1.8); }
+    if (m.hp < m.max) {
+      var bw = m.boss ? 54 : 24, by = y - ry - (m.boss ? 22 : 13) * sc;
+      tg.fillStyle = 'rgba(0,0,0,0.45)'; tg.fillRect(x - bw / 2, by, bw, 4);
+      tg.fillStyle = m.hp / m.max > 0.5 ? '#8ac926' : m.hp / m.max > 0.25 ? '#ffca3a' : '#ff595e'; tg.fillRect(x - bw / 2, by, bw * Math.max(0, m.hp / m.max), 4);
+    }
+  }
+  function tdRange(x, y, r, ok) {
+    tg.fillStyle = ok ? 'rgba(255,255,255,0.16)' : 'rgba(255,80,80,0.2)'; tg.strokeStyle = ok ? 'rgba(255,255,255,0.8)' : 'rgba(255,80,80,0.9)'; tg.lineWidth = 2;
+    tg.beginPath(); tg.arc(x, y, r, 0, Math.PI * 2); tg.fill(); tg.stroke();
+  }
+  function tdDrawFrog(i, x, y, hop, stars) {
+    var img = tdFrogSprite(i), sq = hop > 0 ? Math.sin(hop / 0.16 * Math.PI) * 0.14 : 0, k;
+    tdPad(tg, x, y + 13, 20, 0.3);
+    if (img) tg.drawImage(img, x - 27 * (1 + sq), y - 41 + 50 * sq, 54 * (1 + sq), 55.8 * (1 - sq));
+    else { tg.fillStyle = FROGS[i].skin; tdOval(tg, x, y - 6, 17, 14); tg.fill(); }
+    for (k = 0; k < stars; k++) { tg.fillStyle = '#ffd60a'; tg.strokeStyle = '#7a5c00'; tg.lineWidth = 1; tg.beginPath(); tg.arc(x + (k - (stars - 1) / 2) * 9, y + 21, 3.2, 0, Math.PI * 2); tg.fill(); tg.stroke(); }
+  }
+  function tdDraw() {
+    var th = TD_THEMES[td.L - 1], k, f, a, s, j;
+    tg.drawImage(tdBg, 0, 0, TD_W, TD_H);
+    if (tdSel) tdRange(tdSel.x, tdSel.y, tdSel.s.range, true);
+    if (tdPick >= 0 && tdHover) {
+      var ok = tdCanBuild(tdHover.cx, tdHover.cy), hx = (tdHover.cx + 0.5) * TD_CELL, hy = (tdHover.cy + 0.5) * TD_CELL;
+      tdRange(hx, hy, tdStat(tdPick, 1).range, ok && td.gold >= tdCost(tdPick));
+      if (ok) { tg.globalAlpha = 0.6; tdDrawFrog(tdPick, hx, hy, 0, 0); tg.globalAlpha = 1; }
+    }
+    td.towers.forEach(function (t) { tdDrawFrog(t.i, t.x, t.y, t.hop, t.stars); });
+    td.mobs.forEach(tdDrawBug);
+    for (k = 0; k < td.shots.length; k++) {
+      s = td.shots[k];
+      if (s.type === 'bomb') {
+        var dx = s.tx - s.x, dy = s.ty - s.y, pr = 1 - Math.min(1, Math.sqrt(dx * dx + dy * dy) / s.far);
+        tg.fillStyle = '#6b4a2b'; tdDot(tg, s.x, s.y - Math.sin(pr * Math.PI) * 26, 6);
+      } else { tg.fillStyle = s.type === 'spit' ? '#8ac926' : '#4cc9f0'; tdDot(tg, s.x, s.y, s.type === 'spit' ? 4 : 3); }
+    }
+    for (k = 0; k < td.fx.length; k++) {
+      f = td.fx[k]; a = 1 - f.t / f.dur;
+      tg.globalAlpha = Math.max(0, a);
+      if (f.type === 'tongue') { tg.strokeStyle = '#f06292'; tg.lineWidth = 4; tg.lineCap = 'round'; tg.beginPath(); tg.moveTo(f.x, f.y); tg.lineTo(f.x2, f.y2); tg.stroke(); tg.fillStyle = '#f06292'; tdDot(tg, f.x2, f.y2, 4.5); }
+      else if (f.type === 'beam') { tg.strokeStyle = '#fff3b0'; tg.lineWidth = 3; tg.beginPath(); tg.moveTo(f.x, f.y); tg.lineTo(f.x2, f.y2); tg.stroke(); tg.fillStyle = '#ffd60a'; tdDot(tg, f.x2, f.y2, 7 * a + 2); }
+      else if (f.type === 'bolt') {
+        tg.strokeStyle = '#b8f3ff'; tg.lineWidth = 3; tg.lineJoin = 'round'; tg.beginPath(); tg.moveTo(f.line[0], f.line[1]);
+        for (j = 2; j < f.line.length; j += 2) { tg.lineTo((f.line[j - 2] + f.line[j]) / 2 + ((j * 7) % 13 - 6), (f.line[j - 1] + f.line[j + 1]) / 2 + ((j * 5) % 11 - 5)); tg.lineTo(f.line[j], f.line[j + 1]); }
+        tg.stroke();
+      }
+      else if (f.type === 'ring') { tg.strokeStyle = '#bde0fe'; tg.lineWidth = 4; tg.beginPath(); tg.arc(f.x, f.y, f.r * (1 - a * 0.8), 0, Math.PI * 2); tg.stroke(); }
+      else if (f.type === 'boom') { tg.fillStyle = 'rgba(107,74,43,0.55)'; tdDot(tg, f.x, f.y, f.r * (1 - a * 0.5)); }
+      else if (f.type === 'heal') { tg.strokeStyle = '#ff8fa3'; tg.lineWidth = 3; tg.beginPath(); tg.arc(f.x, f.y, 80 * (1 - a), 0, Math.PI * 2); tg.stroke(); }
+      else if (f.type === 'splash') { tg.strokeStyle = '#ffffff'; tg.lineWidth = 3; tg.beginPath(); tg.arc(f.x, f.y, 6 + 26 * (1 - a), 0, Math.PI * 2); tg.stroke(); }
+      else { tg.fillStyle = f.big ? '#ffd60a' : '#ffffff'; for (j = 0; j < 6; j++) tdDot(tg, f.x + Math.cos(j * 1.047) * (1 - a) * (f.big ? 46 : 16), f.y + Math.sin(j * 1.047) * (1 - a) * (f.big ? 46 : 16), f.big ? 5 : 2.6); }
+      tg.globalAlpha = 1;
+    }
+    tdWeather(th[9], td.t);
+    tg.font = 'bold 15px "Unbounded", "Arial Black", sans-serif'; tg.textAlign = 'center';
+    tg.fillStyle = 'rgba(0,0,0,0.45)'; tdOval(tg, td.end.x, td.end.y - 46, 26, 12); tg.fill();
+    tg.fillStyle = td.lives > 6 ? '#ffffff' : '#ff8fa3'; tg.fillText(String(td.lives), td.end.x, td.end.y - 41);
+    if (tdNoteT > 0) {
+      tg.globalAlpha = Math.min(1, tdNoteT);
+      tg.font = 'bold 19px "Unbounded", "Arial Black", sans-serif';
+      var tw = tg.measureText(tdNote).width + 36;
+      tg.fillStyle = 'rgba(15,35,30,0.72)'; tg.beginPath(); tg.rect(TD_W / 2 - tw / 2, 22, tw, 38); tg.fill();
+      tg.fillStyle = '#ffffff'; tg.fillText(tdNote, TD_W / 2, 48);
+      tg.globalAlpha = 1;
+    }
+  }
+
+  // ---------- оборона болота: управление ----------
+
+  function tdNum(x) { return x >= 100 ? fmt(x) : String(Math.round(x * 10) / 10).replace('.', ','); }
+  function tdStars(n) { var s = ''; for (var k = 0; k < 3; k++) s += k < n ? '★' : '☆'; return s; }
+  function tdSay(text) { tdNote = text; tdNoteT = 2.4; }
+  function tdEvent(name, i) {
+    if (name === 'shot') {
+      var now = performance.now();
+      if (now - tdShotAt < 130 || !ac) return;
+      tdShotAt = now;
+      play(FROGS[i].voice, freq(FROGS[i].deg, FROGS[i].oct), 0, 0.16);
+    } else if (!ac) return;
+    else if (name === 'leak') play('bass', freq(0, 0), 0, 0.7);
+    else if (name === 'wave') play('choir', freq(td.wave % 5, 2), 0, 0.5);
+    else if (name === 'boss') [4, 2, 0].forEach(function (d, k) { play('bass', freq(d, 1), ac.currentTime + k * 0.12, 0.7); });
+    else if (name === 'clear') [0, 2, 4].forEach(function (d, k) { play('pluck', freq(d, 2), ac.currentTime + k * 0.08, 0.5); });
+  }
+  function tdChestOf(L) { return L >= 15 ? 2 : L >= 8 ? 1 : 0; }
+  function tdBuildLevels() {
+    var box = $('td-levels'), done = state.td.done;
+    box.textContent = '';
+    TD_LEVELS.forEach(function (lv, k) {
+      var open = k === 0 || done[k - 1] > 0, b = document.createElement('button'), n = document.createElement('b'), s = document.createElement('small');
+      b.type = 'button'; b.className = 'lvl'; b.id = 'td-lvl-' + (k + 1); b.disabled = !open;
+      n.textContent = String(k + 1);
+      b.appendChild(n); b.appendChild(document.createTextNode(lv[0]));
+      if (done[k]) { s.className = 'won'; s.textContent = tdStars(done[k]); }
+      else s.textContent = open ? 'Награда: ' + CHESTS[tdChestOf(k + 1)][0].toLowerCase() : 'Сначала пройдите уровень ' + k;
+      b.appendChild(s);
+      b.addEventListener('click', function () { tdStartLevel(k + 1); });
+      box.appendChild(b);
+    });
+  }
+  function tdShowMap() {
+    td = null; tdPlaying = false; tdSel = null; tdPick = -1;
+    cancelAnimationFrame(tdRaf);
+    $('td-map').hidden = false; $('td-play').hidden = true; $('td-veil').hidden = true;
+    tdBuildLevels();
+  }
+  function tdOpen() { if (!td) tdShowMap(); }
+  function tdPause() {
+    if (!td || !tdPlaying) return;
+    tdPlaying = false;
+    cancelAnimationFrame(tdRaf);
+    tdVeil = 'resume';
+    $('td-veil-title').textContent = 'Пауза';
+    $('td-veil-text').textContent = 'Волна ' + td.wave + ' из ' + TD_WAVES + '. Лягушки ждут.';
+    $('td-veil-btn').textContent = 'Продолжить';
+    $('td-veil-alt').hidden = false;
+    $('td-veil').hidden = false;
+  }
+  function tdResume() { tdPlaying = true; $('td-veil').hidden = true; tdLast = 0; cancelAnimationFrame(tdRaf); tdRaf = requestAnimationFrame(tdFrame); }
+  function tdBuildShop() {
+    var box = $('td-shop');
+    box.textContent = ''; tdShop = [];
+    FROGS.forEach(function (f) {
+      var lvl = tdFrogLvl(f.i);
+      if (!lvl) return;
+      var b = document.createElement('button'), s = document.createElement('span'), sm = document.createElement('small'), cost = tdCost(f.i);
+      b.type = 'button'; b.className = 'buy'; b.id = 'td-buy-' + f.i;
+      b.appendChild(drawFrog({ skin: f.skin, belly: f.belly, mark: f.mark, pattern: f.pattern, shape: f.shape, rx: f.rx, ry: f.ry, wear: wearOf(f, lvl) }));
+      s.appendChild(document.createTextNode(f.name));
+      sm.textContent = TD_CLASS[f.voice].ru + ' · ' + fmt(cost);
+      s.appendChild(sm); b.appendChild(s);
+      b.addEventListener('click', function () { tdPick = tdPick === f.i ? -1 : f.i; tdSel = null; audio(); });
+      box.appendChild(b);
+      tdShop.push({ i: f.i, b: b, cost: cost });
+      tdFrogSprite(f.i);
+    });
+  }
+  function tdStartLevel(L) {
+    audio();
+    tdNew(L);
+    tdMakeDecor(); tdBake(); tdBuildShop();
+    tdPick = -1; tdSel = null; tdHover = null; tdSig = ''; tdInfoSig = ''; tdAutoT = 0; tdNext = null; tdBackArmed = false;
+    $('td-back').textContent = 'К уровням';
+    $('td-title').textContent = L + '. ' + TD_LEVELS[L - 1][0];
+    $('td-map').hidden = true; $('td-play').hidden = false;
+    tdSay(TD_LEVELS[L - 1][0]);
+    tdResume();
+  }
+  function tdFinish() {
+    tdPlaying = false; tdSel = null; tdPick = -1;
+    var L = td.L, win = td.over === 'win';
+    if (win) {
+      var tier = state.td.done[L - 1] ? 0 : tdChestOf(L), stars = td.lives >= TD_LIVES ? 3 : td.lives >= 12 ? 2 : 1;
+      state.td.chests[tier] += 1;
+      state.td.done[L - 1] = Math.max(state.td.done[L - 1], stars);
+      dirty = true; save();
+      tdVeil = L < TD_LEVELS.length ? 'next' : 'map';
+      $('td-veil-title').textContent = 'Победа! ' + tdStars(stars);
+      $('td-veil-text').textContent = 'Озеро отбито, жизней осталось: ' + td.lives + '. Награда — ' + CHESTS[tier][0].toLowerCase() + ', он ждёт в инвентаре на вкладке «Моя лягушка».';
+      $('td-veil-btn').textContent = L < TD_LEVELS.length ? 'Следующий уровень' : 'К уровням';
+      if (ac) [0, 2, 4, 5, 7].forEach(function (d, k) { play('pluck', freq(d, 2), ac.currentTime + k * 0.11); });
+    } else {
+      tdVeil = 'retry';
+      $('td-veil-title').textContent = 'Стрекозы прорвались';
+      $('td-veil-text').textContent = 'Вы дошли до волны ' + td.wave + ' из ' + TD_WAVES + '. Попробуйте рассадить лягушек иначе или подрастите их в пруду: уровень лягушки прибавляет ей силы.';
+      $('td-veil-btn').textContent = 'Ещё раз';
+      if (ac) [4, 2, 0].forEach(function (d, k) { play('bass', freq(d, 1), ac.currentTime + k * 0.18); });
+    }
+    $('td-veil-alt').hidden = tdVeil === 'map';
+    tdSig = ''; tdHud();
+    $('td-veil').hidden = false;
+  }
+  // подписи и кнопки обновляются только когда что-то изменилось, чтобы кнопка не пересоздавалась под пальцем
+  function tdHud() {
+    var gold = Math.floor(td.gold), ready = !td.active || td.qi >= td.queue.length;
+    var sig = [gold, td.lives, td.wave, ready, td.mobs.length > 0, tdPick, tdSel ? tdSel.cx + ':' + tdSel.cy + ':' + tdSel.stars : '', tdSpeed, tdAuto].join('|');
+    if (sig === tdSig) return;
+    tdSig = sig;
+    $('td-lives').textContent = td.lives;
+    $('td-gold').textContent = fmt(gold);
+    $('td-wave').textContent = td.wave + ' из ' + TD_WAVES;
+    $('td-next').disabled = !ready || td.wave >= TD_WAVES;
+    $('td-next').textContent = td.wave === 0 ? 'Начать волну' : td.wave >= TD_WAVES ? 'Последняя волна' : ready ? 'Волна ' + (td.wave + 1) : 'Стрекозы летят…';
+    $('td-speed').textContent = 'Скорость ×' + tdSpeed;
+    $('td-auto').setAttribute('aria-pressed', tdAuto ? 'true' : 'false');
+    tdShop.forEach(function (x) { x.b.classList.toggle('poor', gold < x.cost); x.b.setAttribute('aria-pressed', tdPick === x.i ? 'true' : 'false'); });
+    if (td.wave < TD_WAVES) {
+      if (!tdNext || tdNext.w !== td.wave + 1) { tdNext = tdWave(td.L, td.wave + 1); tdNext.w = td.wave + 1; }
+      $('td-foe').textContent = 'Дальше: ' + tdNext.list.length + ' шт., ур. ' + tdNext.ml + ' — ' + tdNext.kinds.map(function (k) { return TD_KIND[k].ru; }).join(', ') + (tdNext.boss ? ' и матка' : '');
+    } else $('td-foe').textContent = '';
+    tdInfo(gold);
+  }
+  function tdInfo(gold) {
+    var box = $('td-info'), sig = tdSel ? 't' + tdSel.cx + ':' + tdSel.cy + ':' + tdSel.stars : 'p' + tdPick, f, c, s, up;
+    if (sig !== tdInfoSig) {
+      tdInfoSig = sig;
+      box.textContent = '';
+      if (!tdSel && tdPick < 0) { box.textContent = 'Мошек дают за каждую сбитую стрекозу. Матка, долетев до озера, отнимает сразу 5 жизней.'; return; }
+      f = FROGS[tdSel ? tdSel.i : tdPick]; c = TD_CLASS[f.voice]; s = tdSel ? tdSel.s : tdStat(f.i, 1);
+      var b = document.createElement('b');
+      b.textContent = f.name + (tdSel ? ' ' + tdStars(tdSel.stars) : '');
+      box.appendChild(b);
+      box.appendChild(document.createTextNode(c.ru + ', ур. ' + (tdSel ? tdSel.lvl : tdFrogLvl(f.i)) + ' · урон ' + tdNum(s.dmg) + (s.poison ? ' + яд ' + tdNum(s.poison * 4) : '') + ' · ' + tdNum(c.rate) + ' в секунду · дальность ' + tdNum(s.range / TD_CELL) + ' · ' + c.info));
+      if (tdSel) {
+        var u = document.createElement('button'), x = document.createElement('button'), t = tdSel;
+        u.type = 'button'; u.className = 'act'; u.id = 'td-up';
+        x.type = 'button'; x.className = 'act'; x.id = 'td-sell'; x.textContent = 'Убрать (+' + fmt(Math.floor(t.spent * 0.7)) + ')';
+        u.addEventListener('click', function () { if (tdUpgrade(t)) { play(t.cls, freq(FROGS[t.i].deg + t.stars, FROGS[t.i].oct), 0, 0.7); } else tdSay('Не хватает мошек'); });
+        x.addEventListener('click', function () { tdSell(t); tdSel = null; tdBake(); });
+        box.appendChild(u); box.appendChild(x);
+      }
+    }
+    if (tdSel) {
+      up = tdUpCost(tdSel);
+      var ub = $('td-up');
+      ub.textContent = up ? 'Улучшить (' + fmt(up) + ')' : 'Улучшена до предела';
+      ub.disabled = !up || gold < up;
+    }
+  }
+  function tdFrame(ts) {
+    if (!tdPlaying || !td) return;
+    var dt = tdLast ? Math.min(0.04, (ts - tdLast) / 1000) : 0.016, k;
+    tdLast = ts;
+    for (k = 0; k < tdSpeed && !td.over; k++) tdStep(dt);
+    if (tdNoteT > 0) tdNoteT -= dt;
+    if (tdAuto && !td.over && td.wave > 0 && td.wave < TD_WAVES && !td.active) {
+      tdAutoT += dt * tdSpeed;
+      if (tdAutoT > 1.6) { tdAutoT = 0; tdCall(); }
+    } else tdAutoT = 0;
+    tdDraw(); tdHud();
+    if (td.over) tdFinish(); else tdRaf = requestAnimationFrame(tdFrame);
+  }
+  function tdCall() {
+    if (!tdStartWave()) return;
+    var w = tdWave(td.L, td.wave);
+    tdSay('Волна ' + td.wave + (w.boss ? ': летит матка!' : ''));
+  }
+  function tdCellAt(ev) {
+    var box = tdCv.getBoundingClientRect();
+    return { cx: Math.floor((ev.clientX - box.left) / box.width * TD_COLS), cy: Math.floor((ev.clientY - box.top) / box.height * TD_ROWS) };
+  }
+  tdCv.addEventListener('pointermove', function (ev) { if (td) tdHover = tdCellAt(ev); });
+  tdCv.addEventListener('pointerleave', function () { tdHover = null; });
+  tdCv.addEventListener('pointerdown', function (ev) {
+    if (!td || td.over || !tdPlaying) return;
+    ev.preventDefault();
+    var c = tdCellAt(ev), t = tdTowerAt(c.cx, c.cy);
+    tdHover = c;
+    if (t) { tdSel = tdSel === t ? null : t; tdPick = -1; return; }
+    tdSel = null;
+    if (tdPick < 0) return;
+    if (!tdCanBuild(c.cx, c.cy)) { tdSay('Сюда посадить нельзя'); return; }
+    if (td.gold < tdCost(tdPick)) { tdSay('Не хватает мошек'); return; }
+    if (tdPlace(tdPick, c.cx, c.cy)) {
+      play(FROGS[tdPick].voice, freq(FROGS[tdPick].deg, FROGS[tdPick].oct), 0, 0.8);
+      tdBake();
+      if (td.gold < tdCost(tdPick)) tdPick = -1;
+    }
+  });
+  window.addEventListener('keydown', function (ev) { if (ev.key === 'Escape' && td) { tdPick = -1; tdSel = null; } });
+  $('td-next').addEventListener('click', function () { audio(); tdCall(); });
+  $('td-speed').addEventListener('click', function () { tdSpeed = tdSpeed % 3 + 1; });
+  $('td-auto').addEventListener('click', function () { tdAuto = !tdAuto; });
+  $('td-pause').addEventListener('click', tdPause);
+  $('td-back').addEventListener('click', function () {
+    if (td && !td.over && td.wave > 0 && !tdBackArmed) { tdBackArmed = true; this.textContent = 'Выйти? Бой не сохранится'; return; }
+    tdShowMap();
+  });
+  $('td-veil-alt').addEventListener('click', tdShowMap);
+  $('td-veil-btn').addEventListener('click', function () {
+    if (tdVeil === 'resume') tdResume();
+    else if (tdVeil === 'next') tdStartLevel(td.L + 1);
+    else if (tdVeil === 'retry') tdStartLevel(td.L);
+    else tdShowMap();
+  });
+
   state = load();
   FROGS.forEach(function (f) { paintFrog(f); refreshCard(f); });
   refreshHeader();
-  show(location.hash === '#moya' ? 'mine' : location.hash === '#pryzhki' ? 'jump' : 'pond');
+  if (location.hash === '#oborona') curGame = 'td';
+  show(location.hash === '#moya' ? 'mine' : location.hash === '#pryzhki' || location.hash === '#oborona' || location.hash === '#igry' ? 'games' : 'pond');
   setInterval(save, 2000);
   document.addEventListener('visibilitychange', save);
   window.addEventListener('pagehide', save);
