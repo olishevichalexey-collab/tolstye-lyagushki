@@ -2196,8 +2196,8 @@
     messagingSenderId: '919508268301',
     appId: '1:919508268301:web:fa03533b09147c89efec44'
   };
-  // больше этого числа достижений правила базы пока не принимают
-  var NET_ACH_MAX = 36;
+  // больше этого числа достижений правила базы не принимают (см. firebase-rules.json)
+  var NET_ACH_MAX = 100;
   var TOPS = [['kvak', 'Кваки'], ['jump', 'Прыжки'], ['td', 'Оборона болота'], ['ach', 'Достижения']];
   var net = { db: null, uid: '', ok: false, sent: '', board: 'kvak', err: '' };
   function loadScript(src, done) {
