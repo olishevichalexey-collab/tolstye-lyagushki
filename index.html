@@ -4,6 +4,17 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="description" content="Пруд с толстыми поющими лягушками: будите новых, собирайте хор и растите свою лягушку из яйца.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Толстые лягушки">
+<meta property="og:title" content="Толстые лягушки — кликер с поющим болотом">
+<meta property="og:description" content="Будите толстых лягушек, собирайте хор, растите питомца из яйца и играйте в четыре мини-игры. Бесплатно, прямо в браузере.">
+<meta property="og:url" content="https://tolstye-lyagushki.github.io/">
+<meta property="og:image" content="https://tolstye-lyagushki.github.io/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ru_RU">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="canonical" href="https://tolstye-lyagushki.github.io/">
 <style>body{margin:0}[hidden]{display:none!important}</style>
 <title>Толстые лягушки</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='%236fbf4b'%3E%3Ccircle cx='19' cy='19' r='13'/%3E%3Ccircle cx='45' cy='19' r='13'/%3E%3Cellipse cx='32' cy='39' rx='29' ry='22'/%3E%3C/g%3E%3Ccircle cx='19' cy='19' r='8.5' fill='%23fff'/%3E%3Ccircle cx='45' cy='19' r='8.5' fill='%23fff'/%3E%3Ccircle cx='20.5' cy='20' r='4.5' fill='%231c2b22'/%3E%3Ccircle cx='46.500' cy='20' r='4.5' fill='%231c2b22'/%3E%3Ccircle cx='19' cy='18' r='1.5' fill='%23fff'/%3E%3Ccircle cx='45' cy='18' r='1.5' fill='%23fff'/%3E%3Cellipse cx='11' cy='43' rx='5' ry='3' fill='%23f29bb5'/%3E%3Cellipse cx='53' cy='43' rx='5' ry='3' fill='%23f29bb5'/%3E%3Cpath d='M15 40 Q32 54 49 40' fill='none' stroke='%231c2b22' stroke-width='3.500' stroke-linecap='round'/%3E%3C/svg%3E">
@@ -349,6 +360,7 @@
     <span class="spacer"></span>
     <label class="vol">Громкость<input id="vol" type="range" min="0" max="100" step="5" value="100"></label>
     <button class="act" id="btn-help" type="button">Как играть</button>
+    <button class="act" id="btn-share" type="button">Поделиться</button>
     <button class="act" id="btn-chord" type="button">Все разом</button>
     <button class="act" id="btn-stop" type="button">Остановить хор</button>
   </div>
@@ -1570,6 +1582,17 @@
   document.getElementById('help').addEventListener('click', function (ev) { if (ev.target === this) helpShow(false); });
   window.addEventListener('keydown', function (ev) { if (ev.key === 'Escape') helpShow(false); });
   try { if (!localStorage.getItem('fatFrogs.help')) helpShow(true); } catch (e) { /* без хранилища справка не навязывается */ }
+  document.getElementById('btn-share').addEventListener('click', function () {
+    var url = 'https://tolstye-lyagushki.github.io/';
+    var text = 'У меня уже ' + fmt(state.total) + ' кваков в «Толстых лягушках». Обгонишь?';
+    function copy() {
+      // без доступа к буферу ссылку хотя бы видно в подсказке
+      try { navigator.clipboard.writeText(text + ' ' + url).then(function () { toast('Ссылка скопирована — отправьте её друзьям'); }, function () { toast(url); }); }
+      catch (e) { toast(url); }
+    }
+    if (navigator.share) navigator.share({ title: 'Толстые лягушки', text: text, url: url }).catch(function (e) { if (!e || e.name !== 'AbortError') copy(); });
+    else copy();
+  });
   var C2 = 65.41, SCALE = [0, 2, 4, 7, 9]; // пентатоника: любые ноты из неё звучат вместе без фальши
   function audio() {
     if (!ac) {
