@@ -16,6 +16,13 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="canonical" href="https://tolstye-lyagushki.github.io/">
 <style>body{margin:0}[hidden]{display:none!important}</style>
+<script>
+  // заставка promo-3d.html — один раз каждому игроку и только на своём сайте (на itch.io её нет)
+  (function () { try {
+    var host = location.hostname;
+    if ((host === "tolstye-lyagushki.github.io" || host === "localhost") && !localStorage.getItem("fatFrogs.intro")) location.replace("promo-3d.html");
+  } catch (e) { /* без хранилища заставку не показываем */ } })();
+</script>
 <title>Толстые лягушки</title>
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Cg fill='%236fbf4b'%3E%3Ccircle cx='19' cy='19' r='13'/%3E%3Ccircle cx='45' cy='19' r='13'/%3E%3Cellipse cx='32' cy='39' rx='29' ry='22'/%3E%3C/g%3E%3Ccircle cx='19' cy='19' r='8.5' fill='%23fff'/%3E%3Ccircle cx='45' cy='19' r='8.5' fill='%23fff'/%3E%3Ccircle cx='20.5' cy='20' r='4.5' fill='%231c2b22'/%3E%3Ccircle cx='46.500' cy='20' r='4.5' fill='%231c2b22'/%3E%3Ccircle cx='19' cy='18' r='1.5' fill='%23fff'/%3E%3Ccircle cx='45' cy='18' r='1.5' fill='%23fff'/%3E%3Cellipse cx='11' cy='43' rx='5' ry='3' fill='%23f29bb5'/%3E%3Cellipse cx='53' cy='43' rx='5' ry='3' fill='%23f29bb5'/%3E%3Cpath d='M15 40 Q32 54 49 40' fill='none' stroke='%231c2b22' stroke-width='3.500' stroke-linecap='round'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap">
