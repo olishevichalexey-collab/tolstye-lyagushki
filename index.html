@@ -325,11 +325,11 @@
   .chest small { display: block; font-weight: 500; color: var(--ink-soft); font-size: 0.74rem; }
   .chest:hover { border-color: var(--lily); }
   .chest.shake svg { animation: wiggle 0.5s ease-in-out; }
-  .shop-h { margin: 8px 0 0; }
-  .shop { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; max-width: 480px; }
-  .shop .chest { width: 100%; }
-  .shop .chest small { font-variant-numeric: tabular-nums; }
-  @media (max-width: 440px) { .shop { grid-template-columns: minmax(0, 1fr); max-width: 300px; } }
+  .chest-shop-h { margin: 8px 0 0; }
+  .chest-shop { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; max-width: 480px; }
+  .chest-shop .chest { width: 100%; }
+  .chest-shop .chest small { font-variant-numeric: tabular-nums; }
+  @media (max-width: 440px) { .chest-shop { grid-template-columns: minmax(0, 1fr); max-width: 300px; } }
   .chest:disabled { cursor: not-allowed; opacity: 0.55; }
   .chest:disabled:hover { border-color: var(--line); transform: none; }
   .drop { min-height: 1.5em; font-weight: 700; max-width: 36ch; text-wrap: balance; }
@@ -2936,8 +2936,8 @@
       box.appendChild(n);
     }
     // лавка: сундук за корм сразу ложится в инвентарь
-    var sh = document.createElement('h2'); sh.className = 'shop-h'; sh.textContent = 'Лавка сундуков'; box.appendChild(sh);
-    var shop = document.createElement('div'); shop.className = 'shop';
+    var sh = document.createElement('h2'); sh.className = 'chest-shop-h'; sh.textContent = 'Лавка сундуков'; box.appendChild(sh);
+    var shop = document.createElement('div'); shop.className = 'chest-shop';
     CHESTS.forEach(function (ch, tier) {
       var b = document.createElement('button');
       b.type = 'button'; b.className = 'chest buy-chest'; b.id = 'buy-chest-' + tier;
