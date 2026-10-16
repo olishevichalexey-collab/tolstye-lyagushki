@@ -325,6 +325,13 @@
   .chest small { display: block; font-weight: 500; color: var(--ink-soft); font-size: 0.74rem; }
   .chest:hover { border-color: var(--lily); }
   .chest.shake svg { animation: wiggle 0.5s ease-in-out; }
+  .shop-h { margin: 8px 0 0; }
+  .shop { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; width: 100%; max-width: 480px; }
+  .shop .chest { width: 100%; }
+  .shop .chest small { font-variant-numeric: tabular-nums; }
+  @media (max-width: 440px) { .shop { grid-template-columns: minmax(0, 1fr); max-width: 300px; } }
+  .chest:disabled { cursor: not-allowed; opacity: 0.55; }
+  .chest:disabled:hover { border-color: var(--line); transform: none; }
   .drop { min-height: 1.5em; font-weight: 700; max-width: 36ch; text-wrap: balance; }
   .odds { font-size: 0.82rem; color: var(--ink-soft); border-collapse: collapse; font-variant-numeric: tabular-nums; }
   .odds th, .odds td { padding: 2px 8px; text-align: right; font-weight: 700; }
@@ -784,7 +791,7 @@
 
   // ---------- данные ----------
 
-  var NAMES = ['Пончик', 'Клёцка', 'Батон', 'Клубничка', 'Булочка', 'Черничка', 'Колобок', 'Малинка', 'Вареник', 'Лимончик', 'Кекс', 'Арбузик', 'Пряник', 'Вишенка', 'Зефир', 'Грушка', 'Чебурек', 'Тыковка', 'Эклер', 'Виноградинка', 'Плюшка', 'Ананасик', 'Такояки', 'Трюфель', 'Царь-Жаба', 'Чертёнок', 'Вампирчик', 'Дракоша', 'Единорожка', 'Котожаб', 'Зайка', 'Пришелец', 'Ёжик', 'Моржик', 'Панк'];
+  var NAMES = ['Пончик', 'Клёцка', 'Батон', 'Клубничка', 'Булочка', 'Черничка', 'Колобок', 'Малинка', 'Вареник', 'Лимончик', 'Кекс', 'Арбузик', 'Пряник', 'Вишенка', 'Зефир', 'Грушка', 'Чебурек', 'Тыковка', 'Эклер', 'Виноградинка', 'Плюшка', 'Ананасик', 'Такояки', 'Трюфель', 'Царь-Жаба', 'Чертёнок', 'Вампирчик', 'Дракоша', 'Единорожка', 'Котожаб', 'Зайка', 'Пришелец', 'Ёжик', 'Моржик', 'Панк', 'Коровка', 'Пчёлка', 'Мишутка', 'Лисичка', 'Совушка', 'Осьминожка', 'Акулёнок', 'Робоквак', 'Динозаврик', 'Кристаллик'];
   // кожа, пузо, цвет узора, узор, форма тела (у ягодных и фруктовых лягушек своя)
   var SKINS = [
     ['#6fbf4b', '#e9f3b5', '#4f9a36', 'spots', 'round'], ['#9bc53d', '#f6f2c4', '#7aa02a', 'plain', 'round'], ['#4fae7b', '#dff3d8', '#35895c', 'stripes', 'round'],
@@ -800,7 +807,12 @@
     ['#c1121f', '#ffd9d6', '#6a040f', 'plain', 'round', 'horns fangs'], ['#b8a9d9', '#f1ecfb', '#3c096c', 'tiger', 'round', 'ears_bat fangs'], ['#3fa34d', '#fff3b0', '#1b5e20', 'spots', 'round', 'horns spikes'],
     ['#fdf0f7', '#ffffff', '#f08ab5', 'stars', 'round', 'horn1'], ['#f4a261', '#fff1e0', '#c2622a', 'tiger', 'round', 'ears_cat whiskers'], ['#e9e4f0', '#ffffff', '#b9a9d9', 'plain', 'round', 'ears_bunny'],
     ['#9be564', '#e8ffd1', '#3f8f2a', 'dots', 'round', 'antennae'], ['#b08968', '#f3e2cf', '#6b4a2b', 'plain', 'round', 'spikes'], ['#7d93a8', '#e3ecf3', '#4a5d70', 'plain', 'round', 'tusks whiskers'],
-    ['#2ec4b6', '#e0fbf8', '#ff006e', 'stripes', 'round', 'mohawk']
+    ['#2ec4b6', '#e0fbf8', '#ff006e', 'stripes', 'round', 'mohawk'],
+    // третья волна: звери и букашки за большие кваки, у каждой свой узор и свои приметы. В обороне болота они тоже не участвуют
+    ['#e5383b', '#ffe5e5', '#1b1b24', 'ladybug', 'round', 'feelers'], ['#ffc300', '#fff3b0', '#2b2118', 'bands', 'round', 'feelers beewings'], ['#a0703f', '#f0d9b5', '#6b4423', 'plain', 'round', 'ears_bear'],
+    ['#f3722c', '#fff6ee', '#8c3b10', 'plain', 'round', 'ears_fox'], ['#9c7a62', '#f5e6d3', '#5d4037', 'feathers', 'round', 'ears_owl'], ['#c77dff', '#f3e8ff', '#7b2cbf', 'suckers', 'round', 'tentacles'],
+    ['#6b98bf', '#f1f7fb', '#3c6a8e', 'plain', 'round', 'fin gills'], ['#a8b5c0', '#dfe7ed', '#56636e', 'bolts', 'round', 'antenna_bolt'], ['#7cb342', '#f0f4c3', '#e07a4f', 'spots', 'round', 'plates'],
+    ['#8fd8f5', '#e8fbff', '#4a8fd9', 'facets', 'gem']
   ];
   var SHAPE_SIZE = { strawberry: [104, 88], blueberry: [94, 90], raspberry: [102, 86], lemon: [110, 76], watermelon: [108, 90], cherry: [94, 88], pear: [100, 92], pumpkin: [122, 80], pineapple: [90, 92] };
   var VOICES = ['croak', 'pluck', 'bass', 'tok', 'chirp', 'choir', 'kick'];
@@ -818,7 +830,7 @@
     choir: [[0], [8], [0, 8]],
     kick: [[0, 4, 8, 12], [0, 8, 10], [0, 6, 8]]
   };
-  var UNLOCK = [0, 0, 0, 300, 800, 1600, 2800, 4500, 6500, 9000, 12000, 16000, 21000, 27000, 34000, 42000, 52000, 64000, 78000, 95000, 115000, 140000, 170000, 205000, 250000, 300000, 360000, 430000, 510000, 600000, 700000, 820000, 950000, 1100000, 1300000];
+  var UNLOCK = [0, 0, 0, 300, 800, 1600, 2800, 4500, 6500, 9000, 12000, 16000, 21000, 27000, 34000, 42000, 52000, 64000, 78000, 95000, 115000, 140000, 170000, 205000, 250000, 300000, 360000, 430000, 510000, 600000, 700000, 820000, 950000, 1100000, 1300000, 1550000, 1850000, 2200000, 2600000, 3050000, 3550000, 4100000, 4700000, 5400000, 6200000];
   var LEVELS = [0, 40, 200, 700, 2000];
 
   var ITEMS = {
@@ -847,7 +859,10 @@
     'scarf headphones pixel jetpack tee', 'lei straw shades3d balloon hawaii', 'bandana ninja eyepatch shell kimono', 'goldkey detective monocle cape tux',
     'chain crown sunglasses cape knight', 'amulet pirate laser cape knight', 'ruff wizard mask wings tux', 'medal viking ski jetpack knight',
     'beads flower star fairy pajama', 'bell beanie glasses balloon overalls', 'bowtie bow heart wings apron', 'whistle astro cyber jetpack astrosuit',
-    'clover acorn aviator shell overalls', 'scarf santa ski balloon pajama', 'chain headphones vr guitar tee'
+    'clover acorn aviator shell overalls', 'scarf santa ski balloon pajama', 'chain headphones vr guitar tee',
+    'kerchief bow heart umbrella raincoat', 'whistle sweatband aviator kite football', 'scarfknit frogcap roundglasses backpack sweater', 'camera beret masquerade quiver sweater',
+    'medal graduate roundglasses batwings wizardrobe', 'pearls pirate snorkel shell sailor', 'whistle bucket snorkel balloon tee', 'chain headphones nightvision mecha superhero',
+    'clover leafhat steampunk backpack overalls', 'pearls crown star wings tux'
   ];
   var SLOT_RU = { neck: 'На шею', hat: 'На голову', eyes: 'На глаза', suit: 'Костюм', back: 'Особое' };
   var WARDROBE = ['neck', 'hat', 'eyes', 'suit', 'back'];
@@ -864,10 +879,17 @@
     santa: ['hat', 'Колпак Деда Мороза', 1], detective: ['hat', 'Шляпа сыщика', 1], aviator: ['eyes', 'Очки-авиаторы', 1], stethoscope: ['neck', 'Стетоскоп', 1], pajama: ['suit', 'Пижама со звёздами', 1], guitar: ['back', 'Гитара за спиной', 1],
     ninja: ['hat', 'Повязка ниндзя', 2], vr: ['eyes', 'Шлем виртуальной реальности', 2], goldkey: ['neck', 'Золотой ключик', 2], kimono: ['suit', 'Кимоно', 2], fairy: ['back', 'Крылья феи', 2],
     pharaoh: ['hat', 'Убор фараона', 3], laser: ['eyes', 'Лазерный взгляд', 3], astrosuit: ['suit', 'Скафандр', 3],
-    ufo: ['hat', 'Летающая тарелка', 4], phoenix: ['back', 'Крылья феникса', 4]
+    ufo: ['hat', 'Летающая тарелка', 4], phoenix: ['back', 'Крылья феникса', 4],
+    // третья партия (обновление с лавкой сундуков)
+    frogcap: ['hat', 'Ушанка', 0], sweatband: ['hat', 'Спортивная повязка', 0], roundglasses: ['eyes', 'Круглые очки', 0], sleepmask: ['eyes', 'Маска для сна', 0], pacifier: ['neck', 'Соска на верёвочке', 0],
+    scarfknit: ['neck', 'Полосатый шарф', 0], raincoat: ['suit', 'Дождевик', 0], sweater: ['suit', 'Новогодний свитер', 0], backpack: ['back', 'Рюкзачок', 0], umbrella: ['back', 'Зонтик', 0],
+    graduate: ['hat', 'Шапочка выпускника', 1], bunnyears: ['hat', 'Ушки зайчика', 1], masquerade: ['eyes', 'Маскарадная маска', 1], snorkel: ['eyes', 'Маска с трубкой', 1],
+    camera: ['neck', 'Фотоаппарат', 1], sailor: ['suit', 'Матроска', 1], football: ['suit', 'Футбольная форма', 1], kite: ['back', 'Воздушный змей', 1],
+    samurai: ['hat', 'Шлем самурая', 2], steampunk: ['eyes', 'Стимпанк-гоглы', 2], pearls: ['neck', 'Жемчужное ожерелье', 2], superhero: ['suit', 'Костюм супергероя', 2], batwings: ['back', 'Крылья летучей мыши', 2], quiver: ['back', 'Колчан со стрелами', 2],
+    jester: ['hat', 'Колпак шута', 3], nightvision: ['eyes', 'Очки ночного видения', 3], wizardrobe: ['suit', 'Мантия волшебника', 3], mecha: ['back', 'Механические крылья', 3],
+    icecrown: ['hat', 'Ледяная корона', 4], swampheart: ['neck', 'Сердце болота', 4]
   };
-  var LOOT_IDS = Object.keys(LOOT);
-  // породы питомца, которые выпадают при перерождении: название, редкость (5 — секретная), форма тела, множители ширины и высоты, эффект вокруг
+  var LOOT_IDS = Object.keys(LOOT);  // породы питомца, которые выпадают при перерождении: название, редкость (5 — секретная), форма тела, множители ширины и высоты, эффект вокруг
   var KIND_RARE = RARITY.concat([['Секретная', '#ff2e88']]);
   var KINDS = [
     ['Болотная', 0, '', 1, 1, ''], ['Пухляш', 0, '', 1.14, 0.88, ''], ['Столбик', 0, '', 0.86, 1.1, ''],
@@ -886,8 +908,10 @@
   // где у формы макушка: высота над серединой тела в долях полувысоты (у обычных форм — ровно 1)
   var HAT_TOP = { heart: 0.6, drop: 1.2, flame: 1.2, star: 1.02, ice: 1.12, cloud: 1.08 };
   // сундуки: название и шансы редкостей в процентах; за повтор, когда вся редкость собрана, дают корм
-  var CHESTS = [['Деревянный сундук', [55, 28, 12, 4, 1]], ['Серебряный сундук', [35, 33, 20, 9.5, 2.5]], ['Золотой сундук', [15, 30, 30, 18, 7]]];
+  var CHESTS = [['Деревянный сундук', [55, 28, 12, 4, 1]], ['Серебряный сундук', [35, 33, 20, 9.5, 2.5]], ['Золотой сундук', [15, 30, 30, 18, 7]], ['Изумрудный сундук', [0, 12, 36, 34, 18]]];
   var CHEST_FLIES = [5, 12, 30, 80, 250];
+  // цены в лавке сундуков, в корме; изумрудный сундук бывает только в лавке
+  var CHEST_PRICE = [100, 300, 800, 2000];
   var STAGES = [['Яйцо', 0], ['Головастик', 40], ['Лягушонок', 160], ['Лягушка', 450], ['Толстая лягушка', 1100]];
 
   function pick(pool, i) { return pool[Math.min(pool.length - 1, Math.floor(i * pool.length / 25))]; }
@@ -920,9 +944,9 @@
       total: 0, taps: 0, flies: 0,
       frogs: FROGS.map(function (f) { return { n: 0, open: f.i < 3, auto: false, m: 0 }; }),
       me: { xp: 0, name: '', skin: 0, kind: 0, best: 0, nin: 0, wear: { neck: '', hat: '', eyes: '', suit: '', back: '' } },
-      td: { done: TD_LEVELS.map(function () { return 0; }), chests: [0, 0, 0], loot: {} },
+      td: { done: TD_LEVELS.map(function () { return 0; }), chests: [0, 0, 0, 0], loot: {} },
       ab: { done: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
-      ach: { got: {}, kills: 0, bosses: 0, opened: 0, gold: 0, rides: 0, stomps: 0, close: 0, solo: 0, squad: 0, choir: 0, licks: 0, sweep: 0, tickles: 0, tdLost: 0, hid: {}, rebirths: 0, kinds: { 0: 1 } },
+      ach: { got: {}, kills: 0, bosses: 0, opened: 0, gold: 0, rides: 0, stomps: 0, close: 0, solo: 0, squad: 0, choir: 0, licks: 0, sweep: 0, tickles: 0, tdLost: 0, hid: {}, rebirths: 0, kinds: { 0: 1 }, bought: 0 },
       rec: { kvak: 0, jump: 0, td: 0, nin: 0, ab: 0 }
     };
   }
@@ -940,6 +964,7 @@
     if (typeof s.me.wear.suit !== 'string') s.me.wear.suit = '';
     if (!s.td || !s.td.done || !s.td.chests || !s.td.loot) s.td = f.td;
     while (s.td.done.length < TD_LEVELS.length) s.td.done.push(0);
+    while (s.td.chests.length < CHESTS.length) s.td.chests.push(0);
     if (!s.ab || !s.ab.done) s.ab = f.ab;
     while (s.ab.done.length < AB_LEVELS) s.ab.done.push(0);
     if (!s.ach || !s.ach.got) s.ach = f.ach;
@@ -1051,6 +1076,38 @@
         S('path', { d: 'M' + (x0 + k * 26) + ' ' + y0 + ' l' + h + ' ' + h, stroke: m, 'stroke-width': 3.5 }, g);
         S('path', { d: 'M' + (x0 + k * 26 + h) + ' ' + y0 + ' l' + (-h) + ' ' + h, stroke: m, 'stroke-width': 3.5 }, g);
       }
+    } else if (o.pattern === 'ladybug') {
+      // божья коровка: шов посередине спинки и крупные чёрные пятна
+      S('rect', { x: c.cx - 2.5, y: y0, width: 5, height: h, fill: m }, g);
+      [[0.24, 0.3, 14], [0.76, 0.3, 14], [0.12, 0.58, 11], [0.88, 0.58, 11], [0.33, 0.12, 8], [0.67, 0.12, 8]].forEach(function (p) { S('circle', { cx: x0 + w * p[0], cy: y0 + h * p[1], r: p[2], fill: m }, g); });
+    } else if (o.pattern === 'bands') {
+      for (k = 0; k < 5; k++) S('rect', { x: x0, y: y0 + h * (0.06 + k * 0.2), width: w, height: h * 0.09, rx: 4, fill: m }, g);
+    } else if (o.pattern === 'feathers') {
+      var fr = w / 14;
+      for (j = 0; j < 7; j++) for (k = -1; k < 8; k++) {
+        var fx = x0 + fr * 2 * k + (j % 2) * fr, fy = y0 + h * (j + 0.6) / 7;
+        S('path', { d: 'M' + fx + ' ' + fy + ' a' + fr + ' ' + fr + ' 0 0 0 ' + (fr * 2) + ' 0', fill: 'none', stroke: m, 'stroke-width': 2.5, opacity: 0.7 }, g);
+      }
+    } else if (o.pattern === 'suckers') {
+      [[0.12, 0.42, 8], [0.88, 0.42, 8], [0.2, 0.2, 6], [0.8, 0.2, 6], [0.06, 0.66, 7], [0.94, 0.66, 7], [0.36, 0.08, 5], [0.64, 0.08, 5]].forEach(function (p) {
+        S('circle', { cx: x0 + w * p[0], cy: y0 + h * p[1], r: p[2], fill: o.belly, stroke: m, 'stroke-width': 2.5 }, g);
+        S('circle', { cx: x0 + w * p[0], cy: y0 + h * p[1], r: p[2] * 0.35, fill: m, opacity: 0.6 }, g);
+      });
+    } else if (o.pattern === 'bolts') {
+      // робот: стыки листов металла и заклёпки
+      S('path', { d: 'M' + x0 + ' ' + (y0 + h * 0.36) + ' L' + (x0 + w) + ' ' + (y0 + h * 0.36) + ' M' + (x0 + w * 0.2) + ' ' + y0 + ' L' + (x0 + w * 0.2) + ' ' + (y0 + h * 0.36) + ' M' + (x0 + w * 0.8) + ' ' + y0 + ' L' + (x0 + w * 0.8) + ' ' + (y0 + h * 0.36) + ' M' + (x0 + w * 0.1) + ' ' + (y0 + h * 0.36) + ' L' + (x0 + w * 0.1) + ' ' + (y0 + h), fill: 'none', stroke: m, 'stroke-width': 2.5, opacity: 0.8 }, g);
+      [[0.16, 0.3], [0.24, 0.3], [0.76, 0.3], [0.84, 0.3], [0.05, 0.44], [0.15, 0.44], [0.85, 0.44], [0.95, 0.44], [0.05, 0.7], [0.95, 0.7]].forEach(function (p) {
+        S('circle', { cx: x0 + w * p[0], cy: y0 + h * p[1], r: 3.6, fill: m }, g);
+        S('circle', { cx: x0 + w * p[0] - 1, cy: y0 + h * p[1] - 1, r: 1.2, fill: '#ffffff', opacity: 0.7 }, g);
+      });
+    } else if (o.pattern === 'facets') {
+      // кристалл: грани от середины к углам, верхняя грань светлее
+      S('polygon', { points: [[-0.55, -1], [0.55, -1], [0.28, -0.42], [-0.28, -0.42]].map(function (p) { return (c.cx + c.rx * p[0]) + ',' + (c.cy + c.ry * p[1]); }).join(' '), fill: '#ffffff', opacity: 0.35 }, g);
+      S('polygon', { points: [[1, -0.15], [0.6, 1], [0.28, -0.42]].map(function (p) { return (c.cx + c.rx * p[0]) + ',' + (c.cy + c.ry * p[1]); }).join(' '), fill: m, opacity: 0.3 }, g);
+      [[-0.55, -1], [0.55, -1], [1, -0.15], [-1, -0.15], [0.6, 1], [-0.6, 1]].forEach(function (p) {
+        S('path', { d: 'M' + (c.cx + c.rx * (p[0] < 0 ? -0.28 : 0.28)) + ' ' + (c.cy - c.ry * 0.42) + ' L' + (c.cx + c.rx * p[0]) + ' ' + (c.cy + c.ry * p[1]), stroke: m, 'stroke-width': 2.5, opacity: 0.55 }, g);
+      });
+      S('path', { d: 'M' + (c.cx - c.rx * 0.28) + ' ' + (c.cy - c.ry * 0.42) + ' L' + (c.cx + c.rx * 0.28) + ' ' + (c.cy - c.ry * 0.42), stroke: m, 'stroke-width': 2.5, opacity: 0.55 }, g);
     }
   }
 
@@ -1394,6 +1451,223 @@
         [[74, -1.05], [84, -0.2], [56, 0.3]].forEach(function (p) { S('path', { d: 'M' + r0 + ' ' + t0 + ' L' + (cx + s * (c.rx + p[0])) + ' ' + (c.cy + c.ry * p[1]), stroke: '#3c096c', 'stroke-width': 3.5, 'stroke-linecap': 'round' }, g); });
         S('circle', { cx: cx + s * (c.rx + 74), cy: c.cy - c.ry * 1.05, r: 5, fill: '#ffd60a' }, g);
       });
+    } else drawLoot3(g, id, c);
+  }
+  // третья партия вещей из сундуков: те же опорные точки, что и у drawLoot (макушка, глаза, шея, костюм, спина)
+  function drawLoot3(g, id, c) {
+    var cx = c.cx, hy = c.cy - c.ry + 8, hw = c.rx * 0.36, ey = c.ey, ex = c.ex, ny = c.cy + c.ry * 0.02, nw = c.rx * 0.62;
+    var sy = c.cy + c.ry * 0.08, sx = cx - c.rx - 24, sw = (c.rx + 24) * 2, sh = c.base - sy + 4, k, x, y;
+    function cord(col, wd, dip) { P(g, 'M' + (cx - nw) + ' ' + (ny - 6) + ' Q' + cx + ' ' + (ny + (dip || 30)) + ' ' + (cx + nw) + ' ' + (ny - 6), null, col, wd || 4); }
+    // ---- на голову ----
+    if (id === 'frogcap') {
+      [-1, 1].forEach(function (s) { S('ellipse', { cx: cx + s * (hw + 14), cy: hy + 20, rx: 12, ry: 21, fill: '#f1e7da', stroke: '#b8a58a', 'stroke-width': 3 }, g); });
+      P(g, 'M' + (cx - hw - 10) + ' ' + (hy + 2) + ' A' + (hw + 10) + ' ' + (hw + 4) + ' 0 0 1 ' + (cx + hw + 10) + ' ' + (hy + 2) + ' Z', '#8d6e63', '#4e342e', 3);
+      S('rect', { x: cx - hw - 15, y: hy - 9, width: (hw + 15) * 2, height: 17, rx: 8.5, fill: '#f1e7da', stroke: '#b8a58a', 'stroke-width': 3 }, g);
+      S('polygon', { points: star(cx, hy - 24, 7), fill: '#e5383b', stroke: '#9e2a2b', 'stroke-width': 1.5 }, g);
+    } else if (id === 'sweatband') {
+      S('rect', { x: cx - hw - 20, y: hy - 2, width: (hw + 20) * 2, height: 16, rx: 7, fill: '#ffffff', stroke: '#c9d3dc', 'stroke-width': 3 }, g);
+      [2, 9].forEach(function (d) { S('rect', { x: cx - hw - 18, y: hy + d, width: (hw + 18) * 2, height: 3, fill: '#e5383b' }, g); });
+    } else if (id === 'graduate') {
+      S('rect', { x: cx - hw + 2, y: hy - 16, width: hw * 2 - 4, height: 20, rx: 5, fill: '#22223b', stroke: '#0d0d1a', 'stroke-width': 3 }, g);
+      P(g, 'M' + (cx - hw - 30) + ' ' + (hy - 20) + ' L' + cx + ' ' + (hy - 34) + ' L' + (cx + hw + 30) + ' ' + (hy - 20) + ' L' + cx + ' ' + (hy - 6) + ' Z', '#2b2d42', '#0d0d1a', 3);
+      P(g, 'M' + cx + ' ' + (hy - 20) + ' L' + (cx + hw + 16) + ' ' + (hy - 16) + ' L' + (cx + hw + 18) + ' ' + (hy + 12), null, '#ffd60a', 3);
+      S('rect', { x: cx + hw + 13, y: hy + 10, width: 10, height: 14, rx: 3, fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 2 }, g);
+      S('circle', { cx: cx, cy: hy - 20, r: 4.5, fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 1.5 }, g);
+    } else if (id === 'bunnyears') {
+      [-1, 1].forEach(function (s) {
+        var bx = cx + s * hw * 0.62, by = hy - 34, tr = 'rotate(' + (s * 14) + ' ' + bx + ' ' + (hy + 4) + ')';
+        S('ellipse', { cx: bx, cy: by, rx: 13, ry: 33, fill: '#ffffff', stroke: '#d3d9e0', 'stroke-width': 3, transform: tr }, g);
+        S('ellipse', { cx: bx, cy: by + 2, rx: 5.5, ry: 23, fill: '#ffc2d9', transform: tr }, g);
+      });
+      P(g, 'M' + (cx - hw - 8) + ' ' + (hy + 8) + ' Q' + cx + ' ' + (hy - 16) + ' ' + (cx + hw + 8) + ' ' + (hy + 8), null, '#ff8fb8', 7);
+    } else if (id === 'samurai') {
+      [-1, 1].forEach(function (s) { P(g, 'M' + (cx + s * (hw + 2)) + ' ' + (hy - 2) + ' L' + (cx + s * (hw + 32)) + ' ' + (hy + 16) + ' L' + (cx + s * (hw + 26)) + ' ' + (hy + 26) + ' L' + (cx + s * (hw - 4)) + ' ' + (hy + 10) + ' Z', '#b3122d', '#6a040f', 3); });
+      P(g, 'M' + (cx - hw - 6) + ' ' + (hy + 4) + ' A' + (hw + 6) + ' ' + (hw + 2) + ' 0 0 1 ' + (cx + hw + 6) + ' ' + (hy + 4) + ' Z', '#2b2d42', '#0d0d1a', 3);
+      [-1, 1].forEach(function (s) { P(g, 'M' + cx + ' ' + (hy - hw + 4) + ' Q' + (cx + s * 22) + ' ' + (hy - hw - 20) + ' ' + (cx + s * 40) + ' ' + (hy - hw - 40), null, '#e0b100', 6); });
+      S('circle', { cx: cx, cy: hy - hw + 6, r: 7, fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 2 }, g);
+      P(g, 'M' + (cx - hw - 4) + ' ' + (hy - 4) + ' Q' + cx + ' ' + (hy + 4) + ' ' + (cx + hw + 4) + ' ' + (hy - 4), null, '#e0b100', 3);
+    } else if (id === 'jester') {
+      [[-1, '#7b2cbf'], [0, '#ffd60a'], [1, '#e5383b']].forEach(function (p) {
+        var k2 = p[0], bx = cx + k2 * hw * 0.62, tx = k2 ? cx + k2 * (hw + 36) : cx + 8, ty = k2 ? hy - 36 : hy - 64;
+        P(g, 'M' + (bx - 15) + ' ' + hy + ' Q' + (bx - 10 + k2 * 4) + ' ' + (hy - 40) + ' ' + tx + ' ' + ty + ' Q' + (bx + 6 + k2 * 10) + ' ' + (hy - 22) + ' ' + (bx + 15) + ' ' + hy + ' Z', p[1], shade(p[1], -0.4), 2.5);
+        S('circle', { cx: tx, cy: ty, r: 6.5, fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 2 }, g);
+      });
+      S('rect', { x: cx - hw - 8, y: hy - 7, width: (hw + 8) * 2, height: 13, rx: 6, fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 2.5 }, g);
+      [-0.6, 0, 0.6].forEach(function (p) { S('path', { d: 'M' + (cx + (hw + 8) * p) + ' ' + (hy - 3) + ' l5 4 l-5 4 l-5 -4 Z', fill: '#7b2cbf' }, g); });
+    } else if (id === 'icecrown') {
+      [30, 42, 56, 42, 30].forEach(function (h, n) {
+        x = cx + (n - 2) * (hw + 4) / 2.2;
+        P(g, 'M' + (x - 10) + ' ' + (hy - 8) + ' L' + x + ' ' + (hy - 8 - h) + ' L' + (x + 10) + ' ' + (hy - 8) + ' Z', '#dff7ff', '#5fa8c9', 2.5);
+        P(g, 'M' + x + ' ' + (hy - 12) + ' L' + x + ' ' + (hy - 4 - h * 0.8), null, '#ffffff', 2, { opacity: 0.8 });
+      });
+      S('rect', { x: cx - hw - 8, y: hy - 12, width: (hw + 8) * 2, height: 13, rx: 5, fill: '#bde6f7', stroke: '#5fa8c9', 'stroke-width': 3 }, g);
+      [-0.6, 0, 0.6].forEach(function (p) { P(g, 'M' + (cx + (hw + 8) * p) + ' ' + (hy - 11) + ' l5 5.5 l-5 5.5 l-5 -5.5 Z', '#4a8fd9', '#2c5f99', 1.5); });
+      S('polygon', { points: star(cx, hy - 66, 5), fill: '#ffffff', opacity: 0.9 }, g);
+    // ---- на глаза ----
+    } else if (id === 'roundglasses') {
+      P(g, 'M' + (cx - ex + 22) + ' ' + ey + ' Q' + cx + ' ' + (ey - 9) + ' ' + (cx + ex - 22) + ' ' + ey, null, '#3d2b1f', 4);
+      [-1, 1].forEach(function (s) {
+        P(g, 'M' + (cx + s * (ex + 22)) + ' ' + (ey - 2) + ' l' + (s * 18) + ' -6', null, '#3d2b1f', 4);
+        S('circle', { cx: cx + s * ex, cy: ey, r: 22, fill: '#cfe8ff', 'fill-opacity': 0.25, stroke: '#3d2b1f', 'stroke-width': 4.5 }, g);
+      });
+    } else if (id === 'sleepmask') {
+      [-1, 1].forEach(function (s) { P(g, 'M' + (cx + s * (ex + 28)) + ' ' + ey + ' l' + (s * 18) + ' -4', null, '#c9457a', 5); });
+      S('rect', { x: cx - ex - 30, y: ey - 17, width: ex * 2 + 60, height: 34, rx: 17, fill: '#ffafcc', stroke: '#c9457a', 'stroke-width': 3 }, g);
+      [-1, 1].forEach(function (s) {
+        P(g, 'M' + (cx + s * ex - 13) + ' ' + (ey - 2) + ' Q' + (cx + s * ex) + ' ' + (ey + 9) + ' ' + (cx + s * ex + 13) + ' ' + (ey - 2), null, '#6a2c70', 3.5);
+        [-8, 0, 8].forEach(function (d) { P(g, 'M' + (cx + s * ex + d) + ' ' + (ey + 4 - Math.abs(d) * 0.3) + ' l' + (d * 0.3) + ' 6', null, '#6a2c70', 2.5); });
+      });
+    } else if (id === 'masquerade') {
+      var md = 'M' + (cx - ex - 36) + ' ' + (ey - 12) + ' Q' + (cx - ex) + ' ' + (ey - 32) + ' ' + cx + ' ' + (ey - 12) + ' Q' + (cx + ex) + ' ' + (ey - 32) + ' ' + (cx + ex + 36) + ' ' + (ey - 12) +
+        ' Q' + (cx + ex + 30) + ' ' + (ey + 22) + ' ' + (cx + ex) + ' ' + (ey + 20) + ' Q' + (cx + 12) + ' ' + (ey + 18) + ' ' + cx + ' ' + (ey + 6) + ' Q' + (cx - 12) + ' ' + (ey + 18) + ' ' + (cx - ex) + ' ' + (ey + 20) + ' Q' + (cx - ex - 30) + ' ' + (ey + 22) + ' ' + (cx - ex - 36) + ' ' + (ey - 12) + ' Z';
+      [-1, 1].forEach(function (s) { md += ' M' + (cx + s * ex + 15) + ' ' + (ey + 1) + ' a15 11 0 1 0 -30 0 a15 11 0 1 0 30 0 Z'; });
+      P(g, 'M' + (cx + ex + 30) + ' ' + (ey - 12) + ' Q' + (cx + ex + 52) + ' ' + (ey - 40) + ' ' + (cx + ex + 44) + ' ' + (ey - 64), null, '#ff8fb8', 8);
+      P(g, md, '#7b2cbf', '#e0b100', 3, { 'fill-rule': 'evenodd' });
+    } else if (id === 'snorkel') {
+      P(g, 'M' + (cx + ex + 28) + ' ' + (ey + 4) + ' L' + (cx + ex + 42) + ' ' + (ey + 4) + ' L' + (cx + ex + 42) + ' ' + (ey - 70), null, '#ff9f1c', 9);
+      S('rect', { x: cx + ex + 34, y: ey - 82, width: 16, height: 13, rx: 4, fill: '#ef476f', stroke: '#a4161a', 'stroke-width': 2 }, g);
+      [-1, 1].forEach(function (s) { P(g, 'M' + (cx + s * (ex + 28)) + ' ' + ey + ' l' + (s * 14) + ' -4', null, '#1d3557', 6); });
+      S('rect', { x: cx - ex - 28, y: ey - 21, width: ex * 2 + 56, height: 42, rx: 15, fill: '#9bf6ff', 'fill-opacity': 0.35, stroke: '#ff9f1c', 'stroke-width': 6 }, g);
+      P(g, 'M' + (cx - ex - 14) + ' ' + (ey - 10) + ' l' + (ex * 0.9) + ' 0', null, '#ffffff', 4, { opacity: 0.7 });
+    } else if (id === 'steampunk') {
+      S('rect', { x: cx - 14, y: ey - 5, width: 28, height: 8, rx: 3, fill: '#8a5a2b' }, g);
+      [-1, 1].forEach(function (s) {
+        P(g, 'M' + (cx + s * (ex + 26)) + ' ' + ey + ' l' + (s * 20) + ' -4', null, '#5c3a18', 8);
+        S('circle', { cx: cx + s * ex, cy: ey, r: 22, fill: '#2a9d8f', 'fill-opacity': 0.55, stroke: '#8a5a2b', 'stroke-width': 8 }, g);
+        S('circle', { cx: cx + s * ex, cy: ey, r: 26, fill: 'none', stroke: '#d4a373', 'stroke-width': 2 }, g);
+        for (k = 0; k < 6; k++) S('circle', { cx: cx + s * ex + Math.cos(k * 1.047) * 22, cy: ey + Math.sin(k * 1.047) * 22, r: 2.2, fill: '#f1d6a4' }, g);
+        P(g, 'M' + (cx + s * ex - 10) + ' ' + (ey - 8) + ' l8 -3', null, '#ffffff', 3, { opacity: 0.7 });
+      });
+      S('polygon', { points: star(cx + ex + 36, ey - 22, 9), fill: '#d4a373', stroke: '#8a5a2b', 'stroke-width': 2 }, g);
+      S('circle', { cx: cx + ex + 36, cy: ey - 22, r: 3, fill: '#8a5a2b' }, g);
+    } else if (id === 'nightvision') {
+      S('rect', { x: cx - 12, y: ey - 40, width: 24, height: 22, rx: 5, fill: '#495057', stroke: '#212529', 'stroke-width': 3 }, g);
+      [-1, 1].forEach(function (s) { P(g, 'M' + (cx + s * (ex + 24)) + ' ' + ey + ' l' + (s * 18) + ' -4', null, '#2b2d42', 8); });
+      S('rect', { x: cx - ex - 26, y: ey - 15, width: ex * 2 + 52, height: 30, rx: 9, fill: '#2b2d42', stroke: '#111111', 'stroke-width': 3 }, g);
+      [-1, 1].forEach(function (s) {
+        S('circle', { cx: cx + s * ex, cy: ey, r: 17, fill: '#1b1b24', stroke: '#6c757d', 'stroke-width': 4 }, g);
+        S('circle', { cx: cx + s * ex, cy: ey, r: 10, fill: '#7fd48f', opacity: 0.85 }, g);
+        S('circle', { cx: cx + s * ex - 3.5, cy: ey - 3.5, r: 3, fill: '#ffffff', opacity: 0.8 }, g);
+      });
+    // ---- на шею ----
+    } else if (id === 'pacifier') {
+      cord('#ffffff', 3, 24);
+      S('circle', { cx: cx, cy: ny + 38, r: 8, fill: 'none', stroke: '#1d7fa3', 'stroke-width': 4 }, g);
+      S('ellipse', { cx: cx, cy: ny + 26, rx: 17, ry: 10, fill: '#7fd3f0', stroke: '#1d7fa3', 'stroke-width': 3 }, g);
+      S('ellipse', { cx: cx, cy: ny + 15, rx: 7, ry: 6, fill: '#ffe8a3', stroke: '#c9a227', 'stroke-width': 2 }, g);
+    } else if (id === 'scarfknit') {
+      S('rect', { x: cx + nw * 0.3, y: ny + 2, width: 18, height: 46, rx: 4, fill: '#e5383b', transform: 'rotate(-8 ' + (cx + nw * 0.3) + ' ' + ny + ')' }, g);
+      [12, 26, 40].forEach(function (d) { S('rect', { x: cx + nw * 0.3, y: ny + d, width: 18, height: 6, fill: '#ffffff', transform: 'rotate(-8 ' + (cx + nw * 0.3) + ' ' + ny + ')' }, g); });
+      P(g, 'M' + (cx - nw) + ' ' + (ny - 4) + ' Q' + cx + ' ' + (ny + 22) + ' ' + (cx + nw) + ' ' + (ny - 4), null, '#e5383b', 17);
+      P(g, 'M' + (cx - nw) + ' ' + (ny - 4) + ' Q' + cx + ' ' + (ny + 22) + ' ' + (cx + nw) + ' ' + (ny - 4), null, '#ffffff', 17, { 'stroke-dasharray': '9 13', 'stroke-linecap': 'butt' });
+    } else if (id === 'camera') {
+      cord('#2b2d42', 3.5, 26);
+      S('rect', { x: cx - 24, y: ny + 14, width: 48, height: 32, rx: 7, fill: '#3d4148', stroke: '#15171a', 'stroke-width': 3 }, g);
+      S('rect', { x: cx - 18, y: ny + 9, width: 14, height: 7, rx: 2, fill: '#3d4148', stroke: '#15171a', 'stroke-width': 2 }, g);
+      S('circle', { cx: cx, cy: ny + 30, r: 11, fill: '#6c757d', stroke: '#15171a', 'stroke-width': 3 }, g);
+      S('circle', { cx: cx, cy: ny + 30, r: 5.5, fill: '#8ecae6' }, g);
+      S('rect', { x: cx + 12, y: ny + 17, width: 8, height: 5, rx: 1.5, fill: '#ffffff' }, g);
+    } else if (id === 'pearls') {
+      for (k = 0; k < 13; k++) { var tp = k / 12; S('circle', { cx: cx - nw + nw * 2 * tp, cy: ny - 4 + Math.sin(tp * Math.PI) * 26, r: k === 6 ? 0 : 6, fill: U('pearl'), stroke: '#b8aec4', 'stroke-width': 1.2 }, g); }
+      S('circle', { cx: cx, cy: ny + 32, r: 10, fill: U('pearl'), stroke: '#b8aec4', 'stroke-width': 1.5 }, g);
+      shine(g, cx - 3, ny + 28, 3, 2, -20, 0.9);
+    } else if (id === 'swampheart') {
+      P(g, 'M' + (cx - nw) + ' ' + (ny - 6) + ' Q' + cx + ' ' + (ny + 28) + ' ' + (cx + nw) + ' ' + (ny - 6), null, U('gold'), 4);
+      leaf(g, cx - 14, ny + 22, 18, 5, -60, '#3fa34d'); leaf(g, cx + 14, ny + 22, 18, 5, 60, '#3fa34d');
+      S('path', { d: heart(cx, ny + 30, 13), fill: '#2a9d8f', stroke: U('gold'), 'stroke-width': 4 }, g);
+      S('path', { d: heart(cx - 2, ny + 28, 6), fill: '#a7f3d0', opacity: 0.7 }, g);
+      S('polygon', { points: star(cx + 16, ny + 18, 4), fill: '#ffffff', opacity: 0.85 }, g);
+    // ---- костюмы (обрезаны по телу) ----
+    } else if (id === 'raincoat') {
+      S('rect', { x: sx, y: sy, width: sw, height: sh, fill: '#ffd23f' }, g);
+      P(g, 'M' + cx + ' ' + sy + ' L' + cx + ' ' + (c.base + 4), null, '#c99a00', 3);
+      [0.25, 0.5, 0.75].forEach(function (p) { S('circle', { cx: cx + 10, cy: sy + sh * p, r: 4, fill: '#2b2d42' }, g); });
+      [-1, 1].forEach(function (s) { S('rect', { x: cx + s * c.rx * 0.5 - 15, y: sy + sh * 0.55, width: 30, height: 18, rx: 4, fill: 'none', stroke: '#c99a00', 'stroke-width': 3 }, g); });
+      P(g, 'M' + (cx - 32) + ' ' + (sy - 2) + ' L' + (cx - 4) + ' ' + (sy + 24) + ' L' + (cx - 6) + ' ' + (sy - 2) + ' Z M' + (cx + 32) + ' ' + (sy - 2) + ' L' + (cx + 4) + ' ' + (sy + 24) + ' L' + (cx + 6) + ' ' + (sy - 2) + ' Z', '#ffe680', '#c99a00', 2.5);
+    } else if (id === 'sweater') {
+      S('rect', { x: sx, y: sy, width: sw, height: sh, fill: '#b3122d' }, g);
+      y = sy + sh * 0.3;
+      S('rect', { x: sx, y: y, width: sw, height: 22, fill: '#ffffff' }, g);
+      for (k = 0; k * 16 < sw; k++) { S('path', { d: 'M' + (sx + k * 16) + ' ' + (y + 22) + ' l8 -9 l8 9 Z', fill: '#2d6a4f' }, g); S('path', { d: 'M' + (sx + k * 16) + ' ' + y + ' l8 7 l8 -7 Z', fill: '#b3122d' }, g); }
+      [[0.2, 0.68], [0.5, 0.82], [0.8, 0.68], [0.35, 0.16], [0.65, 0.16]].forEach(function (p) {
+        x = sx + sw * p[0]; var yy = sy + sh * p[1];
+        P(g, 'M' + (x - 7) + ' ' + yy + ' L' + (x + 7) + ' ' + yy + ' M' + x + ' ' + (yy - 7) + ' L' + x + ' ' + (yy + 7) + ' M' + (x - 5) + ' ' + (yy - 5) + ' L' + (x + 5) + ' ' + (yy + 5) + ' M' + (x + 5) + ' ' + (yy - 5) + ' L' + (x - 5) + ' ' + (yy + 5), null, '#ffffff', 2.5);
+      });
+      S('rect', { x: sx, y: sy - 2, width: sw, height: 9, fill: '#2d6a4f' }, g);
+    } else if (id === 'sailor') {
+      S('rect', { x: sx, y: sy, width: sw, height: sh, fill: '#ffffff' }, g);
+      S('rect', { x: sx, y: c.base - 18, width: sw, height: 24, fill: '#1d3557' }, g);
+      P(g, 'M' + (cx - c.rx * 0.85) + ' ' + (sy - 2) + ' L' + (cx + c.rx * 0.85) + ' ' + (sy - 2) + ' L' + (cx + c.rx * 0.85) + ' ' + (sy + 16) + ' L' + (cx + 22) + ' ' + (sy + 16) + ' L' + cx + ' ' + (sy + 46) + ' L' + (cx - 22) + ' ' + (sy + 16) + ' L' + (cx - c.rx * 0.85) + ' ' + (sy + 16) + ' Z', '#1d3557');
+      P(g, 'M' + (cx - c.rx * 0.85) + ' ' + (sy + 10) + ' L' + (cx - 26) + ' ' + (sy + 10) + ' L' + cx + ' ' + (sy + 38) + ' L' + (cx + 26) + ' ' + (sy + 10) + ' L' + (cx + c.rx * 0.85) + ' ' + (sy + 10), null, '#ffffff', 2.5);
+      P(g, 'M' + cx + ' ' + (sy + 44) + ' l-14 22 l10 -2 Z M' + cx + ' ' + (sy + 44) + ' l14 22 l-10 -2 Z', '#e5383b', '#9e2a2b', 2);
+      S('circle', { cx: cx, cy: sy + 44, r: 6, fill: '#e5383b', stroke: '#9e2a2b', 'stroke-width': 2 }, g);
+    } else if (id === 'football') {
+      S('rect', { x: sx, y: sy, width: sw, height: sh, fill: '#3a86ff' }, g);
+      [-1, 1].forEach(function (s) { S('rect', { x: cx + s * c.rx * 0.72 - 5, y: sy, width: 10, height: sh, fill: '#ffffff' }, g); });
+      P(g, 'M' + (cx - 22) + ' ' + (sy - 2) + ' L' + cx + ' ' + (sy + 18) + ' L' + (cx + 22) + ' ' + (sy - 2), null, '#ffffff', 6);
+      var num = S('text', { x: cx, y: sy + sh * 0.62, 'text-anchor': 'middle', 'font-family': 'Nunito, sans-serif', 'font-weight': 900, 'font-size': 38, fill: '#ffffff', stroke: '#1d4ed8', 'stroke-width': 1.5 }, g);
+      num.textContent = '10';
+    } else if (id === 'superhero') {
+      S('rect', { x: sx, y: sy, width: sw, height: sh, fill: '#3a0ca3' }, g);
+      S('rect', { x: sx, y: sy + sh * 0.62, width: sw, height: 11, fill: '#ffd60a' }, g);
+      S('rect', { x: cx - 10, y: sy + sh * 0.62 - 2, width: 20, height: 15, rx: 3, fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 2.5 }, g);
+      S('circle', { cx: cx, cy: sy + 28, r: 21, fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 3 }, g);
+      P(g, 'M' + (cx + 4) + ' ' + (sy + 12) + ' L' + (cx - 9) + ' ' + (sy + 30) + ' L' + (cx - 1) + ' ' + (sy + 30) + ' L' + (cx - 5) + ' ' + (sy + 44) + ' L' + (cx + 10) + ' ' + (sy + 24) + ' L' + (cx + 2) + ' ' + (sy + 24) + ' Z', '#e5383b', '#9e2a2b', 1.5);
+    } else if (id === 'wizardrobe') {
+      S('rect', { x: sx, y: sy, width: sw, height: sh, fill: '#3c096c' }, g);
+      S('rect', { x: cx - 5, y: sy, width: 10, height: sh, fill: '#e0b100' }, g);
+      S('rect', { x: sx, y: sy - 2, width: sw, height: 9, fill: '#e0b100' }, g);
+      [[0.14, 0.3, 7], [0.32, 0.66, 6], [0.7, 0.36, 8], [0.86, 0.7, 6], [0.22, 0.88, 5], [0.62, 0.84, 5]].forEach(function (p) { S('polygon', { points: star(sx + sw * p[0], sy + sh * p[1], p[2]), fill: '#ffd60a' }, g); });
+      [[0.84, 0.2], [0.18, 0.56]].forEach(function (p) { x = sx + sw * p[0]; y = sy + sh * p[1]; S('path', { d: 'M' + x + ' ' + (y - 9) + ' A9 9 0 1 0 ' + x + ' ' + (y + 9) + ' A6.5 7 0 1 1 ' + x + ' ' + (y - 9) + ' Z', fill: '#e8e3ff' }, g); });
+    // ---- особое: за спиной ----
+    } else if (id === 'backpack') {
+      x = cx + c.rx * 0.98; y = c.cy - c.ry * 0.3;
+      S('rect', { x: x - 30, y: y - 42, width: 62, height: 86, rx: 18, fill: '#ff9f1c', stroke: '#b5650a', 'stroke-width': 4 }, g);
+      P(g, 'M' + (x - 30) + ' ' + (y - 18) + ' Q' + (x + 1) + ' ' + (y - 2) + ' ' + (x + 32) + ' ' + (y - 18) + ' L' + (x + 32) + ' ' + (y - 24) + ' Q' + (x + 32) + ' ' + (y - 42) + ' ' + (x + 14) + ' ' + (y - 42) + ' L' + (x - 12) + ' ' + (y - 42) + ' Q' + (x - 30) + ' ' + (y - 42) + ' ' + (x - 30) + ' ' + (y - 24) + ' Z', '#ffb84d', '#b5650a', 3);
+      S('rect', { x: x - 16, y: y + 10, width: 34, height: 24, rx: 6, fill: '#ffb84d', stroke: '#b5650a', 'stroke-width': 3 }, g);
+      S('rect', { x: x - 4, y: y - 14, width: 10, height: 9, rx: 2, fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 2 }, g);
+    } else if (id === 'umbrella') {
+      var ux = cx - c.rx * 0.78, uy = c.cy - c.ry - 30;
+      P(g, 'M' + (cx - c.rx * 0.6) + ' ' + (c.cy - c.ry * 0.1) + ' L' + (ux - 8) + ' ' + (uy - 40), null, '#5c3a18', 4);
+      var ud = 'M' + (ux - 52) + ' ' + uy + ' A52 44 0 0 1 ' + (ux + 52) + ' ' + uy;
+      for (k = 0; k < 4; k++) ud += ' q-13 -10 -26 0';
+      P(g, ud + ' Z', '#ef6f8f', '#9e2a4b', 3, { transform: 'rotate(-14 ' + ux + ' ' + uy + ')' });
+      [-1, 1].forEach(function (s) { P(g, 'M' + ux + ' ' + (uy - 44) + ' Q' + (ux + s * 18) + ' ' + (uy - 24) + ' ' + (ux + s * 26) + ' ' + uy, null, '#9e2a4b', 2.5, { transform: 'rotate(-14 ' + ux + ' ' + uy + ')' }); });
+    } else if (id === 'kite') {
+      var kx = cx + c.rx + 6, ky = c.cy - c.ry - 34;
+      P(g, 'M' + (cx + c.rx * 0.6) + ' ' + c.cy + ' Q' + (cx + c.rx + 30) + ' ' + (c.cy - c.ry * 0.2) + ' ' + kx + ' ' + (ky + 48), null, '#6c757d', 2);
+      P(g, 'M' + kx + ' ' + (ky + 48) + ' q-14 22 4 34 q18 12 4 34', null, '#6c757d', 2);
+      [[ky + 64, '#ffd60a'], [ky + 84, '#3a86ff'], [ky + 102, '#e5383b']].forEach(function (b, n) { var bx = kx + (n % 2 ? 6 : -6); S('path', { d: 'M' + (bx - 8) + ' ' + (b[0] - 5) + ' L' + (bx + 8) + ' ' + (b[0] + 5) + ' L' + (bx + 8) + ' ' + (b[0] - 5) + ' L' + (bx - 8) + ' ' + (b[0] + 5) + ' Z', fill: b[1] }, g); });
+      P(g, 'M' + kx + ' ' + (ky - 40) + ' L' + (kx + 30) + ' ' + ky + ' L' + kx + ' ' + (ky + 48) + ' Z', '#e5383b', '#9e2a2b', 2.5);
+      P(g, 'M' + kx + ' ' + (ky - 40) + ' L' + (kx - 30) + ' ' + ky + ' L' + kx + ' ' + (ky + 48) + ' Z', '#ffd60a', '#b58900', 2.5);
+      P(g, 'M' + (kx - 30) + ' ' + ky + ' L' + (kx + 30) + ' ' + ky, null, '#5c3a18', 2);
+    } else if (id === 'batwings') {
+      [-1, 1].forEach(function (s) {
+        var r0 = cx + s * c.rx * 0.6, t0 = c.cy - c.ry * 0.25, tip = [cx + s * (c.rx + 34), c.cy - c.ry * 0.95], pts = [[c.rx + 40, -0.05], [c.rx + 24, 0.22], [c.rx + 4, 0.36]];
+        var d = 'M' + r0 + ' ' + t0 + ' L' + tip[0] + ' ' + tip[1], prev = tip;
+        pts.forEach(function (p) { var px = cx + s * p[0], py = c.cy + c.ry * p[1]; d += ' Q' + ((prev[0] + px) / 2 - s * 10) + ' ' + ((prev[1] + py) / 2 - 4) + ' ' + px + ' ' + py; prev = [px, py]; });
+        P(g, d + ' Z', '#3c2a4d', '#1b1028', 3);
+        pts.forEach(function (p) { P(g, 'M' + r0 + ' ' + t0 + ' L' + (cx + s * p[0]) + ' ' + (c.cy + c.ry * p[1]), null, '#5e4a73', 2.5); });
+      });
+    } else if (id === 'quiver') {
+      x = cx + c.rx * 0.6; y = c.cy - c.ry * 0.55;
+      var qg = S('g', { transform: 'rotate(28 ' + x + ' ' + y + ')' }, g);
+      [[-8, '#e5383b'], [2, '#ffd60a'], [11, '#3a86ff']].forEach(function (a) {
+        P(qg, 'M' + (x + a[0]) + ' ' + (y - 34) + ' L' + (x + a[0]) + ' ' + (y - 74), null, '#8a5a2b', 3);
+        P(qg, 'M' + (x + a[0]) + ' ' + (y - 74) + ' l-6 10 l6 -3 l6 3 Z', a[1], shade(a[1], -0.4), 1.5);
+      });
+      S('rect', { x: x - 18, y: y - 40, width: 36, height: 104, rx: 10, fill: '#8a5a2b', stroke: '#5c3a18', 'stroke-width': 4 }, qg);
+      [-22, 30].forEach(function (d) { S('rect', { x: x - 18, y: y + d, width: 36, height: 7, fill: '#d4a373' }, qg); });
+    } else if (id === 'mecha') {
+      [-1, 1].forEach(function (s) {
+        var px = cx + s * c.rx * 0.62, py = c.cy - c.ry * 0.2;
+        [[64, 76], [38, 82], [12, 66]].forEach(function (f) {
+          var a = f[0] * Math.PI / 180, tx = px + s * Math.cos(a) * f[1], ty = py - Math.sin(a) * f[1], d = 'M' + px + ' ' + py + ' L' + tx + ' ' + ty;
+          P(g, d, null, '#495057', 21); P(g, d, null, '#ced4da', 14); P(g, d, null, '#8ecae6', 3);
+        });
+        S('circle', { cx: px, cy: py, r: 11, fill: '#6c757d', stroke: '#343a40', 'stroke-width': 3 }, g);
+        S('circle', { cx: px, cy: py, r: 3.5, fill: '#ced4da' }, g);
+      });
     }
   }
   // приметы лягушек-диковинок: рожки, уши, шипы, клыки и прочее. back — то, что растёт из-за тела и рисуется под ним; остальное — поверх морды
@@ -1424,6 +1698,46 @@
           S('circle', { cx: cx + s * c.rx * 0.42, cy: top - 40, r: 8, fill: '#ff70a6', stroke: '#c9457a', 'stroke-width': 2 }, g);
         }
       });
+      // третья волна: звери и букашки
+      if (has('plates')) for (k = -3; k <= 3; k++) {
+        var pa = k * 0.33, ph = 46 - Math.abs(k) * 7, px = cx + Math.sin(pa) * c.rx * 0.9, py = c.cy - Math.cos(pa) * c.ry * 0.9;
+        P(g, 'M' + (px - 15 * Math.cos(pa)) + ' ' + (py - 15 * Math.sin(pa) + 6) + ' Q' + (cx + Math.sin(pa) * (c.rx * 0.9 + ph * 2)) + ' ' + (c.cy - Math.cos(pa) * (c.ry * 0.9 + ph * 2)) + ' ' + (px + 15 * Math.cos(pa)) + ' ' + (py + 15 * Math.sin(pa) + 6) + ' Z', o.mark, shade(o.mark, -0.35), 3);
+      }
+      if (has('fin')) P(g, 'M' + (cx - 26) + ' ' + (top + 18) + ' Q' + (cx - 2) + ' ' + (top - 16) + ' ' + (cx + 22) + ' ' + (top - 50) + ' Q' + (cx + 14) + ' ' + (top - 8) + ' ' + (cx + 32) + ' ' + (top + 18) + ' Z', o.mark, shade(o.mark, -0.35), 3);
+      if (has('antenna_bolt')) {
+        P(g, 'M' + cx + ' ' + (top + 10) + ' L' + cx + ' ' + (top - 38), null, o.mark, 5);
+        S('circle', { cx: cx, cy: top - 46, r: 9, fill: '#ef6f6c', stroke: '#9e2a2b', 'stroke-width': 2.5 }, g);
+        S('circle', { cx: cx - 3, cy: top - 49, r: 2.5, fill: '#ffffff', opacity: 0.8 }, g);
+      }
+      if (has('tentacles')) [-1, 1].forEach(function (s) {
+        [0, 1, 2].forEach(function (n) {
+          var bx = cx + s * (c.rx * 0.45 + n * c.rx * 0.17), tx = cx + s * (c.rx * 0.78 + n * c.rx * 0.16 + 30), ty = c.base - 30 - n * 10;
+          P(g, 'M' + bx + ' ' + (c.base - 16) + ' Q' + (bx + s * 26) + ' ' + (c.base + 10) + ' ' + tx + ' ' + ty + ' q' + (s * 6) + ' -12 ' + (s * -6) + ' -14', null, o.skin, 15);
+          S('circle', { cx: (bx + tx) / 2 + s * 6, cy: c.base - 6, r: 3, fill: o.belly }, g);
+        });
+      });
+      [-1, 1].forEach(function (s) {
+        var x = cx + s * c.rx * 0.62;
+        if (has('feelers')) {
+          P(g, 'M' + (cx + s * c.rx * 0.18) + ' ' + (top + 10) + ' Q' + (cx + s * c.rx * 0.16) + ' ' + (top - 24) + ' ' + (cx + s * c.rx * 0.4) + ' ' + (top - 40), null, o.mark, 4);
+          S('circle', { cx: cx + s * c.rx * 0.4, cy: top - 42, r: 7, fill: o.mark }, g);
+        }
+        if (has('beewings')) {
+          S('ellipse', { cx: cx + s * (c.rx + 14), cy: c.cy - c.ry * 0.6, rx: 36, ry: 22, fill: '#eaf8ff', 'fill-opacity': 0.8, stroke: '#8fb3cc', 'stroke-width': 2.5, transform: 'rotate(' + (s * -32) + ' ' + (cx + s * (c.rx + 14)) + ' ' + (c.cy - c.ry * 0.6) + ')' }, g);
+          S('ellipse', { cx: cx + s * (c.rx + 6), cy: c.cy - c.ry * 0.15, rx: 24, ry: 14, fill: '#eaf8ff', 'fill-opacity': 0.8, stroke: '#8fb3cc', 'stroke-width': 2.5, transform: 'rotate(' + (s * 18) + ' ' + (cx + s * (c.rx + 6)) + ' ' + (c.cy - c.ry * 0.15) + ')' }, g);
+        }
+        if (has('ears_bear')) {
+          S('circle', { cx: cx + s * c.rx * 0.74, cy: top + 10, r: 23, fill: o.skin, stroke: o.mark, 'stroke-width': 3 }, g);
+          S('circle', { cx: cx + s * c.rx * 0.74, cy: top + 12, r: 12, fill: o.belly }, g);
+        }
+        if (has('ears_fox')) {
+          var ftx = x + s * 14, fty = top - 42;
+          P(g, 'M' + (x - 26) + ' ' + (top + 30) + ' L' + ftx + ' ' + fty + ' L' + (x + 26) + ' ' + (top + 30) + ' Z', o.skin, o.mark, 3);
+          P(g, 'M' + (x - 12) + ' ' + (top + 22) + ' L' + (x + s * 9) + ' ' + (top - 14) + ' L' + (x + 12) + ' ' + (top + 22) + ' Z', o.belly);
+          P(g, 'M' + ftx + ' ' + fty + ' L' + (ftx + (x - 26 - ftx) * 0.3) + ' ' + (fty + (top + 30 - fty) * 0.3) + ' L' + (ftx + (x + 26 - ftx) * 0.3) + ' ' + (fty + (top + 30 - fty) * 0.3) + ' Z', o.mark, o.mark, 3);
+        }
+        if (has('ears_owl')) P(g, 'M' + (x - 18) + ' ' + (top + 26) + ' L' + (x + s * 20) + ' ' + (top - 30) + ' L' + (x + 16) + ' ' + (top + 22) + ' Z', o.mark, shade(o.mark, -0.3), 3);
+      });
       if (has('horn1')) {
         S('path', { d: 'M' + (cx - 11) + ' ' + (top + 14) + ' L' + cx + ' ' + (top - 54) + ' L' + (cx + 11) + ' ' + (top + 14) + ' Z', fill: '#ffd60a', stroke: '#b58900', 'stroke-width': 3, 'stroke-linejoin': 'round' }, g);
         [0, 1, 2].forEach(function (n) { S('path', { d: 'M' + (cx - 8 + n * 2.4) + ' ' + (top - 2 - n * 16) + ' l' + (16 - n * 4.8) + ' -7', stroke: '#b58900', 'stroke-width': 2.5 }, g); });
@@ -1434,11 +1748,12 @@
     [-1, 1].forEach(function (s) {
       if (has('fangs')) S('path', { d: 'M' + (cx + s * mw * 0.42 - 5.5) + ' ' + (my + 12) + ' L' + (cx + s * mw * 0.42) + ' ' + (my + 28) + ' L' + (cx + s * mw * 0.42 + 5.5) + ' ' + (my + 13) + ' Z', fill: '#ffffff', stroke: '#1c2b22', 'stroke-width': 1.5, 'stroke-linejoin': 'round' }, g);
       if (has('tusks')) S('path', { d: 'M' + (cx + s * mw * 0.5 - 6) + ' ' + (my + 10) + ' Q' + (cx + s * mw * 0.5 + s * 2) + ' ' + (my + 34) + ' ' + (cx + s * mw * 0.5 - s * 3) + ' ' + (my + 48) + ' Q' + (cx + s * mw * 0.5 + 9) + ' ' + (my + 30) + ' ' + (cx + s * mw * 0.5 + 6) + ' ' + (my + 11) + ' Z', fill: '#fdf6e3', stroke: '#b8a97a', 'stroke-width': 2, 'stroke-linejoin': 'round' }, g);
+      if (has('gills')) [0, 11, 22].forEach(function (d) { P(g, 'M' + (cx + s * c.rx * 0.8) + ' ' + (c.cy - c.ry * 0.12 + d) + ' q' + (s * -7) + ' 5 0 10', null, shade(o.skin, -0.35), 3); });
       if (has('whiskers')) [-9, 0, 9].forEach(function (d) { S('path', { d: 'M' + (cx + s * (mw + 14)) + ' ' + (my + 8) + ' L' + (cx + s * (mw + 52)) + ' ' + (my + 8 + d), stroke: '#1c2b22', 'stroke-width': 2, 'stroke-linecap': 'round' }, g); });
     });
   }
   function drawChest(tier) {
-    var col = [['#b5651d', '#7a4212', '#ffd60a'], ['#ced4da', '#7d8a96', '#4cc9f0'], ['#ffd60a', '#b58900', '#e63946']][tier];
+    var col = [['#b5651d', '#7a4212', '#ffd60a'], ['#ced4da', '#7d8a96', '#4cc9f0'], ['#ffd60a', '#b58900', '#e63946'], ['#3fbf8f', '#17775a', '#e8fff6']][tier];
     var s = S('svg', { viewBox: '0 0 64 54', 'aria-hidden': 'true' });
     S('path', { d: 'M6 24 Q6 6 32 6 Q58 6 58 24 Z', fill: col[0], stroke: col[1], 'stroke-width': 3, 'stroke-linejoin': 'round' }, s);
     S('rect', { x: 6, y: 24, width: 52, height: 24, rx: 3, fill: col[0], stroke: col[1], 'stroke-width': 3 }, s);
@@ -2501,7 +2816,18 @@
     if (audio()) [0, 2, 4, 7, 9].forEach(function (d, k) { play(rare >= 3 ? 'choir' : 'pluck', freq(d + rare, 2), ac.currentTime + k * 0.12); });
     checkAch();
   }
+  // в лавке гаснут сундуки, на которые не хватает корма; корм тратится и на кормёжку, поэтому сверяемся при каждом обновлении питомца
+  function shopPrice(b, tier) {
+    var poor = state.flies < CHEST_PRICE[tier], sm = b.querySelector('small');
+    b.disabled = poor;
+    sm.textContent = fmt(CHEST_PRICE[tier]) + ' корма';
+    if (poor) { sm.appendChild(document.createElement('br')); sm.appendChild(document.createTextNode('нужно ещё ' + fmt(CHEST_PRICE[tier] - state.flies))); }
+  }
+  function refreshShop() {
+    CHESTS.forEach(function (ch, tier) { var b = $('buy-chest-' + tier); if (b) shopPrice(b, tier); });
+  }
   function refreshPet() {
+    refreshShop();
     var me = state.me, st = stageOf(me.xp);
     var crack = st === 0 && me.xp >= stageNeed(1) * 0.6;
     var sig = [st, me.skin, me.kind, me.wear.neck, me.wear.hat, me.wear.eyes, me.wear.suit, me.wear.back, crack].join('|');
@@ -2606,9 +2932,25 @@
     });
     if (!any) {
       var n = document.createElement('p'); n.className = 'note';
-      n.textContent = 'Сундуков пока нет. Их дают за пройденные уровни в мини-игре «Оборона болота».';
+      n.textContent = 'Сундуков пока нет. Их дают за пройденные уровни в мини-игре «Оборона болота», а ещё их можно купить за корм в лавке ниже.';
       box.appendChild(n);
     }
+    // лавка: сундук за корм сразу ложится в инвентарь
+    var sh = document.createElement('h2'); sh.className = 'shop-h'; sh.textContent = 'Лавка сундуков'; box.appendChild(sh);
+    var shop = document.createElement('div'); shop.className = 'shop';
+    CHESTS.forEach(function (ch, tier) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'chest buy-chest'; b.id = 'buy-chest-' + tier;
+      b.appendChild(drawChest(tier));
+      var s = document.createElement('span');
+      s.appendChild(document.createTextNode(ch[0]));
+      var sm = document.createElement('small'); s.appendChild(sm);
+      b.appendChild(s);
+      shopPrice(b, tier);
+      b.addEventListener('click', function () { buyChest(tier); });
+      shop.appendChild(b);
+    });
+    box.appendChild(shop);
     var d = document.createElement('div'); d.className = 'drop'; d.id = 'inv-drop'; d.setAttribute('aria-live', 'polite');
     d.textContent = dropText; d.style.color = dropColor;
     box.appendChild(d);
@@ -2618,7 +2960,7 @@
     sum.textContent = 'Шансы выпадения'; det.appendChild(sum);
     var tbl = document.createElement('table'); tbl.className = 'odds';
     var tr = document.createElement('tr');
-    ['Редкость', 'Деревянный', 'Серебряный', 'Золотой'].forEach(function (x) { var th = document.createElement('th'); th.textContent = x; tr.appendChild(th); });
+    ['Редкость'].concat(CHESTS.map(function (ch) { return ch[0].split(' ')[0]; })).forEach(function (x) { var th = document.createElement('th'); th.textContent = x; tr.appendChild(th); });
     tbl.appendChild(tr);
     RARITY.forEach(function (r, k) {
       var row = document.createElement('tr'), c0 = document.createElement('td');
@@ -2628,7 +2970,7 @@
     });
     det.appendChild(tbl);
     var dn = document.createElement('p'); dn.className = 'note';
-    dn.textContent = 'Первая победа на уровнях 1–7 даёт деревянный сундук, 8–14 — серебряный, с 15-го — золотой; повторная победа — деревянный. Повторов не бывает: пока в выпавшей редкости есть несобранные вещи, выпадает новая, а потом вместо вещи дают корм.';
+    dn.textContent = 'Первая победа на уровнях 1–7 даёт деревянный сундук, 8–14 — серебряный, с 15-го — золотой; повторная победа — деревянный. Любой сундук можно купить в лавке за корм, изумрудный — только там. Повторов не бывает: пока в выпавшей редкости есть несобранные вещи, выпадает новая, а потом вместо вещи дают корм.';
     det.appendChild(dn);
     box.appendChild(det);
   }
@@ -2637,7 +2979,7 @@
     if (t.chests[tier] < 1) return;
     t.chests[tier] -= 1;
     state.ach.opened += 1;
-    if (tier === 2) state.ach.gold = 1;
+    if (tier >= 2) state.ach.gold = 1;
     var roll = Math.random() * 100, acc = 0, r;
     for (r = 0; r < 4; r++) { acc += CHESTS[tier][1][r]; if (roll < acc) break; }
     var free = LOOT_IDS.filter(function (id) { return LOOT[id][2] === r && !t.loot[id]; });
@@ -2655,6 +2997,21 @@
     buildInv(); buildWardrobe(); refreshPet(); refreshHeader();
     checkAch();
     sparkle(r >= 2 ? 'star' : 'heart', RARITY[r][1]);
+  }
+  function buyChest(tier) {
+    var price = CHEST_PRICE[tier];
+    if (state.flies < price) return;
+    state.flies -= price;
+    state.td.chests[tier] += 1;
+    state.ach.bought = (state.ach.bought || 0) + 1;
+    dropColor = '';
+    dropText = 'Куплен ' + CHESTS[tier][0].toLowerCase() + ' — он уже в инвентаре, нажмите на него, чтобы открыть.';
+    dirty = true; save();
+    if (audio()) [0, 4, 7].forEach(function (d, k) { play('tok', freq(d, 2), ac.currentTime + k * 0.08); });
+    buildInv(); refreshPet(); refreshHeader();
+    checkAch();
+    var b = $('chest-' + tier);
+    if (b) { b.classList.remove('shake'); void b.offsetWidth; b.classList.add('shake'); }
   }
   // покормить можно по одной единице корма или сразу пачкой в 10 и 25
   function feedPet(n) {
@@ -4334,7 +4691,8 @@
     ['Пруд', 'open5', 'Квинтет', 'Разбудите 5 лягушек.', 5, 5, function () { return frogsAt(1); }],
     ['Пруд', 'open13', 'Половина пруда', 'Разбудите 13 лягушек.', 13, 15, function () { return frogsAt(1); }],
     ['Пруд', 'open25', 'Полный пруд', 'Разбудите 25 лягушек.', 25, 40, function () { return frogsAt(1); }],
-    ['Пруд', 'open35', 'Зверинец', 'Разбудите всех 35 лягушек, включая диковинок.', 35, 80, function () { return frogsAt(1); }],
+    ['Пруд', 'open35', 'Зверинец', 'Разбудите 35 лягушек, включая диковинок.', 35, 80, function () { return frogsAt(1); }],
+    ['Пруд', 'open45', 'Всё болото в сборе', 'Разбудите всех 45 лягушек — до самого Кристаллика.', 45, 200, function () { return frogsAt(1); }],
     ['Пруд', 'lvl5', 'Примадонна', 'Вырастите любую лягушку до 5-го уровня.', 1, 10, function () { return frogsAt(5); }],
     ['Пруд', 'lvl5all', 'Консерватория', 'Вырастите 25 лягушек до 5-го уровня.', 25, 100, function () { return frogsAt(5); }],
     ['Пруд', 'choir', 'Хор без дирижёра', 'Пусть 5 лягушек поют сами одновременно.', 1, 10, function () { return state.ach.choir; }],
@@ -4371,7 +4729,9 @@
     ['Сундуки', 'gold', 'Золотая лихорадка', 'Откройте золотой сундук.', 1, 10, function () { return state.ach.gold; }],
     ['Сундуки', 'legend', 'Легенда болота', 'Получите легендарную вещь.', 1, 30, function () { return lootGot(4); }],
     ['Сундуки', 'loot13', 'Коллекционер', 'Соберите 13 вещей из сундуков.', 13, 30, function () { return lootGot(); }],
-    ['Сундуки', 'lootall', 'Полная коллекция', 'Соберите все 48 вещей из сундуков.', 48, 150, function () { return lootGot(); }],
+    ['Сундуки', 'lootall', 'Большая коллекция', 'Соберите 48 вещей из сундуков.', 48, 150, function () { return lootGot(); }],
+    ['Сундуки', 'loot78', 'Полная коллекция', 'Соберите все ' + LOOT_IDS.length + ' вещей из сундуков.', LOOT_IDS.length, 300, function () { return lootGot(); }],
+    ['Сундуки', 'shop1', 'Покупатель', 'Купите сундук в лавке за корм.', 1, 5, function () { return state.ach.bought || 0; }],
     ['Перерождение', 'reb1', 'Новая жизнь', 'Превратите выросшую лягушку в яйцо.', 1, 10, function () { return state.ach.rebirths; }],
     ['Перерождение', 'reb5', 'Колесо жизни', 'Переродитесь 5 раз.', 5, 40, function () { return state.ach.rebirths; }],
     ['Перерождение', 'reb15', 'Вечная жаба', 'Переродитесь 15 раз.', 15, 100, function () { return state.ach.rebirths; }],
@@ -4525,8 +4885,9 @@
     rec.t = window.firebase.database.ServerValue.TIMESTAMP;
     net.db.ref('players/' + net.uid).set(rec).catch(function () { net.sent = ''; });
   }
-  // вид питомца в восьми знаках: стадия, расцветка, порода и по знаку на каждый раздел гардероба (0 — ничего, дальше номер вещи в разделе)
-  var B36 = '0123456789abcdefghijklmnopqrstuvwxyz';
+  // вид питомца в восьми знаках: стадия, расцветка, порода и по знаку на каждый раздел гардероба (0 — ничего, дальше номер вещи в разделе).
+  // Номеров больше 35 стало после третьей партии вещей и лягушек: они пишутся заглавными буквами, старые копии игры видят на их месте «ничего»
+  var B36 = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
   function slotItems(slot) { return (POOLS[slot] || []).concat(LOOT_IDS.filter(function (id) { return LOOT[id][0] === slot; })); }
   function petCode() {
     var me = state.me;
