@@ -1,0 +1,587 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Толстые лягушки</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@600;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --water: #eaf8ef;
+    --water-deep: #cfeedb;
+    --ink: #12301f;
+    --ink-soft: #456352;
+    --frog: #16803c;
+    --on-frog: #ffffff;
+    --lily: #c8286e;
+    --surface: #ffffff;
+    --line: #c4e6d0;
+    --clay-hi: rgba(255, 255, 255, 0.85);
+    --clay-lo: rgba(18, 80, 40, 0.10);
+    --clay-drop: rgba(22, 90, 50, 0.22);
+    --font: "Nunito", "Segoe UI Rounded", "Segoe UI", system-ui, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --water: #12291d;
+      --water-deep: #0b1b13;
+      --ink: #e6f7ec;
+      --ink-soft: #a9cdb8;
+      --frog: #5bd27e;
+      --on-frog: #0b1b13;
+      --lily: #f48cbc;
+      --surface: #1b3a2a;
+      --line: #2e5a42;
+      --clay-hi: rgba(255, 255, 255, 0.07);
+      --clay-lo: rgba(0, 0, 0, 0.25);
+      --clay-drop: rgba(0, 0, 0, 0.45);
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --water: #12291d;
+    --water-deep: #0b1b13;
+    --ink: #e6f7ec;
+    --ink-soft: #a9cdb8;
+    --frog: #5bd27e;
+    --on-frog: #0b1b13;
+    --lily: #f48cbc;
+    --surface: #1b3a2a;
+    --line: #2e5a42;
+    --clay-hi: rgba(255, 255, 255, 0.07);
+    --clay-lo: rgba(0, 0, 0, 0.25);
+    --clay-drop: rgba(0, 0, 0, 0.45);
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html { background: var(--water); }
+  body {
+    margin: 0;
+    font-family: var(--font);
+    color: var(--ink);
+    background: radial-gradient(120% 80% at 50% 0%, var(--water) 0%, var(--water-deep) 100%) fixed;
+    overflow-x: hidden;
+  }
+
+  /* слои: огромный заголовок — позади лягушки, весь остальной текст — перед ней */
+  #scene { position: fixed; inset: 0; width: 100vw; height: 100vh; z-index: 1; pointer-events: none; }
+  .behind { position: relative; z-index: 0; }
+  .front { position: relative; z-index: 2; }
+
+  .top {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 3;
+    display: flex; align-items: center; justify-content: space-between; gap: 12px;
+    padding: 14px clamp(16px, 4vw, 40px);
+  }
+  .logo { font-weight: 900; font-size: 18px; letter-spacing: -0.01em; color: var(--ink); text-decoration: none; }
+  .top-right { display: flex; align-items: center; gap: 10px; }
+  .pill {
+    font-weight: 800; font-size: 14px; padding: 8px 14px; border-radius: 999px;
+    background: var(--surface); color: var(--ink-soft);
+    box-shadow: inset 0 2px 0 var(--clay-hi), inset 0 -3px 0 var(--clay-lo), 0 6px 14px -6px var(--clay-drop);
+  }
+  .pill b { color: var(--ink); font-variant-numeric: tabular-nums; }
+
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    font: 900 17px var(--font); text-decoration: none; cursor: pointer; border: 0;
+    padding: 14px 26px; border-radius: 999px;
+    background: var(--frog); color: var(--on-frog);
+    box-shadow: inset 0 3px 0 rgba(255,255,255,0.35), inset 0 -5px 0 rgba(0,0,0,0.18), 0 10px 22px -8px var(--clay-drop);
+    transition: transform .18s cubic-bezier(.3,1.6,.5,1);
+  }
+  .btn:hover { transform: translateY(-2px) scale(1.04); }
+  .btn:active { transform: translateY(1px) scale(.97); }
+  .btn.small { font-size: 14px; padding: 9px 16px; }
+  .btn.ghost { background: var(--surface); color: var(--ink); }
+
+  .s { min-height: 100vh; padding: 96px clamp(16px, 6vw, 80px); display: grid; align-items: center; }
+
+  /* 1. главный экран */
+  .hero { place-items: center; text-align: center; grid-template-rows: 1fr auto; padding-bottom: 36px; }
+  .hero-foot p, .hero .hint { text-shadow: 0 0 12px var(--water), 0 0 4px var(--water); }
+  .hero h1 {
+    margin: 0; font-weight: 900; line-height: .86; letter-spacing: -0.045em;
+    font-size: clamp(64px, 15.5vw, 230px);
+    color: var(--ink); opacity: .92;
+    align-self: center; transform: translateY(-6vh);
+  }
+  .hero h1 span { display: block; color: var(--frog); }
+  .hero-foot { display: grid; justify-items: center; gap: 16px; max-width: 520px; }
+  .hero-foot p { margin: 0; font-size: 19px; font-weight: 700; color: var(--ink-soft); line-height: 1.4; }
+  .hint { font-size: 14px; font-weight: 800; color: var(--lily); letter-spacing: .02em; }
+  .scroll-cue { width: 26px; height: 42px; border-radius: 14px; border: 3px solid var(--ink-soft); opacity: .5; position: relative; }
+  .scroll-cue::after { content: ""; position: absolute; left: 50%; top: 7px; width: 4px; height: 8px; margin-left: -2px; border-radius: 2px; background: var(--ink-soft); animation: cue 1.6s infinite; }
+  @keyframes cue { 0% { transform: translateY(0); opacity: 1; } 80% { transform: translateY(12px); opacity: 0; } 100% { opacity: 0; } }
+
+  /* 2–4. блоки с текстом сбоку от лягушки */
+  .split { grid-template-columns: 1fr 1fr; gap: 40px; }
+  .split.left .copy { grid-column: 1; }
+  .split.right .copy { grid-column: 2; }
+  .copy { max-width: 470px; }
+  .num { font-weight: 900; font-size: 15px; color: var(--lily); letter-spacing: .08em; }
+  .copy h2 { margin: 10px 0 16px; font-weight: 900; line-height: .95; letter-spacing: -0.035em; font-size: clamp(42px, 6vw, 84px); }
+  .copy p { margin: 0 0 14px; font-size: 19px; font-weight: 600; line-height: 1.5; color: var(--ink-soft); }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .chip { font-weight: 800; font-size: 14px; padding: 7px 13px; border-radius: 999px; background: var(--surface); box-shadow: inset 0 -3px 0 var(--clay-lo), 0 4px 10px -6px var(--clay-drop); }
+
+  .games { grid-template-columns: 0.8fr 1.2fr; gap: 40px; }
+  .games .copy { grid-column: 2; max-width: 640px; }
+  .cards { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 8px; }
+  .card {
+    padding: 20px 20px 22px; border-radius: 26px; background: var(--surface);
+    box-shadow: inset 0 3px 0 var(--clay-hi), inset 0 -6px 0 var(--clay-lo), 0 16px 30px -18px var(--clay-drop);
+    transition: transform .25s cubic-bezier(.3,1.5,.5,1);
+    transform: perspective(700px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  }
+  .card .k { font-weight: 900; font-size: 13px; color: var(--lily); letter-spacing: .08em; }
+  .card h3 { margin: 6px 0 6px; font-size: 22px; font-weight: 900; letter-spacing: -0.02em; }
+  .card p { margin: 0; font-size: 15px; font-weight: 600; line-height: 1.45; color: var(--ink-soft); }
+
+  .cta { place-items: start center; text-align: center; padding-top: 18vh; }
+  .cta h2 { margin: 0 0 22px; font-weight: 900; letter-spacing: -0.04em; line-height: .9; font-size: clamp(52px, 9vw, 140px); }
+  .cta h2 span { color: var(--frog); }
+
+  /* появление при прокрутке */
+  .reveal { opacity: 0; transform: translateY(36px); transition: opacity .7s ease, transform .9s cubic-bezier(.2,1.2,.3,1); transition-delay: var(--d, 0s); }
+  .reveal.in { opacity: 1; transform: none; }
+
+  /* «ква!» при клике */
+  .kva {
+    position: fixed; z-index: 4; pointer-events: none;
+    font: 900 26px var(--font); color: var(--lily);
+    padding: 6px 14px; border-radius: 999px; background: var(--surface);
+    box-shadow: 0 8px 18px -8px var(--clay-drop);
+    transform: translate(-50%, -50%);
+    animation: kva .9s cubic-bezier(.2,1.4,.4,1) forwards;
+  }
+  @keyframes kva {
+    0% { transform: translate(-50%, -30%) scale(.4) rotate(var(--r)); opacity: 0; }
+    25% { transform: translate(-50%, -110%) scale(1.1) rotate(var(--r)); opacity: 1; }
+    100% { transform: translate(-50%, -220%) scale(.9) rotate(var(--r)); opacity: 0; }
+  }
+
+  @media (max-width: 760px) {
+    .s { padding: 84px 16px 40px; }
+    .hero { grid-template-rows: auto 1fr; }
+    .hero-foot { align-self: end; }
+    .hero h1 { align-self: start; transform: none; margin-top: 4vh; }
+    .split, .games { grid-template-columns: 1fr; align-items: end; }
+    .split .copy, .games .copy { grid-column: 1 !important; }
+    .copy { padding: 22px; border-radius: 26px; background: color-mix(in srgb, var(--surface) 88%, transparent); backdrop-filter: blur(6px); }
+    .cards { grid-template-columns: 1fr 1fr; gap: 10px; }
+    .card { padding: 14px 14px 16px; border-radius: 20px; }
+    .card h3 { font-size: 17px; margin: 4px 0; }
+    .card p { display: none; }
+    .copy h2 { font-size: clamp(34px, 10vw, 44px); }
+    .copy p { font-size: 16px; }
+    .chip { font-size: 12px; padding: 6px 10px; }
+    .cta { place-items: end center; padding-bottom: 60px; }
+    .top .pill { display: none; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { transition: opacity .3s ease; transform: none; }
+    .scroll-cue::after { animation: none; }
+  }
+</style>
+</head>
+<body>
+<canvas id="scene"></canvas>
+
+<header class="top">
+  <a class="logo" href="#">Толстые лягушки</a>
+  <div class="top-right">
+    <span class="pill">кваков: <b id="count">0</b></span>
+    <a class="btn small" href="https://tolstye-lyagushki.github.io/">Играть</a>
+  </div>
+</header>
+
+<main>
+  <section class="s hero">
+    <h1 class="behind">Толстые<span>лягушки</span></h1>
+    <div class="hero-foot front">
+      <div class="hint">↑ ткни в лягушку</div>
+      <p>Кликер про самых пухлых жителей болота. Корми, наряжай и собирай их всех.</p>
+      <a class="btn" href="https://tolstye-lyagushki.github.io/">Играть бесплатно</a>
+
+    </div>
+  </section>
+
+  <section class="s split left">
+    <div class="copy front">
+      <div class="num reveal">01 — КОЛЛЕКЦИЯ</div>
+      <h2 class="reveal" style="--d:.08s">25 лягушек в&nbsp;одном пруду</h2>
+      <p class="reveal" style="--d:.16s">Каждая квакает по-своему и растёт до пятого уровня. С каждым уровнем — новая вещь в наряде: шарф, шляпа, очки, плащ.</p>
+      <div class="chips reveal" style="--d:.24s"><span class="chip">шея · ур.2</span><span class="chip">голова · ур.3</span><span class="chip">глаза · ур.4</span><span class="chip">костюм · ур.5</span></div>
+    </div>
+  </section>
+
+  <section class="s split right">
+    <div class="copy front">
+      <div class="num reveal">02 — ПИТОМЕЦ</div>
+      <h2 class="reveal" style="--d:.08s">Своя лягушка с&nbsp;гардеробом</h2>
+      <p class="reveal" style="--d:.16s">Открывай сундуки, собирай вещи и наряжай питомца. Легендарные шляпы выпадают редко — но выпадают.</p>
+    </div>
+  </section>
+
+  <section class="s games">
+    <div class="copy front">
+      <div class="num reveal">03 — МИНИ-ИГРЫ</div>
+      <h2 class="reveal" style="--d:.08s">Четыре способа не&nbsp;скучать</h2>
+      <div class="cards">
+        <article class="card reveal" style="--d:.12s"><div class="k">01</div><h3>Прыжки</h3><p>Скачи по кувшинкам всё выше и не промахнись.</p></article>
+        <article class="card reveal" style="--d:.18s"><div class="k">02</div><h3>Оборона болота</h3><p>Tower defense: 30 уровней по 25 волн.</p></article>
+        <article class="card reveal" style="--d:.24s"><div class="k">03</div><h3>Ловля мошек</h3><p>Лови языком, пока не разлетелись.</p></article>
+        <article class="card reveal" style="--d:.30s"><div class="k">04</div><h3>Штурм ульев</h3><p>Ломай ульи с настоящей физикой, 30 уровней.</p></article>
+      </div>
+    </div>
+  </section>
+
+  <section class="s cta">
+    <div class="front">
+      <h2 class="reveal">Пруд <span>ждёт</span></h2>
+      <a class="btn reveal" style="--d:.1s" href="https://tolstye-lyagushki.github.io/">Играть бесплатно</a>
+    </div>
+  </section>
+</main>
+
+<script type="importmap">
+  { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js" } }
+</script>
+<script type="module">
+import * as THREE from 'three';
+
+const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const canvas = document.getElementById('scene');
+const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+renderer.shadowMap.enabled = true;
+renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+
+const scene = new THREE.Scene();
+const camera = new THREE.PerspectiveCamera(35, 1, 0.1, 100);
+camera.position.set(0, 1.4, 9);
+camera.lookAt(0, 0, 0);
+
+scene.add(new THREE.HemisphereLight(0xffffff, 0x9fd4a8, 1.7));
+const sun = new THREE.DirectionalLight(0xffffff, 2.2);
+sun.position.set(3, 6, 5);
+sun.castShadow = true;
+sun.shadow.mapSize.set(1024, 1024);
+Object.assign(sun.shadow.camera, { left: -6, right: 6, top: 6, bottom: -6 });
+sun.shadow.radius = 6;
+sun.shadow.bias = -0.001;
+scene.add(sun);
+const fill = new THREE.DirectionalLight(0xffe2f0, 0.7);
+fill.position.set(-4, 2, 3);
+scene.add(fill);
+
+// пластилин: матовые материалы без блеска
+const clay = (color, roughness = 0.62) => new THREE.MeshStandardMaterial({ color, roughness, metalness: 0 });
+const M = {
+  skin: clay(0x6cc25a),
+  belly: clay(0xdcf3b6),
+  pad: clay(0x2f8f4e, 0.75),
+  white: clay(0xffffff, 0.35),
+  pupil: clay(0x1a1a1a, 0.3),
+  mouth: clay(0x234d29),
+  cheek: new THREE.MeshStandardMaterial({ color: 0xff8fb8, roughness: 0.8, transparent: true, opacity: 0.8 }),
+  hat: clay(0x2d2540, 0.5),
+  band: clay(0xc8286e),
+};
+M.pad.side = THREE.DoubleSide;
+
+const S = new THREE.SphereGeometry(1, 48, 32);
+function blob(geo, mat, pos, scl) {
+  const m = new THREE.Mesh(geo, mat);
+  m.position.set(...pos);
+  if (scl) m.scale.set(...scl);
+  m.castShadow = true;
+  m.receiveShadow = true;
+  return m;
+}
+
+// иерархия: anchor (место по прокрутке) → jumper (прыжок, сплющивание) → yaw (поворот к курсору) → части тела
+const anchor = new THREE.Group();
+scene.add(anchor);
+const pad = new THREE.Mesh(new THREE.CylinderGeometry(1.9, 1.9, 0.14, 72, 1, false, 0.35, Math.PI * 2 - 0.7), M.pad);
+pad.position.y = -1.02;
+pad.rotation.y = Math.PI;
+pad.receiveShadow = true;
+anchor.add(pad);
+
+const jumper = new THREE.Group();
+anchor.add(jumper);
+const yaw = new THREE.Group();
+jumper.add(yaw);
+
+const BODY = [1.25, 0.95, 1.1];
+const body = blob(S, M.skin, [0, 0, 0], BODY);
+yaw.add(body);
+const BELLY = [0.95, 0.72, 0.66];
+const belly = blob(S, M.belly, [0, -0.18, 0.5], BELLY);
+yaw.add(belly);
+
+const eyes = [];
+for (const sx of [-1, 1]) {
+  yaw.add(blob(S, M.skin, [sx * 0.52, 0.68, 0.22], [0.42, 0.4, 0.42]));
+  const eye = new THREE.Group();
+  eye.position.set(sx * 0.52, 0.84, 0.56);
+  yaw.add(eye);
+  eye.add(blob(S, M.white, [0, 0, 0], [0.31, 0.31, 0.31]));
+  const look = new THREE.Group();
+  eye.add(look);
+  look.add(blob(S, M.pupil, [0, 0, 0.24], [0.15, 0.17, 0.08]));
+  look.add(blob(S, M.white, [0.05, 0.06, 0.315], [0.04, 0.04, 0.02]));
+  eyes.push({ eye, look });
+
+  const cheek = blob(S, M.cheek, [sx * 0.78, 0.12, 0.83], [0.2, 0.13, 0.07]);
+  cheek.rotation.y = sx * 0.6;
+  cheek.castShadow = false;
+  yaw.add(cheek);
+
+  const arm = blob(new THREE.CapsuleGeometry(0.16, 0.35, 8, 16), M.skin, [sx * 0.62, -0.72, 0.62]);
+  arm.rotation.z = sx * 0.25;
+  yaw.add(arm);
+  yaw.add(blob(S, M.skin, [sx * 0.7, -0.98, 0.82], [0.26, 0.08, 0.22]));
+  yaw.add(blob(S, M.skin, [sx * 1.0, -0.55, -0.05], [0.5, 0.42, 0.68]));
+  yaw.add(blob(S, M.skin, [sx * 1.15, -0.97, 0.35], [0.3, 0.07, 0.38]));
+}
+
+// улыбка — трубка, уложенная по поверхности тела и живота
+function surfaceZ(x, y) {
+  const e = (cx, cy, cz, rx, ry, rz) => {
+    const k = 1 - ((x - cx) / rx) ** 2 - ((y - cy) / ry) ** 2;
+    return k > 0 ? cz + rz * Math.sqrt(k) : -9;
+  };
+  return Math.max(e(0, 0, 0, ...BODY), e(0, -0.18, 0.5, ...BELLY));
+}
+const smile = [];
+for (let i = 0; i <= 20; i++) {
+  const u = i / 10 - 1;
+  const x = 0.4 * u, y = 0.3 - 0.13 * (1 - u * u);
+  smile.push(new THREE.Vector3(x, y, surfaceZ(x, y) + 0.012));
+}
+yaw.add(new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(smile), 48, 0.032, 8), M.mouth));
+
+// шляпа появляется в блоке «Питомец»
+const hat = new THREE.Group();
+hat.position.set(0, 0.9, 0.05);
+hat.rotation.z = -0.18;
+hat.add(blob(new THREE.CylinderGeometry(0.44, 0.44, 0.05, 48), M.hat, [0, 0.02, 0]));
+hat.add(blob(new THREE.CylinderGeometry(0.27, 0.3, 0.46, 48), M.hat, [0, 0.26, 0]));
+hat.add(blob(new THREE.CylinderGeometry(0.305, 0.305, 0.09, 48), M.band, [0, 0.09, 0]));
+hat.scale.setScalar(0.001);
+yaw.add(hat);
+
+// кувшинки на заднем плане
+const farPads = [];
+const padGeo = new THREE.CylinderGeometry(1, 1, 0.08, 40, 1, false, 0.3, Math.PI * 2 - 0.6);
+const farMat = clay(0xa8dcb6, 0.9);
+farMat.side = THREE.DoubleSide;
+[[-5.2, -1.8, -4, 0.8], [4.8, -2.2, -3, 0.65], [-3.2, -3.2, -1, 0.55], [6.2, -1.2, -7, 1.0], [2.2, -3.6, 0.5, 0.45]]
+  .forEach(([x, y, z, r], i) => {
+    const m = new THREE.Mesh(padGeo, farMat);
+    m.position.set(x, y, z);
+    m.scale.set(r, 1, r);
+    m.rotation.y = i * 1.7;
+    m.receiveShadow = true;
+    scene.add(m);
+    farPads.push({ m, y, phase: i * 1.3 });
+  });
+
+// круги на воде при приземлении
+const ripples = [];
+const rippleGeo = new THREE.RingGeometry(0.92, 1, 72);
+function spawnRipple() {
+  const mat = new THREE.MeshBasicMaterial({ color: 0x3b8a46, transparent: true, opacity: 0.4, side: THREE.DoubleSide, depthWrite: false });
+  const r = new THREE.Mesh(rippleGeo, mat);
+  r.rotation.x = -Math.PI / 2;
+  const p = new THREE.Vector3();
+  pad.getWorldPosition(p);
+  r.position.set(p.x, p.y - 0.05, p.z);
+  r.scale.setScalar(anchor.scale.x * 1.9);
+  scene.add(r);
+  ripples.push({ r, t: 0, base: anchor.scale.x * 1.9 });
+}
+
+// раскраски «видов» для блока «Коллекция»
+const SPECIES = [0x6cc25a, 0xf2a03d, 0x5aa9e6, 0xb07cd8, 0xe86a8a, 0x3fae8c, 0xe8c547];
+const skinTarget = new THREE.Color(SPECIES[0]);
+let speciesIdx = 0, speciesTimer = 0;
+
+// опорные точки по блокам: x, y, масштаб
+const KEYS_WIDE = [
+  { x: 0, y: -0.05, s: 0.8 },
+  { x: 2.5, y: -0.25, s: 0.8 },
+  { x: -2.5, y: -0.25, s: 0.8 },
+  { x: -2.8, y: -0.35, s: 0.66 },
+  { x: 0, y: -0.75, s: 0.82 },
+];
+const KEYS_NARROW = [
+  { x: 0, y: 0.45, s: 0.56 },
+  { x: 0, y: 1.1, s: 0.6 },
+  { x: 0, y: 1.1, s: 0.6 },
+  { x: 0, y: 1.25, s: 0.46 },
+  { x: 0, y: 0.6, s: 0.7 },
+];
+let KEYS = KEYS_WIDE;
+
+function resize() {
+  const w = innerWidth, h = innerHeight;
+  renderer.setSize(w, h, false);
+  camera.aspect = w / h;
+  camera.updateProjectionMatrix();
+  KEYS = w < 760 ? KEYS_NARROW : KEYS_WIDE;
+}
+addEventListener('resize', resize);
+resize();
+
+const sections = [...document.querySelectorAll('.s')];
+function sectionFloat() {
+  const mid = scrollY + innerHeight / 2;
+  const c = sections.map(s => s.offsetTop + s.offsetHeight / 2);
+  if (mid <= c[0]) return 0;
+  for (let i = 0; i < c.length - 1; i++) if (mid < c[i + 1]) return i + (mid - c[i]) / (c[i + 1] - c[i]);
+  return c.length - 1;
+}
+
+// курсор и клики
+const pointer = new THREE.Vector2(0, 0);
+const look = new THREE.Vector2(0, 0);
+const ray = new THREE.Raycaster();
+function hitFrog(cx, cy) {
+  ray.setFromCamera(new THREE.Vector2(cx / innerWidth * 2 - 1, -(cy / innerHeight) * 2 + 1), camera);
+  return ray.intersectObject(jumper, true).length > 0;
+}
+addEventListener('pointermove', e => {
+  pointer.set(e.clientX / innerWidth * 2 - 1, -(e.clientY / innerHeight) * 2 + 1);
+  if (!e.target.closest('a, button, .card')) document.body.style.cursor = hitFrog(e.clientX, e.clientY) ? 'pointer' : '';
+});
+
+let jy = 0, vy = 0, landT = 9, squashAmp = 0, inflate = 0, kvaks = 0;
+const countEl = document.getElementById('count');
+const WORDS = ['ква!', 'КВА', 'кваа~', 'квак!', 'ква-ква'];
+addEventListener('pointerdown', e => {
+  if (e.target.closest('a, button, .card')) return;
+  if (!hitFrog(e.clientX, e.clientY)) return;
+  if (jy < 0.08) vy = reduceMotion ? 2.2 : 4.4;
+  inflate = 1;
+  countEl.textContent = ++kvaks;
+  const b = document.createElement('div');
+  b.className = 'kva';
+  b.textContent = WORDS[Math.floor(Math.random() * WORDS.length)];
+  b.style.left = e.clientX + 'px';
+  b.style.top = e.clientY + 'px';
+  b.style.setProperty('--r', (Math.random() * 24 - 12).toFixed(1) + 'deg');
+  document.body.appendChild(b);
+  setTimeout(() => b.remove(), 950);
+});
+
+// наклон карточек за курсором
+document.querySelectorAll('.card').forEach(card => {
+  card.addEventListener('pointermove', e => {
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--ry', ((e.clientX - r.left) / r.width - 0.5) * 14 + 'deg');
+    card.style.setProperty('--rx', -((e.clientY - r.top) / r.height - 0.5) * 14 + 'deg');
+  });
+  card.addEventListener('pointerleave', () => { card.style.setProperty('--rx', '0deg'); card.style.setProperty('--ry', '0deg'); });
+});
+
+const io = new IntersectionObserver(es => es.forEach(e => e.isIntersecting && e.target.classList.add('in')), { threshold: 0.2 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+const smooth = t => t * t * (3 - 2 * t);
+let fs = sectionFloat();
+let blinkT = 2.5, blinkPhase = -1;
+const clock = new THREE.Clock();
+
+function frame() {
+  const dt = Math.min(clock.getDelta(), 0.05);
+  const time = clock.elapsedTime;
+
+  // положение по прокрутке: между блоками лягушка перелетает дугой
+  fs += (sectionFloat() - fs) * Math.min(1, dt * 7);
+  const i = Math.min(Math.floor(fs), KEYS.length - 2);
+  const t = Math.min(1, Math.max(0, fs - i));
+  const a = KEYS[i], b = KEYS[i + 1], e = smooth(t);
+  const arc = reduceMotion ? 0 : Math.sin(Math.PI * t) * 1.3 * (a.x === b.x ? 0.5 : 1);
+  anchor.position.set(a.x + (b.x - a.x) * e, a.y + (b.y - a.y) * e, 0);
+  anchor.scale.setScalar(a.s + (b.s - a.s) * e);
+  jumper.position.y = arc + jy;
+  pad.position.y = -1.02 - arc - jy;
+  const dir = Math.sign(b.x - a.x);
+
+  // прыжок от клика: гравитация и пружинистое приземление
+  vy -= 16 * dt;
+  jy += vy * dt;
+  if (jy <= 0) {
+    if (vy < -1.5) { landT = 0; squashAmp = Math.min(0.3, -vy * 0.055); spawnRipple(); }
+    jy = 0; vy = 0;
+  }
+  landT += dt;
+  const squash = squashAmp * Math.exp(-6 * landT) * Math.cos(18 * landT);
+  const stretch = Math.max(-0.1, Math.min(0.16, vy * 0.03)) + Math.sin(Math.PI * t) * 0.12 * (reduceMotion ? 0 : 1);
+  const breathe = Math.sin(time * 2.2) * 0.012;
+  jumper.scale.set((1 + squash * 0.5) * (1 - stretch * 0.5) * (1 + breathe), (1 - squash) * (1 + stretch) * (1 - breathe), (1 + squash * 0.5) * (1 + breathe));
+
+  // взгляд и поворот за курсором
+  look.lerp(pointer, Math.min(1, dt * 6));
+  yaw.rotation.y += (look.x * 0.45 + dir * 0.7 * Math.sin(Math.PI * t) - yaw.rotation.y) * Math.min(1, dt * 6);
+  yaw.rotation.x += (-look.y * 0.12 - yaw.rotation.x) * Math.min(1, dt * 6);
+  for (const ey of eyes) {
+    ey.look.rotation.y = look.x * 0.55;
+    ey.look.rotation.x = -look.y * 0.45;
+  }
+
+  // моргание
+  blinkT -= dt;
+  if (blinkT <= 0 && blinkPhase < 0) blinkPhase = 0;
+  if (blinkPhase >= 0) {
+    blinkPhase += dt / 0.16;
+    const k = blinkPhase < 1 ? 1 - Math.sin(Math.PI * blinkPhase) * 0.92 : 1;
+    eyes.forEach(ey => ey.eye.scale.y = k);
+    if (blinkPhase >= 1) { blinkPhase = -1; blinkT = 2 + Math.random() * 3.5; }
+  }
+
+  // горловой мешок раздувается на «ква»
+  inflate = Math.max(0, inflate - dt * 2.2);
+  const puff = 1 + Math.sin(inflate * Math.PI) * 0.28;
+  belly.scale.set(BELLY[0] * puff, BELLY[1] * puff, BELLY[2] * puff);
+
+  // «Коллекция» — лягушка меняет раскраску; в остальных блоках — обычная зелёная
+  const inCollection = Math.abs(fs - 1) < 0.45;
+  if (inCollection) {
+    speciesTimer -= dt;
+    if (speciesTimer <= 0) { speciesIdx = (speciesIdx + 1) % SPECIES.length; skinTarget.setHex(SPECIES[speciesIdx]); speciesTimer = 1.1; }
+  } else if (speciesIdx !== 0) { speciesIdx = 0; skinTarget.setHex(SPECIES[0]); speciesTimer = 0; }
+  M.skin.color.lerp(skinTarget, Math.min(1, dt * 5));
+
+  // шляпа в «Питомце» и дальше
+  const hatOn = fs > 1.55 ? 1 : 0.001;
+  const hs = hat.scale.x + (hatOn - hat.scale.x) * Math.min(1, dt * 9);
+  hat.scale.setScalar(hs);
+
+  farPads.forEach(p => {
+    p.m.position.y = p.y + Math.sin(time * 0.9 + p.phase) * 0.06 + fs * 0.35;
+    p.m.rotation.y += dt * 0.05;
+  });
+
+  for (let k = ripples.length - 1; k >= 0; k--) {
+    const r = ripples[k];
+    r.t += dt;
+    r.r.scale.setScalar(r.base * (1 + r.t * 1.2));
+    r.r.material.opacity = 0.4 * Math.max(0, 1 - r.t / 1.1);
+    if (r.t > 1.1) { scene.remove(r.r); r.r.material.dispose(); ripples.splice(k, 1); }
+  }
+
+  renderer.render(scene, camera);
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>
