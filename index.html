@@ -20,7 +20,10 @@
   // заставка promo-3d.html — один раз каждому игроку и только на своём сайте (на itch.io её нет)
   (function () { try {
     var host = location.hostname;
-    if ((host === "tolstye-lyagushki.github.io" || host === "localhost") && !localStorage.getItem("fatFrogs.intro")) location.replace("promo-3d.html");
+    if ((host === "tolstye-lyagushki.github.io" || host === "localhost") && !localStorage.getItem("fatFrogs.intro")) {
+      localStorage.setItem("fatFrogs.intro", "1");
+      location.replace("promo-3d.html?v=2");
+    }
   } catch (e) { /* без хранилища заставку не показываем */ } })();
 </script>
 <title>Толстые лягушки</title>
